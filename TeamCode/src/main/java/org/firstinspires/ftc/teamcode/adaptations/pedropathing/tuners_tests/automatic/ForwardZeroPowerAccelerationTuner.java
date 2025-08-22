@@ -1,5 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.automatic;
-
+package org.firstinspires.ftc.teamcode.adaptations.pedropathing.tuners_tests.automatic;
 
 import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
 import static com.pedropathing.follower.FollowerConstants.leftRearMotorName;
@@ -13,6 +12,7 @@ import static com.pedropathing.follower.FollowerConstants.rightRearMotorDirectio
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -29,18 +29,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.constants.LConstants;
 
 /**
- * This is the StrafeVelocityTuner autonomous follower OpMode. This runs the robot right at max
- * power until it reaches some specified distance. It records the most recent velocities, and on
- * reaching the end of the distance, it averages them and prints out the velocity obtained. It is
- * recommended to run this multiple times on a full battery to get the best results. What this does
- * is, when paired with ForwardVelocityTuner, allows FollowerConstants to create a Vector that
- * empirically represents the direction your mecanum wheels actually prefer to go in, allowing for
- * more accurate following.
- * You can adjust the distance the robot will travel on FTC Dashboard: 192/168/43/1:8080/dash
+ * This is the ForwardZeroPowerAccelerationTuner autonomous follower OpMode. This runs the robot
+ * forward until a specified velocity is achieved. Then, the robot cuts power to the motors, setting
+ * them to zero power. The deceleration, or negative acceleration, is then measured until the robot
+ * stops. The accelerations across the entire time the robot is slowing down is then averaged and
+ * that number is then printed. This is used to determine how the robot will decelerate in the
+ * forward direction when power is cut, making the estimations used in the calculations for the
+ * drive Vector more accurate and giving better braking at the end of Paths.
+ * You can adjust the max velocity the robot will hit on FTC Dashboard: 192/168/43/1:8080/dash
  *
  * @author Anyi Lin - 10158 Scott's Bots
  * @author Aaron Yang - 10158 Scott's Bots
@@ -48,9 +48,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @version 1.0, 3/13/2024
  */
 @Config
-@Autonomous(name = "Strafe Velocity Tuner", group = "Automatic Tuners")
-public class StrafeVelocityTuner extends OpMode {
-    private ArrayList<Double> velocities = new ArrayList<>();
+@Autonomous(name = "Forward Zero Power Acceleration Tuner", group = "Automatic Tuners")
+public class ForwardZeroPowerAccelerationTuner extends OpMode {
+    private ArrayList<Double> accelerations = new ArrayList<>();
 
     private DcMotorEx leftFront;
     private DcMotorEx leftRear;
@@ -60,16 +60,19 @@ public class StrafeVelocityTuner extends OpMode {
 
     private PoseUpdater poseUpdater;
 
-    public static double DISTANCE = 48;
-    public static double RECORD_NUMBER = 10;
+    public static double VELOCITY = 30;
+
+    private double previousVelocity;
+
+    private long previousTimeNano;
 
     private Telemetry telemetryA;
 
+    private boolean stopping;
     private boolean end;
 
     /**
-     * This initializes the drive motors as well as the cache of velocities and the FTC Dashboard
-     * telemetry.
+     * This initializes the drive motors as well as the FTC Dashboard telemetry.
      */
     @Override
     public void init() {
@@ -97,34 +100,31 @@ Constants.setConstants(FConstants.class, LConstants.class);
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
-        for (int i = 0; i < RECORD_NUMBER; i++) {
-            velocities.add(0.0);
-        }
-
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryA.addLine("The robot will run at 1 power until it reaches " + DISTANCE + " inches to the right.");
-        telemetryA.addLine("Make sure you have enough room, since the robot has inertia after cutting power.");
-        telemetryA.addLine("After running the distance, the robot will cut power from the drivetrain and display the strafe velocity.");
+        telemetryA.addLine("The robot will run forward until it reaches " + VELOCITY + " inches per second.");
+        telemetryA.addLine("Then, it will cut power from the drivetrain and roll to a stop.");
+        telemetryA.addLine("Make sure you have enough room.");
+        telemetryA.addLine("After stopping, the forward zero power acceleration (natural deceleration) will be displayed.");
         telemetryA.addLine("Press CROSS or A on game pad 1 to stop.");
         telemetryA.update();
     }
 
     /**
-     * This starts the OpMode by setting the drive motors to run right at full power.
+     * This starts the OpMode by setting the drive motors to run forward at full power.
      */
     @Override
     public void start() {
         leftFront.setPower(1);
-        leftRear.setPower(-1);
-        rightFront.setPower(-1);
+        leftRear.setPower(1);
+        rightFront.setPower(1);
         rightRear.setPower(1);
     }
 
     /**
      * This runs the OpMode. At any point during the running of the OpMode, pressing CROSS or A on
-     * game pad1 will stop the OpMode. This continuously records the RECORD_NUMBER most recent
-     * velocities, and when the robot has run sideways enough, these last velocities recorded are
-     * averaged and printed.
+     * game pad 1 will stop the OpMode. When the robot hits the specified velocity, the robot will
+     * record its deceleration / negative acceleration until it stops. Then, it will average all the
+     * recorded deceleration / negative acceleration and print that value.
      */
     @Override
     public void loop() {
@@ -137,33 +137,34 @@ Constants.setConstants(FConstants.class, LConstants.class);
         }
 
         poseUpdater.update();
+        Vector heading = new Vector(1.0, poseUpdater.getPose().getHeading());
         if (!end) {
-            if (Math.abs(poseUpdater.getPose().getY()) > DISTANCE) {
-                end = true;
-                for (DcMotorEx motor : motors) {
-                    motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    motor.setPower(0);
+            if (!stopping) {
+                if (MathFunctions.dotProduct(poseUpdater.getVelocity(), heading) > VELOCITY) {
+                    previousVelocity = MathFunctions.dotProduct(poseUpdater.getVelocity(), heading);
+                    previousTimeNano = System.nanoTime();
+                    stopping = true;
+                    for (DcMotorEx motor : motors) {
+                        motor.setPower(0);
+                    }
                 }
             } else {
-                double currentVelocity = Math.abs(MathFunctions.dotProduct(poseUpdater.getVelocity(), new Vector(1, Math.PI / 2)));
-                velocities.add(currentVelocity);
-                velocities.remove(0);
+                double currentVelocity = MathFunctions.dotProduct(poseUpdater.getVelocity(), heading);
+                accelerations.add((currentVelocity - previousVelocity) / ((System.nanoTime() - previousTimeNano) / Math.pow(10.0, 9)));
+                previousVelocity = currentVelocity;
+                previousTimeNano = System.nanoTime();
+                if (currentVelocity < FollowerConstants.pathEndVelocityConstraint) {
+                    end = true;
+                }
             }
         } else {
-            leftFront.setPower(0);
-            leftRear.setPower(0);
-            rightFront.setPower(0);
-            rightRear.setPower(0);
-            for (DcMotorEx motor : motors) {
-                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            }
             double average = 0;
-            for (Double velocity : velocities) {
-                average += velocity;
+            for (Double acceleration : accelerations) {
+                average += acceleration;
             }
-            average /= (double) velocities.size();
+            average /= (double) accelerations.size();
 
-            telemetryA.addData("strafe velocity:", average);
+            telemetryA.addData("forward zero power acceleration (deceleration):", average);
             telemetryA.update();
         }
     }
