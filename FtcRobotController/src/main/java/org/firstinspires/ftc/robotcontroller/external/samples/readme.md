@@ -4,7 +4,7 @@ No Team-specific code should be placed or modified in this ``.../samples`` folde
 
 Samples should be Copied from here, and then Pasted into the team's 
 [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](../../../../../../../../../../TeamCode/src/main/java/org/firstinspires/ftc/teamcode)
- folder, using the Android Studio cut and paste commands.  This automatically changes all file and
+ folder, using the Android Studio cut and paste org.firstinspires.ftc.teamcode.commands.  This automatically changes all file and
 class names to be consistent.  From there, the sample can be modified to suit the team's needs.
 
 For more detailed instructions see the /teamcode readme.  
