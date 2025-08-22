@@ -4,14 +4,8 @@ import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
 import static org.firstinspires.ftc.teamcode.game.Alliance.BLUE;
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.game.Sample.ALLIANCE;
-import static org.firstinspires.ftc.teamcode.game.Sample.NEUTRAL;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
-import static org.firstinspires.ftc.teamcode.game.Submersible.NE;
-import static org.firstinspires.ftc.teamcode.game.Submersible.NW;
-import static org.firstinspires.ftc.teamcode.game.Submersible.SE;
-import static org.firstinspires.ftc.teamcode.game.Submersible.SW;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.opMode;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
@@ -28,7 +22,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.game.Config;
-import org.firstinspires.ftc.teamcode.game.Submersible;
 
 import java.io.File;
 import java.util.Arrays;
@@ -110,12 +103,6 @@ public class ConfigSubsystem extends SubsystemBase {
         for (Item item : items) telemetry.addData(getCaption(item.key), item.telemetrySupplier);
         telemetry.addLine("-----------------------------------------------------------------------------");
 
-        if (config.submersible != null) {
-            for (String line : Submersible.getDisplayLines())
-                telemetry.addLine("<font face=\"monospace\">" + line.replace(" ", "&nbsp;") + "</font>");
-            telemetry.addLine("-----------------------------------------------------------------------------");
-        }
-
         if (!PERSISTENCE || (thread != null && thread.isAlive())) return;
 
         thread = new Thread() {
@@ -131,12 +118,6 @@ public class ConfigSubsystem extends SubsystemBase {
     
     private void reset() {
         if (config.alliance == null || config.side == null) return;
-        config.spikesTarget = config.alliance.sign * config.side.sign > 0 ? 3 : 2;
-        config.elementsTarget = config.alliance.sign * config.side.sign > 0 ? 0 : 2;
-        config.sample = config.alliance.sign * config.side.sign > 0 ? NEUTRAL : ALLIANCE;
-        config.submersible = config.alliance == RED ?
-            (config.side == NORTH ? NE : SE) :
-            (config.side == NORTH ? NW : SW);
         drive.resetPose();
     }
 

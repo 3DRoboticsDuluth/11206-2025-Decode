@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.game.Position.ENTER;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIGH;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
@@ -30,22 +29,18 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.game.Alliance;
-import org.firstinspires.ftc.teamcode.game.Location;
 import org.firstinspires.ftc.teamcode.game.Pose;
-import org.firstinspires.ftc.teamcode.game.Position;
 import org.firstinspires.ftc.teamcode.game.Side;
 
-import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 
 /** @noinspection DataFlowIssue*/
 @SuppressWarnings({"unused"})
 public class DriveCommands {
-    private final HashMap<Location, Function<Pose, Pose>> locationPoses =
-        new HashMap<Location, Function<Pose, Pose>>() {{
-        }};
+//    private final HashMap<Location, Function<Pose, Pose>> locationPoses =
+//        new HashMap<Location, Function<Pose, Pose>>() {{
+//        }};
 
     PathBuilder pathBuilder = new PathBuilder();
 
@@ -87,12 +82,12 @@ public class DriveCommands {
         );
     }
 
-    public Command to(Location location, Position position) {
-        return to(locationPoses.get(location).apply(
-            location.offsets.get(position)
-        ));
-    }
-
+//    public Command to(Location location, Position position) {
+//        return to(locationPoses.get(location).apply(
+//            location.offsets.get(position)
+//        ));
+//    }
+//
     public Command to(double x, double y, double heading) {
         return to(
             nav.createPose(x, y, heading)
@@ -106,22 +101,6 @@ public class DriveCommands {
             abs(pose.hypot(config.pose)) > TO_FAR;
     }
     
-    public boolean toFarToDeposit() {
-        return toFar(
-            locationPoses.get(config.deposit).apply(
-                config.deposit.offsets.get(ENTER)
-            )
-        );
-    }
-    
-    public boolean toFarToIntake() {
-        return toFar(
-            locationPoses.get(config.intake).apply(
-                config.intake.offsets.get(ENTER)
-            )
-        );
-    }
-
     public Command shake() {
         return rumble().andThen(
             turn(-10),

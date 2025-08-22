@@ -4,11 +4,6 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.hardware;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.tan;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
@@ -128,11 +123,6 @@ public class VisionSubsystem extends SubsystemBase {
         for (LLResultTypes.ColorResult cr : colorResults) {
             double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
 
-            elementPose = getElementPose(
-                direction * cr.getTargetXDegrees(),
-                direction * cr.getTargetYDegrees()
-            );
-
             telemetry.addData(
                  "Vision (Color Result)",
                  () -> String.format(
@@ -173,37 +163,5 @@ public class VisionSubsystem extends SubsystemBase {
 
             return;
         }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private Pose getElementPose(double targetYawAngle, double targetPitchAngle) {
-        double heightDiff = CAMERA_Z_INCHES - config.intake.element.height;
-        double elevationAngle = toRadians(-CAMERA_PITCH_DEGREES - targetPitchAngle);
-        double bearingAngle = toRadians(CAMERA_YAW_DEGREES - targetYawAngle);
-
-        telemetry.addData("Vision (Height Diff)", () -> String.format("%.1f", heightDiff));
-        telemetry.addData("Vision (Elevation Angle)", () -> String.format("%.1f°", toDegrees(elevationAngle)));
-        telemetry.addData("Vision (Bearing Angle)", () -> String.format("%.1f°", toDegrees(bearingAngle)));
-        
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Height Diff) | %.1f", heightDiff));
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Elevation Angle) | %.1f°", elevationAngle));
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Bearing Angle) | %.1f°", bearingAngle));
-
-        double distance = abs(heightDiff / tan(elevationAngle * ELEVATION_SCALAR));
-        double xOffset = CAMERA_X_INCHES + distance * cos(bearingAngle * BEARING_X_SCALAR);
-        double yOffset = CAMERA_Y_INCHES + distance * sin(bearingAngle * BEARING_Y_SCALAR);
-        double heading = atan2(yOffset, xOffset);
-
-        telemetry.addData("Vision (Element Distance)", () -> String.format("%.1f", distance));
-        telemetry.addData("Vision (Element X Offset)", () -> String.format("%.1f", xOffset));
-        telemetry.addData("Vision (Element Y Offset)", () -> String.format("%.1f", yOffset));
-        telemetry.addData("Vision (Element Heading)", () -> String.format("%.1f", toDegrees(heading)));
-        
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Distance) | %.1f", distance));
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element X Offset) | %.1f", xOffset));
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Y Offset) | %.1f", yOffset));
-        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Heading) | %.1f", toDegrees(heading)));
-
-        return new Pose(xOffset, yOffset, heading);
     }
 }
