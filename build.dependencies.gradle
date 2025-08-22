@@ -18,6 +18,10 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.2.0'
     implementation 'com.pedropathing:pedro:1.0.9'
 
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.17') {
+        exclude group: 'org.firstinspires.ftc'
+    }
+
     //noinspection GradleDependency
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
