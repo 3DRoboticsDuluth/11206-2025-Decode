@@ -12,9 +12,6 @@ import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
-import org.firstinspires.ftc.teamcode.adaptations.pedropathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.adaptations.pedropathing.constants.LConstants;
-
 import java.util.ArrayList;
 
 @Autonomous(name = "FollowPedroSample")
@@ -39,8 +36,8 @@ public class FollowPedroSample extends CommandOpMode {
     public void initialize() {
         super.reset();
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        Constants.setConstants(Constants.class);
+        follower = new Follower(hardwareMap, Constants.class);
         follower.setStartingPose(new Pose());
 
         generatePath();

@@ -19,13 +19,11 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.util.Constants;
 import com.pedropathing.util.Drawing;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.controller.PController;
 
-import org.firstinspires.ftc.teamcode.adaptations.pedropathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.adaptations.pedropathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants;
 
 @Config
 public class DriveSubsystem extends SubsystemBase {
@@ -50,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     public DriveSubsystem() {
         power = POWER_MEDIUM;
-        Constants.setConstants(FConstants.class, LConstants.class);
+//        Constants.driveConstants(Constants.class); TODO do we need this line?
         resetPose();
     }
 
@@ -148,7 +146,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void resetPose() {
         // NOTE: When invoking setStartingPose with Pinpoint it offsets the new pose from Pinpoints
         // current pose which produces the wrong result. As a work around the follower is recreated.
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = Constants.createFollower(hardwareMap);
         follower.startTeleopDrive();
         follower.setStartingPose(
             toPedroPose(
