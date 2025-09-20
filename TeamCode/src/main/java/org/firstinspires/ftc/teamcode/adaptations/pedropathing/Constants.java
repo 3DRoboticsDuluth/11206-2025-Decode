@@ -38,7 +38,7 @@ public class Constants {
             .xVelocity(65.8072)
             .yVelocity(49.9586);
 
-    public static ThreeWheelConstants localizerConstants = new com.pedropathing.ftc.localization.constants.ThreeWheelConstants()
+    public static ThreeWheelConstants localizerConstants = new ThreeWheelConstants()
             .forwardTicksToInches(.002)
             .strafeTicksToInches(-.002)
             .turnTicksToInches(-.002)
