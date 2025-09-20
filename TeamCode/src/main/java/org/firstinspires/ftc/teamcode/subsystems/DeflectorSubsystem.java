@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-public class DeflectorSubsytem {
+public class DeflectorSubsystem {
 }
