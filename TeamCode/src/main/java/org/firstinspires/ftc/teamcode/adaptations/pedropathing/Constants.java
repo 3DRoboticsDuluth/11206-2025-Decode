@@ -5,8 +5,8 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
+import com.pedropathing.ftc.localization.constants.ThreeWheelConstants;
 import com.pedropathing.localization.Encoder;
-import com.pedropathing.localization.constants.ThreeWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,20 +38,19 @@ public class Constants {
             .xVelocity(65.8072)
             .yVelocity(49.9586);
 
-    public static ThreeWheelConstants localizerConstants =
-            new ThreeWheelConstants()
-                    .forwardTicksToInches(.002)
-                    .strafeTicksToInches(-.002)
-                    .turnTicksToInches(-.002)
-                    .leftPodY((-2809.5702 * 1.25984 * Math.PI) / 2000)
-                    .rightPodY((2832.8068 * 1.25984 * Math.PI) / 2000)
-                    .strafePodX((1324.8535 * 1.25984 * Math.PI) / 2000)
-                    .leftEncoder_HardwareMapName("driveBackLeft")
-                    .rightEncoder_HardwareMapName("driveBackRight")
-                    .strafeEncoder_HardwareMapName("driveFrontRight")
-                    .leftEncoderDirection(Encoder.FORWARD)
-                    .rightEncoderDirection(Encoder.FORWARD)
-                    .strafeEncoderDirection(Encoder.FORWARD);
+    public static ThreeWheelConstants localizerConstants = new com.pedropathing.ftc.localization.constants.ThreeWheelConstants()
+            .forwardTicksToInches(.002)
+            .strafeTicksToInches(-.002)
+            .turnTicksToInches(-.002)
+            .leftPodY((-2809.5702 * 1.25984 * Math.PI) / 2000)
+            .rightPodY((2832.8068 * 1.25984 * Math.PI) / 2000)
+            .strafePodX((1324.8535 * 1.25984 * Math.PI) / 2000)
+            .leftEncoder_HardwareMapName("driveBackLeft")
+            .rightEncoder_HardwareMapName("driveBackRight")
+            .strafeEncoder_HardwareMapName("driveFrontRight")
+            .leftEncoderDirection(Encoder.FORWARD)
+            .rightEncoderDirection(Encoder.FORWARD)
+            .strafeEncoderDirection(Encoder.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.995,
