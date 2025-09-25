@@ -47,6 +47,7 @@ android {
         }
     }
 
+    compileSdk 36
 
     defaultConfig {
         signingConfig signingConfigs.debug

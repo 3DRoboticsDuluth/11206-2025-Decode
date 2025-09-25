@@ -18,8 +18,7 @@ import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.util.Drawing;
+import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.controller.PController;
 
@@ -73,12 +72,12 @@ public class DriveSubsystem extends SubsystemBase {
             follower.getPose()
         );
 
-        follower.drawOnDashBoard();
+//        follower.drawOnDashBoard();
 
         if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
             Pose pose = toPedroPose(config.pose = vision.detectionPose);
             follower.setStartingPose(pose);
-            Drawing.drawRobot(pose, "#b53fad");
+//            Drawing.drawRobot(pose, "#b53fad");
         }
 
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
@@ -93,12 +92,12 @@ public class DriveSubsystem extends SubsystemBase {
         if (isTilted()) forward = strafe = turn = 0;
         if (isBusy() && forward + strafe + turn != 0) follower.startTeleopDrive();
         else if (isBusy()) return;
-        follower.setTeleOpMovementVectors(
-            this.forward += pForward.calculate(this.forward, forward * power),
-            this.strafe += pStrafe.calculate(this.strafe, strafe * power),
-            this.turn += pTurn.calculate(this.turn, turn * power),
-            config.robotCentric
-        );
+//        follower.setTeleOpMovementVectors(
+//            this.forward += pForward.calculate(this.forward, forward * power),
+//            this.strafe += pStrafe.calculate(this.strafe, strafe * power),
+//            this.turn += pTurn.calculate(this.turn, turn * power),
+//            config.robotCentric
+//        );
     }
 
     public double getRoll() {
