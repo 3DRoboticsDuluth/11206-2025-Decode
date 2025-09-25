@@ -23,7 +23,7 @@ import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.pedropathing.localization.Pose;
+import com.pedropathing.geometry.Pose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,7 @@ public class Tuning extends SelectableOpMode {
             follower = Constants.createFollower(hardwareMap);
         }
 
-        follower.setStartingPose(Pose);
+//        follower.setStartingPose(Pose);
 
         poseHistory = follower.getPoseHistory();
 
@@ -112,7 +112,7 @@ public class Tuning extends SelectableOpMode {
     /** This creates a full stop of the robot by setting the drive motors to run at 0 power. */
     public static void stopRobot() {
         follower.startTeleopDrive();
-        follower.setTeleopDrive(0,0,0,true);
+        follower.setTeleOpDrive(0,0,0,true);
     }
 }
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.adaptations.pedropathing;
 
-import com.pedropathing.localization.Pose;
+
+import com.pedropathing.geometry.Pose;
 
 public class PoseUtil {
     public static org.firstinspires.ftc.teamcode.game.Pose fromPedroPose(Pose pose) {
