@@ -97,12 +97,52 @@ public class CurveOptimization {
         );
     }
 
-    private static double score(BezierCurve curve) {
-        double length = curve.length();
-        double maxCurv = computeMaxCurvature(curve);
-        double limit = getMaxAllowedCurvature();
-        double penalty = (maxCurv > limit) ? (maxCurv - limit) * 500.0 : 0.0;
-        return length + penalty;
+    public static double score(BezierCurve curve) {
+        double totalScore = 0.0;
+        int samples = 200;
+
+        Pose last = sample(curve, 0.0);
+
+        // drivetrain constants for weighting
+        double forwardAccel = Math.abs(Constants.followerConstants.forwardZeroPowerAcceleration);
+        double lateralAccel = Math.abs(Constants.followerConstants.lateralZeroPowerAcceleration);
+
+        double forwardWeight = 1.0 / Math.max(forwardAccel, 1e-6);
+        double lateralWeight = 1.0 / Math.max(lateralAccel, 1e-6);
+
+        forwardWeight *= 50.0;
+        lateralWeight *= 50.0;
+
+        for (int i = 1; i <= samples; i++) {
+            double t = i / (double) samples;
+            Pose now = sample(curve, t);
+
+            double dx = now.getX() - last.getX();
+            double dy = now.getY() - last.getY();
+
+            double heading = last.getHeading();
+            double forward =  dx * Math.cos(heading) + dy * Math.sin(heading);
+            double lateral = -dx * Math.sin(heading) + dy * Math.cos(heading);
+
+            totalScore += Math.abs(forward) * forwardWeight
+                    + Math.abs(lateral) * lateralWeight;
+
+            // penalize sharp turns
+            double dHeading = angleDiff(now.getHeading(), last.getHeading());
+            double stepLength = Math.hypot(dx, dy);
+            totalScore += (Math.abs(dHeading) / (stepLength + 1e-6)) * 5.0;
+
+            last = now;
+        }
+
+        return totalScore;
+    }
+
+    public static double angleDiff(double a, double b) { // Just incase its like 178 to -178 so it calcs right since it would be bad for the score if it didn't
+        double d = a - b;
+        while (d > Math.PI) d -= 2 * Math.PI;
+        while (d < -Math.PI) d += 2 * Math.PI;
+        return d;
     }
 
     private static double computeMaxCurvature(BezierCurve curve) {
@@ -132,7 +172,7 @@ public class CurveOptimization {
         return maxC;
     }
 
-    private static Pose sample(BezierCurve curve, double t) {
+    public static Pose sample(BezierCurve curve, double t) {
         Pose[] cp = curve.getControlPoints().toArray(new Pose[0]);
         double x = bezierInterp(cp[0].getX(), cp[1].getX(), cp[2].getX(), cp[3].getX(), t);
         double y = bezierInterp(cp[0].getY(), cp[1].getY(), cp[2].getY(), cp[3].getY(), t);
@@ -152,11 +192,5 @@ public class CurveOptimization {
     private static double bezierDerivative(double a, double b, double c, double d, double t) {
         double u = 1 - t;
         return 3*(u*u)*(b - a) + 6*u*t*(c - b) + 3*(t*t)*(d - c);
-    }
-
-    private static double getMaxAllowedCurvature() {
-        // How much can your robot turn
-        // Curvature = 1 / (minimum_turn_radius)
-        return 0.1;
     }
 }
