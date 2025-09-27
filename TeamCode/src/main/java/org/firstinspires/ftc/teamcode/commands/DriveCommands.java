@@ -11,9 +11,13 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
 import static java.lang.Math.signum;
+import static java.lang.Math.sin;
+import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -23,7 +27,9 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
+import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Pose;
+import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -82,13 +88,13 @@ public class DriveCommands {
             )
         );
     }
-
+//
 //    public Command to(Location location, Position position) {
 //        return to(locationPoses.get(location).apply(
 //            location.offsets.get(position)
 //        ));
 //    }
-//
+
     public Command to(double x, double y, double heading) {
         return to(
             nav.createPose(x, y, heading)
@@ -136,48 +142,45 @@ public class DriveCommands {
     }
 
     public Command to(Pose pose) {
-        return wait.noop();
-//        return new SelectCommand(() ->
-//            pose == null || compare(config.pose, pose, true) ?
-//                toFar(pose) || config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN ?
-//                    shake() : wait.noop() : (
-//                compare(config.pose, pose, false) ?
-//                    turn(toDegrees(pose.heading - config.pose.heading)) :
-//                    follow(pb -> pb.addPath(new BezierCurve(
-//                        new Pose(config.pose.x, config.pose.y, config.pose.heading),
-//                        new Pose(pose.x, pose.y, pose.heading)
-//                    )).setLinearHeadingInterpolation(config.pose.heading, pose.heading))
-//            )
-//        );
+        return new SelectCommand(() ->
+            pose == null || compare(config.pose, pose, true) ?
+                toFar(pose) || config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN ?
+                    shake() : wait.noop() : (
+                compare(config.pose, pose, false) ?
+                    turn(toDegrees(pose.heading - config.pose.heading)) :
+                    follow(pb -> pb.addPath(new BezierCurve(
+                        new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y, config.pose.heading),
+                        new com.pedropathing.geometry.Pose(pose.x, pose.y, pose.heading)
+                    )).setLinearHeadingInterpolation(config.pose.heading, pose.heading))
+            )
+        );
     }
 
     public Command forward(double distance) {
         double heading = config.pose.heading;
-        return wait.noop();
-//        return follow(
-//            pb -> pb.addPath(new BezierCurve(
-//                new Point(config.pose.x, config.pose.y),
-//                new Point(
-//                    config.pose.x + cos(heading) * distance,
-//                    config.pose.y + sin(heading) * distance
-//                )
-//            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading)
-//        );
+        return follow(
+            pb -> pb.addPath(new BezierCurve(
+                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                new com.pedropathing.geometry.Pose(
+                    config.pose.x + cos(heading) * distance,
+                    config.pose.y + sin(heading) * distance
+                )
+            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading)
+        );
     }
 
     public Command strafe(double distance) {
         double heading = config.pose.heading;
         double bearing = heading + Math.toRadians(90);
-        return wait.noop();
-//        return follow(
-//            pb -> pb.addPath(new BezierCurve(
-//                new Point(config.pose.x, config.pose.y),
-//                new Point(
-//                    config.pose.x + cos(bearing) * distance,
-//                    config.pose.y + sin(bearing) * distance
-//                )
-//            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading)
-//        );
+        return follow(
+            pb -> pb.addPath(new BezierCurve(
+                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                new com.pedropathing.geometry.Pose(
+                    config.pose.x + cos(bearing) * distance,
+                    config.pose.y + sin(bearing) * distance
+                )
+            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading)
+        );
     }
 
     public Command turn(double heading) {
