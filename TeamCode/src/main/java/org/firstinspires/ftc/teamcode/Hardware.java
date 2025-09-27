@@ -23,14 +23,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.MagneticFlux;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class Hardware {
-    public Servo deflectorLeft;
-    public Servo deflectorRight;
-    public Servo sort;
-    public Servo vision;
-    public Servo pivot;
-    public Servo conveyorFront;
-    public Servo conveyorMiddle;
-    public Servo conveyorBack;
 
 
     public HardwareMap hardwareMap;
@@ -47,6 +39,18 @@ public class Hardware {
     public MotorEx driveBackLeft;
     public MotorEx driveBackRight;
 
+    public Servo deflectorLeft;
+    public Servo deflectorRight;
+    public Servo sort;
+    public Servo vision;
+    public Servo pivot;
+    public Servo conveyorFront;
+    public Servo conveyorMiddle;
+    public Servo conveyorBack;
+
+    public MotorEx depositLeft;
+    public MotorEx depositRight;
+
     public Limelight3A limelight;
 
     public MagneticFlux magneticLimitSwitch;
@@ -55,53 +59,53 @@ public class Hardware {
     public RevBlinkinLedDriver lightsRight;
     public Servo lightsIndicator;
 
-    public Hardware(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
-
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        drive = new MotorGroup(
-                driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
-                driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
-                driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
-                driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
-                );
-
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(
-            new IMU.Parameters(
-                new RevHubOrientationOnRobot(RIGHT, UP)
-            )
-        );
-
-        deflectorLeft = hardwareMap.get(Servo.class, "deflectorLeft");
-        deflectorRight = hardwareMap.get(Servo.class,"deflectorRight");
-
-        sort = hardwareMap.get(Servo.class, "sort");
-        vision = hardwareMap.get(Servo.class,"vision");
-        pivot = hardwareMap.get(Servo.class, "pivot");
-
-        conveyorFront = hardwareMap.get(Servo.class, "conveyorFront");
-        conveyorMiddle = hardwareMap.get(Servo.class, "conveyorMiddle");
-        conveyorBack = hardwareMap.get(Servo.class, "conveyorBack");
-
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
-        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
-        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
-
-        magneticLimitSwitch = hardwareMap.get(MagneticFlux.class, "magneticLimitSwitch");
-
-        updateImuAnglesAndVelocities();
-    }
+//    public Hardware(HardwareMap hardwareMap) {
+//        this.hardwareMap = hardwareMap;
+//
+//        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+//
+//        drive = new MotorGroup(
+//                driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
+//                driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
+//                driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
+//                driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
+//                );
+//
+//        imu = hardwareMap.get(IMU.class, "imu");
+//        imu.initialize(
+//            new IMU.Parameters(
+//                new RevHubOrientationOnRobot(RIGHT, UP)
+//            )
+//        );
+//
+//        deflectorLeft = hardwareMap.get(Servo.class, "deflectorLeft");
+//        deflectorRight = hardwareMap.get(Servo.class,"deflectorRight");
+//
+//        sort = hardwareMap.get(Servo.class, "sort");
+//        vision = hardwareMap.get(Servo.class,"vision");
+//        pivot = hardwareMap.get(Servo.class, "pivot");
+//
+//        conveyorFront = hardwareMap.get(Servo.class, "conveyorFront");
+//        conveyorMiddle = hardwareMap.get(Servo.class, "conveyorMiddle");
+//        conveyorBack = hardwareMap.get(Servo.class, "conveyorBack");
+//
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//
+//        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
+//        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
+//        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
+//
+//        magneticLimitSwitch = hardwareMap.get(MagneticFlux.class, "magneticLimitSwitch");
+//
+//        updateImuAnglesAndVelocities();
+//    }
 
     public void updateImuAnglesAndVelocities() {
-        try {
-            imuAngles = imu.getRobotYawPitchRollAngles();
-            imuVelocities = imu.getRobotAngularVelocity(RADIANS);
-        } catch (Exception e) {
-            Log.e("Hardware", "Error attempting to get IMU angles and velocities.", e);
-        }
+//        try {
+//            imuAngles = imu.getRobotYawPitchRollAngles();
+//            imuVelocities = imu.getRobotAngularVelocity(RADIANS);
+//        } catch (Exception e) {
+//            Log.e("Hardware", "Error attempting to get IMU angles and velocities.", e);
+//        }
     }
 }
