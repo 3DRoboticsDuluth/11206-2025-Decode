@@ -2,14 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
-import static java.lang.Math.signum;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
-
 import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Pose;
 import org.firstinspires.ftc.teamcode.game.Side;
@@ -41,6 +38,10 @@ public class NavSubsystem {
                 config.alliance.sign * toRadians(-90),
                 Axial.BACK
             );
+    }
+
+    public Pose wall() {
+        return createPose(72, 72, toRadians(90), Axial.CENTER);
     }
 
     public enum Axial {
