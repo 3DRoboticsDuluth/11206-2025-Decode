@@ -11,13 +11,9 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
 import static java.lang.Math.signum;
-import static java.lang.Math.sin;
-import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -27,9 +23,7 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
-import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Pose;
-import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -77,6 +71,14 @@ public class DriveCommands {
                     signum(config.pose.y) * TILE_WIDTH * 2,
                     toRadians(90 - signum(config.pose.x) * 90)
                 )
+            )
+        );
+    }
+
+    public Command driveOptimizedCurve() {
+        return new SelectCommand(
+            () -> to(
+                nav.wall()
             )
         );
     }
