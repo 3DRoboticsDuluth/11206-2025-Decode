@@ -11,6 +11,10 @@ public class Pose {
         this.heading = heading;
     }
 
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public double getHeading() { return heading; }
+
     public double hypot() {
         return Math.hypot(this.x, this.y);
     }

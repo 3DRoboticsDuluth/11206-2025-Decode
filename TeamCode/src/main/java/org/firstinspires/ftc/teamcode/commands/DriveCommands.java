@@ -17,10 +17,9 @@ import static java.lang.Math.sin;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
-import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.PathBuilder;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.paths.PathBuilder;
+import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
@@ -42,7 +41,7 @@ public class DriveCommands {
 //        new HashMap<Location, Function<Pose, Pose>>() {{
 //        }};
 
-    PathBuilder pathBuilder = new PathBuilder();
+    PathBuilder pathBuilder;// = new PathBuilder();
 
     public Command setPowerLow() {
         return new InstantCommand(() -> drive.power = POWER_LOW);
@@ -82,25 +81,33 @@ public class DriveCommands {
         );
     }
 
+    public Command driveOptimizedCurve() {
+        return new SelectCommand(
+            () -> to(
+                nav.wall()
+            )
+        );
+    }
+//
 //    public Command to(Location location, Position position) {
 //        return to(locationPoses.get(location).apply(
 //            location.offsets.get(position)
 //        ));
 //    }
-//
+
     public Command to(double x, double y, double heading) {
         return to(
             nav.createPose(x, y, heading)
         );
     }
-    
+
     public boolean toFar(Pose pose) {
         return config.teleop &&
             config.pose != null &&
             pose != null &&
             abs(pose.hypot(config.pose)) > TO_FAR;
     }
-    
+
     public Command shake() {
         return rumble().andThen(
             turn(-10),
@@ -142,8 +149,8 @@ public class DriveCommands {
                 compare(config.pose, pose, false) ?
                     turn(toDegrees(pose.heading - config.pose.heading)) :
                     follow(pb -> pb.addPath(new BezierCurve(
-                        new Point(config.pose.x, config.pose.y),
-                        new Point(pose.x, pose.y)
+                        new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y, config.pose.heading),
+                        new com.pedropathing.geometry.Pose(pose.x, pose.y, pose.heading)
                     )).setLinearHeadingInterpolation(config.pose.heading, pose.heading))
             )
         );
@@ -153,8 +160,8 @@ public class DriveCommands {
         double heading = config.pose.heading;
         return follow(
             pb -> pb.addPath(new BezierCurve(
-                new Point(config.pose.x, config.pose.y),
-                new Point(
+                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                new com.pedropathing.geometry.Pose(
                     config.pose.x + cos(heading) * distance,
                     config.pose.y + sin(heading) * distance
                 )
@@ -167,8 +174,8 @@ public class DriveCommands {
         double bearing = heading + Math.toRadians(90);
         return follow(
             pb -> pb.addPath(new BezierCurve(
-                new Point(config.pose.x, config.pose.y),
-                new Point(
+                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                new com.pedropathing.geometry.Pose(
                     config.pose.x + cos(bearing) * distance,
                     config.pose.y + sin(bearing) * distance
                 )

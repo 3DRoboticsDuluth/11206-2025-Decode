@@ -21,7 +21,7 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 30
+    compileSdk 35
 
     signingConfigs {
         release {
@@ -47,6 +47,7 @@ android {
         }
     }
 
+    compileSdk 36
 
     defaultConfig {
         signingConfig signingConfigs.debug
