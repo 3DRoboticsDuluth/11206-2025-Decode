@@ -7,13 +7,16 @@ public class CurveOptimization {
 
     // Creates rough BezierCurve to be refined later
     public static BezierCurve generate(Pose start, Pose target) {
-        double d1min = 5.0, d1max = 40.0;
-        double d2min = 5.0, d2max = 40.0;
+
+        // range to cover full field diagonal (~200+ inches)
+        double d1min = 5.0, d1max = 120.0;
+        double d2min = 5.0, d2max = 120.0;
 
         BezierCurve best = null;
         double bestScore = Double.POSITIVE_INFINITY;
 
-        int grid = 8;
+        int grid = 20;
+
         for (int i = 0; i <= grid; i++) {
             double d1 = d1min + (d1max - d1min) * i / grid;
             for (int j = 0; j <= grid; j++) {
@@ -31,9 +34,8 @@ public class CurveOptimization {
             }
         }
 
-        // Refines the BezierCurve previously generated
-
-        double step = 5.0;
+// Refines the BezierCurve previously generated
+        double step = 8.0;
         for (int it = 0; it < 20; it++) {
             boolean improved = false;
             double[] deltas = new double[]{ -step, 0, +step };
@@ -99,7 +101,7 @@ public class CurveOptimization {
 
     public static double score(BezierCurve curve) {
         double totalScore = 0.0;
-        int samples = 200;
+        int samples = 500;
 
         Pose last = sample(curve, 0.0);
 
