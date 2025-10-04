@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.controls;
 
-import static com.pedropathing.pathgen.MathFunctions.clamp;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.BACK;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
@@ -15,6 +14,8 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.RESPONSIVENESS_INCREMENT;
+
+import static java.lang.Math.clamp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 

@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.CurveOptimization.generate;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
-import static java.lang.Math.signum;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.BezierCurve;
 
 import org.firstinspires.ftc.teamcode.game.Alliance;
+import org.firstinspires.ftc.teamcode.game.FieldZones;
 import org.firstinspires.ftc.teamcode.game.Pose;
 import org.firstinspires.ftc.teamcode.game.Side;
 
@@ -31,6 +32,10 @@ public class NavSubsystem {
     public static double MAX_ANG_VEL = PI * ANG_SCALAR;
     public static double MAX_ANG_ACCEL = MAX_ANG_VEL;
 
+    public void initNoGoZones() {
+        FieldZones.initAllZones();
+    }
+
     public Pose getStartPose() {
         return config.side == null || config.side == Side.UNKNOWN ||
             config.alliance == null || config.alliance == Alliance.UNKNOWN ?
@@ -41,6 +46,9 @@ public class NavSubsystem {
                 config.alliance.sign * toRadians(-90),
                 Axial.BACK
             );
+    }
+    public Pose depositFar() {
+        return createPose(2.2 * TILE_WIDTH, .2 * TILE_WIDTH, toRadians(37), Axial.BACK);
     }
 
     public enum Axial {
