@@ -7,6 +7,7 @@ apply plugin: 'com.android.library'
 
 android {
 
+    compileSdk 36
     defaultConfig {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
@@ -18,7 +19,7 @@ android {
         buildConfig = true
     }
 
-    compileSdkVersion 30
+    compileSdkVersion 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
