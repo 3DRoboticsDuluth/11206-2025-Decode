@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.controls.Controls;
 import org.firstinspires.ftc.teamcode.game.Alliance;
+import org.firstinspires.ftc.teamcode.game.FieldZones;
 import org.firstinspires.ftc.teamcode.game.Side;
 
 @Autonomous(name = "Auto")
@@ -23,6 +24,7 @@ public class AutoOpMode extends OpMode {
         config.robotCentric = true;
 
         Controls.initializeAuto();
+//        FieldZones.initAllZones();
 
         schedule(
             wait.forInterruptA()

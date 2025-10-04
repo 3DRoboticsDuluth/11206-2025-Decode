@@ -2,8 +2,23 @@ package org.firstinspires.ftc.teamcode.adaptations.pedropathing;
 
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
+import org.firstinspires.ftc.teamcode.game.NoGoZone;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CurveOptimization {
+
+    private static final List<NoGoZone> noGoZones = new ArrayList<>();
+
+    public static void clearNoGoZones() {
+        noGoZones.clear();
+    }
+
+    // Add a No Go Zone (polygonal)
+    public static void addNoGoZone(NoGoZone zone) {
+        noGoZones.add(zone);
+    }
 
     // Creates rough BezierCurve to be refined later
     public static BezierCurve generate(Pose start, Pose target) {
@@ -25,7 +40,7 @@ public class CurveOptimization {
                 Pose c1 = offsetAlongHeading(start, d1, true);
                 Pose c2 = offsetAlongHeading(target, d2, false);
 
-                BezierCurve candidate = new BezierCurve(new Pose[]{ start, c1, c2, target });
+                BezierCurve candidate = new BezierCurve(new Pose[]{start, c1, c2, target});
                 double sc = score(candidate);
                 if (sc < bestScore) {
                     bestScore = sc;
@@ -34,11 +49,11 @@ public class CurveOptimization {
             }
         }
 
-// Refines the BezierCurve previously generated
+        // Refines the BezierCurve previously generated
         double step = 8.0;
         for (int it = 0; it < 20; it++) {
             boolean improved = false;
-            double[] deltas = new double[]{ -step, 0, +step };
+            double[] deltas = new double[]{-step, 0, +step};
             for (double dx : deltas) {
                 for (double dy : deltas) {
                     double base1 = controlDistance(best, true);
@@ -49,7 +64,7 @@ public class CurveOptimization {
                     Pose c1 = offsetAlongHeading(start, nd1, true);
                     Pose c2 = offsetAlongHeading(target, nd2, false);
 
-                    BezierCurve cand = new BezierCurve(new Pose[]{ start, c1, c2, target });
+                    BezierCurve cand = new BezierCurve(new Pose[]{start, c1, c2, target});
                     double sc = score(cand);
                     if (sc < bestScore) {
                         bestScore = sc;
@@ -93,9 +108,9 @@ public class CurveOptimization {
         double hy = Math.sin(p.getHeading());
         double sign = forward ? 1.0 : -1.0;
         return new Pose(
-            p.getX() + sign * dist * hx,
-            p.getY() + sign * dist * hy,
-            p.getHeading()
+                p.getX() + sign * dist * hx,
+                p.getY() + sign * dist * hy,
+                p.getHeading()
         );
     }
 
@@ -123,7 +138,7 @@ public class CurveOptimization {
             double dy = now.getY() - last.getY();
 
             double heading = last.getHeading();
-            double forward =  dx * Math.cos(heading) + dy * Math.sin(heading);
+            double forward = dx * Math.cos(heading) + dy * Math.sin(heading);
             double lateral = -dx * Math.sin(heading) + dy * Math.cos(heading);
 
             totalScore += Math.abs(forward) * forwardWeight
@@ -134,44 +149,27 @@ public class CurveOptimization {
             double stepLength = Math.hypot(dx, dy);
             totalScore += (Math.abs(dHeading) / (stepLength + 1e-6)) * 5.0;
 
+            // --- Polygonal obstacle avoidance ---
+            for (NoGoZone zone : noGoZones) {
+                double penalty = zone.computePenalty(now); // now is Pedro Pose
+                if (penalty == Double.POSITIVE_INFINITY) {
+                    return Double.POSITIVE_INFINITY; // Hard collision
+                } else {
+                    totalScore += penalty;
+                }
+            }
+
             last = now;
         }
 
         return totalScore;
     }
 
-    public static double angleDiff(double a, double b) { // Just incase its like 178 to -178 so it calcs right since it would be bad for the score if it didn't
+    public static double angleDiff(double a, double b) {
         double d = a - b;
         while (d > Math.PI) d -= 2 * Math.PI;
         while (d < -Math.PI) d += 2 * Math.PI;
         return d;
-    }
-
-    private static double computeMaxCurvature(BezierCurve curve) {
-        int samples = 30;
-        double maxC = 0.0;
-        for (int i = 1; i < samples; i++) {
-            double t0 = (i - 1) / (double) samples;
-            double t1 = i / (double) samples;
-            double t2 = (i + 1) / (double) samples;
-
-            Pose p0 = sample(curve, t0);
-            Pose p1 = sample(curve, t1);
-            Pose p2 = sample(curve, t2);
-
-            double dx1 = p1.getX() - p0.getX();
-            double dy1 = p1.getY() - p0.getY();
-            double dx2 = p2.getX() - p1.getX();
-            double dy2 = p2.getY() - p1.getY();
-
-            double ddx = dx2 - dx1;
-            double ddy = dy2 - dy1;
-            double num = Math.abs(dx1 * ddy - dy1 * ddx);
-            double denom = Math.pow(dx1*dx1 + dy1*dy1, 1.5) + 1e-9;
-            double curv = num / denom;
-            if (curv > maxC) maxC = curv;
-        }
-        return maxC;
     }
 
     public static Pose sample(BezierCurve curve, double t) {
@@ -186,13 +184,13 @@ public class CurveOptimization {
         return new Pose(x, y, heading);
     }
 
-    private static double bezierInterp /* Interpolation */ (double a, double b, double c, double d, double t) {
+    private static double bezierInterp(double a, double b, double c, double d, double t) {
         double u = 1 - t;
-        return (u*u*u)*a + 3*(u*u)*t*b + 3*u*(t*t)*c + (t*t*t)*d;
+        return (u * u * u) * a + 3 * (u * u) * t * b + 3 * u * (t * t) * c + (t * t * t) * d;
     }
 
     private static double bezierDerivative(double a, double b, double c, double d, double t) {
         double u = 1 - t;
-        return 3*(u*u)*(b - a) + 6*u*t*(c - b) + 3*(t*t)*(d - c);
+        return 3 * (u * u) * (b - a) + 6 * u * t * (c - b) + 3 * (t * t) * (d - c);
     }
 }

@@ -84,7 +84,7 @@ public class DriveCommands {
     public Command driveOptimizedCurve() {
         return new SelectCommand(
             () -> to(
-                nav.wall()
+                nav.depositFar()
             )
         );
     }
