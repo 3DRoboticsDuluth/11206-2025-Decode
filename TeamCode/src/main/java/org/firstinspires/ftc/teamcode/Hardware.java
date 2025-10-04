@@ -10,6 +10,7 @@ import android.util.Log;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -39,14 +40,16 @@ public class Hardware {
     public MotorEx driveBackLeft;
     public MotorEx driveBackRight;
 
-    public Servo deflectorLeft;
-    public Servo deflectorRight;
+    public Servo deflector;
     public Servo sort;
     public Servo vision;
     public Servo pivot;
-    public Servo conveyorFront;
-    public Servo conveyorMiddle;
-    public Servo conveyorBack;
+    public MotorEx intake;
+    public CRServo conveyorLeft;
+    public CRServo conveyorRight;
+//    public Servo conveyorFront;
+//    public Servo conveyorMiddle;
+//    public Servo conveyorBack;
 
     public MotorEx depositLeft;
     public MotorEx depositRight;
@@ -59,46 +62,46 @@ public class Hardware {
     public RevBlinkinLedDriver lightsRight;
     public Servo lightsIndicator;
 
-//    public Hardware(HardwareMap hardwareMap) {
-//        this.hardwareMap = hardwareMap;
-//
-//        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-//
-//        drive = new MotorGroup(
-//                driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
-//                driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
-//                driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
-//                driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
-//                );
-//
-//        imu = hardwareMap.get(IMU.class, "imu");
-//        imu.initialize(
-//            new IMU.Parameters(
-//                new RevHubOrientationOnRobot(RIGHT, UP)
-//            )
-//        );
-//
-//        deflectorLeft = hardwareMap.get(Servo.class, "deflectorLeft");
-//        deflectorRight = hardwareMap.get(Servo.class,"deflectorRight");
-//
-//        sort = hardwareMap.get(Servo.class, "sort");
-//        vision = hardwareMap.get(Servo.class,"vision");
-//        pivot = hardwareMap.get(Servo.class, "pivot");
-//
-//        conveyorFront = hardwareMap.get(Servo.class, "conveyorFront");
-//        conveyorMiddle = hardwareMap.get(Servo.class, "conveyorMiddle");
-//        conveyorBack = hardwareMap.get(Servo.class, "conveyorBack");
-//
-//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-//
-//        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
-//        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
-//        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
-//
+    public Hardware(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+
+        drive = new MotorGroup(
+            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
+            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
+            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
+            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
+        );
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(
+            new IMU.Parameters(
+                new RevHubOrientationOnRobot(RIGHT, UP)
+            )
+        );
+
+        deflector = hardwareMap.get(Servo.class, "deflector");
+
+        sort = hardwareMap.get(Servo.class, "sort");
+        vision = hardwareMap.get(Servo.class,"vision");
+        pivot = hardwareMap.get(Servo.class, "pivot");
+
+        intake = hardwareMap.get(MotorEx.class, "intake");
+
+        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
+        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
+        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
+        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
+
 //        magneticLimitSwitch = hardwareMap.get(MagneticFlux.class, "magneticLimitSwitch");
-//
-//        updateImuAnglesAndVelocities();
-//    }
+
+        updateImuAnglesAndVelocities();
+    }
 
     public void updateImuAnglesAndVelocities() {
 //        try {

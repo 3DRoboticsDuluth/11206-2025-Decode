@@ -18,10 +18,14 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 public class DepositSubsystem extends SubsystemBase {
     public static double DEPOSIT_LEFT_VELOCITY = 0.5;
     public static double DEPOSIT_RIGHT_VELOCITY = 0.5;
+    public static double LEFT_WHEEL_POWER;
+    public static double RIGHT_WHEEL_POWER;
 
     public static double KS = 0;
     public static double KA = 0;
     public static double KV = 0;
+
+    public static double WHEEL_SPEED;
 
 
     public DepositSubsystem() {
@@ -38,8 +42,20 @@ public class DepositSubsystem extends SubsystemBase {
         hardware.depositLeft.setFeedforwardCoefficients(KS, KA, KV);
         hardware.depositRight.setFeedforwardCoefficients(KS, KA, KV);
 
-        hardware.depositLeft.setVelocity(DEPOSIT_LEFT_VELOCITY);
-        hardware.depositRight.setVelocity(DEPOSIT_RIGHT_VELOCITY);
+        hardware.depositLeft.setVelocity(LEFT_WHEEL_POWER);
+        hardware.depositRight.setVelocity(RIGHT_WHEEL_POWER);
+
+        hardware.depositLeft.setRunMode(VelocityControl);
+        hardware.depositRight.setRunMode(VelocityControl);
     }
 
+    public void launch() {
+        LEFT_WHEEL_POWER = DEPOSIT_LEFT_VELOCITY;
+        RIGHT_WHEEL_POWER= DEPOSIT_RIGHT_VELOCITY;
+    }
+
+    public void stop() {
+        LEFT_WHEEL_POWER = 0;
+        RIGHT_WHEEL_POWER = 0;
+    }
 }

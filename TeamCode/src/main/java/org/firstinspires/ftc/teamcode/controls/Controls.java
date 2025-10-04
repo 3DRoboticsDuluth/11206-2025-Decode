@@ -9,5 +9,6 @@ public class Controls {
         new ConfigControl();
         new DriveControl();
         new AutoControl();
+        new DepositControl();
     }
 }

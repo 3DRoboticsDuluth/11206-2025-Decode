@@ -6,6 +6,7 @@ public class Commands {
     public static DriveCommands drive;
     public static VisionCommands vision;
     public static AutoCommands auto;
+    public static DepositCommands deposit;
 
     public static void initialize() {
         wait = new WaitCommands();
@@ -13,5 +14,6 @@ public class Commands {
         drive = new DriveCommands();
         vision = new VisionCommands();
         auto = new AutoCommands();
+        deposit = new DepositCommands();
     }
 }
