@@ -14,12 +14,14 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
+import org.firstinspires.ftc.teamcode.opmodes.OpMode;
+
 @Config
 public class DepositSubsystem extends SubsystemBase {
     public static double DEPOSIT_LEFT_VELOCITY = 0.5;
     public static double DEPOSIT_RIGHT_VELOCITY = 0.5;
-    public static double LEFT_WHEEL_POWER;
-    public static double RIGHT_WHEEL_POWER;
+    public static double LEFT_WHEEL_POWER = 2000;
+    public static double RIGHT_WHEEL_POWER = 2000; //TODO 2000 @ .51 servo pose was good to shoot from the far zone
 
     public static double KS = 0;
     public static double KA = 0;
@@ -29,9 +31,6 @@ public class DepositSubsystem extends SubsystemBase {
 
 
     public DepositSubsystem() {
-        hardware.depositLeft = new MotorEx(hardwareMap, "depositLeft", BARE);
-        hardware.depositRight = new MotorEx(hardwareMap, "depositRight", BARE);
-
         hardware.depositLeft.setRunMode(VelocityControl);
         hardware.depositRight.setRunMode(VelocityControl);
     }
@@ -39,14 +38,14 @@ public class DepositSubsystem extends SubsystemBase {
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
-        hardware.depositLeft.setFeedforwardCoefficients(KS, KA, KV);
-        hardware.depositRight.setFeedforwardCoefficients(KS, KA, KV);
-
-        hardware.depositLeft.setVelocity(LEFT_WHEEL_POWER);
-        hardware.depositRight.setVelocity(RIGHT_WHEEL_POWER);
+//        hardware.depositLeft.setFeedforwardCoefficients(KS, KA, KV);
+//        hardware.depositRight.setFeedforwardCoefficients(KS, KA, KV);
 
         hardware.depositLeft.setRunMode(VelocityControl);
         hardware.depositRight.setRunMode(VelocityControl);
+
+        hardware.depositLeft.setVelocity(LEFT_WHEEL_POWER);
+        hardware.depositRight.setVelocity(RIGHT_WHEEL_POWER);
     }
 
     public void launch() {

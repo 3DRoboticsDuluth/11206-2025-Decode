@@ -7,8 +7,8 @@ public class Controls {
 
     public static void initializeTeleop() {
         new ConfigControl();
-        new DriveControl();
-        new AutoControl();
+//        new DriveControl();
+//        new AutoControl();
         new DepositControl();
         new DeflectorControl();
     }

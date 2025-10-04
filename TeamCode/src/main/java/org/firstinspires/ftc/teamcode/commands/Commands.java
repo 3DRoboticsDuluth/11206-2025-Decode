@@ -12,9 +12,9 @@ public class Commands {
     public static void initialize() {
         wait = new WaitCommands();
         config = new ConfigCommands();
-        drive = new DriveCommands();
-        vision = new VisionCommands();
-        auto = new AutoCommands();
+//        drive = new DriveCommands();
+//        vision = new VisionCommands();
+//        auto = new AutoCommands();
         deposit = new DepositCommands();
         deflector = new DeflectorCommands();
     }

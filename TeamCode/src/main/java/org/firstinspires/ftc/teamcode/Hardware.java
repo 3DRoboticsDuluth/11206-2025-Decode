@@ -69,12 +69,12 @@ public class Hardware {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        drive = new MotorGroup(
-            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
-            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
-            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
-            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
-        );
+//        drive = new MotorGroup(
+//            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
+//            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
+//            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
+//            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
+//        );
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
@@ -87,6 +87,8 @@ public class Hardware {
 
         depositRight = new MotorEx(hardwareMap, "depositRight", BARE);
         depositLeft = new MotorEx(hardwareMap, "depositLeft", BARE);
+
+        depositLeft.setInverted(true);
 
 //        sort = hardwareMap.get(Servo.class, "sort");
 //        vision = hardwareMap.get(Servo.class,"vision");
