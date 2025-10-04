@@ -7,6 +7,7 @@ public class Commands {
     public static VisionCommands vision;
     public static AutoCommands auto;
     public static DepositCommands deposit;
+    public static DeflectorCommands deflector;
 
     public static void initialize() {
         wait = new WaitCommands();
@@ -15,5 +16,6 @@ public class Commands {
         vision = new VisionCommands();
         auto = new AutoCommands();
         deposit = new DepositCommands();
+        deflector = new DeflectorCommands();
     }
 }

@@ -10,5 +10,6 @@ public class Controls {
         new DriveControl();
         new AutoControl();
         new DepositControl();
+        new DeflectorControl();
     }
 }

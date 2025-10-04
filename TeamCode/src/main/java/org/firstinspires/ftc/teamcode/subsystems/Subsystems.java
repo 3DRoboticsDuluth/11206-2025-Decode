@@ -7,10 +7,12 @@ public class Subsystems {
     public static VisionSubsystem vision;
     public static TimingSubsystem timing;
     public static DepositSubsystem deposit;
+    public static DeflectorSubsystem deflector;
 
     public static void initialize() {
         config = new ConfigSubsystem();
         deposit = new DepositSubsystem();
+        deflector = new DeflectorSubsystem();
 //        nav = new NavSubsystem();
 //        drive = new DriveSubsystem();
 //        vision = new VisionSubsystem();

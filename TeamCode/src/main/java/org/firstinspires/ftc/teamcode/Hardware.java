@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP;
+import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 
@@ -45,6 +46,7 @@ public class Hardware {
     public Servo vision;
     public Servo pivot;
     public MotorEx intake;
+    public Servo gate;
     public CRServo conveyorLeft;
     public CRServo conveyorRight;
 //    public Servo conveyorFront;
@@ -83,20 +85,25 @@ public class Hardware {
 
         deflector = hardwareMap.get(Servo.class, "deflector");
 
-        sort = hardwareMap.get(Servo.class, "sort");
-        vision = hardwareMap.get(Servo.class,"vision");
-        pivot = hardwareMap.get(Servo.class, "pivot");
+        depositRight = new MotorEx(hardwareMap, "depositRight", BARE);
+        depositLeft = new MotorEx(hardwareMap, "depositLeft", BARE);
 
-        intake = hardwareMap.get(MotorEx.class, "intake");
+//        sort = hardwareMap.get(Servo.class, "sort");
+//        vision = hardwareMap.get(Servo.class,"vision");
+//        pivot = hardwareMap.get(Servo.class, "pivot");
 
-        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
-        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
+//        intake = hardwareMap.get(MotorEx.class, "intake", RMP_);
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        gate = hardwareMap.get(Servo.class, "gate");
 
-        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
-        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
-        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
+//        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
+//        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
+
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+//        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
+//        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
+//        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
 
 //        magneticLimitSwitch = hardwareMap.get(MagneticFlux.class, "magneticLimitSwitch");
 
