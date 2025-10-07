@@ -1,20 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
-import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.hardware;
-import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.hardware.motors.Motor;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
-
-import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 
 @Config
 public class DepositSubsystem extends SubsystemBase {
