@@ -1,28 +1,24 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-
-import static org.firstinspires.ftc.teamcode.opmodes.OpMode.hardware;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.seattlesolvers.solverslib.command.SubsystemBase;
-
-import org.firstinspires.ftc.teamcode.controls.DeflectorControl;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-public class DeflectorSubsystem extends SubsystemBase {
-    public DeflectorSubsystem() {
-        hardware.deflector.setPosition(POSITION);
-    }
+public class DeflectorSubsystem extends HardwareSubsystem {
+    public static double POSITION = 0.5;
 
-    public void periodic() {
-        hardware.deflector.setPosition(POSITION);
+    private final Servo deflector;
+
+    public DeflectorSubsystem() {
+        deflector = getDevice(Servo.class, "deflector");
     }
-    public static double DEFLECTOR_MAX = .54;
-    public static double DEFLECTOR_MIN = .45;
-    public static double POSITION = .5;
-    public static double DEFLECTOR_POSITION;
 
     public void setPosition() {
-        DEFLECTOR_POSITION = POSITION;
+        // TODO
+    }
+
+    @Override
+    public void periodic() {
+        deflector.setPosition(POSITION);
     }
 }

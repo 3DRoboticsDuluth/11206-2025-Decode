@@ -23,9 +23,9 @@ public class DeflectorCommands {
 
     private Command complete(Runnable runnable, double seconds) {
         return new SelectCommand(
-                () -> new InstantCommand(runnable, deflector)
+            () -> new InstantCommand(runnable, deflector)
         ).andThen(
-                wait.seconds(seconds)
+            wait.seconds(seconds)
         );
     }
 }
