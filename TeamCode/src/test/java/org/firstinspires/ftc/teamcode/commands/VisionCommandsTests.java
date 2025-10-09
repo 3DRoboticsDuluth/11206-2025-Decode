@@ -18,5 +18,4 @@ public class VisionCommandsTests extends TestHarness {
         super.setUp();
         vision = spy(new VisionCommands());
     }
-
 }

@@ -36,7 +36,7 @@ public class Hardware {
     public MotorEx driveBackLeft;
     public MotorEx driveBackRight;
 
-    public Servo deflector;
+//    public Servo deflector;
     public Servo sort;
     public Servo vision;
     public Servo pivot;
@@ -78,7 +78,7 @@ public class Hardware {
             )
         );
 
-        deflector = hardwareMap.get(Servo.class, "deflector");
+//        deflector = hardwareMap.get(Servo.class, "deflector");
 
         depositRight = new MotorEx(hardwareMap, "depositRight", BARE);
         depositLeft = new MotorEx(hardwareMap, "depositLeft", BARE);

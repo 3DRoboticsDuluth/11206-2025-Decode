@@ -8,19 +8,5 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
 public class DeflectorCommands {
-    public Command setPosition() {
-        return completeDeflector(deflector::setPosition);
-    }
 
-    private Command completeDeflector(Runnable runnable) {
-        return complete(runnable, 0.4);
-    }
-
-    private Command complete(Runnable runnable, double seconds) {
-        return new SelectCommand(
-            () -> new InstantCommand(runnable, deflector)
-        ).andThen(
-            wait.seconds(seconds)
-        );
-    }
 }

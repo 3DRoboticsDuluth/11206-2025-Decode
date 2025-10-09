@@ -6,24 +6,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class DeflectorSubsystem extends HardwareSubsystem {
     public static double POSITION = 0.5;
-    public static double DEFLECTOR_MAX = .54;
-    public static double DEFLECTOR_MIN = .45;
-    public static double DEFLECTOR_POSITION;
 
-
-    private final Servo deflector;
+    public Servo servo;
 
     public DeflectorSubsystem() {
-        deflector = getDevice(Servo.class, "deflector");
+        servo = getDevice(Servo.class, "deflector");
     }
 
-
-    public void setPosition() {
-        // TODO
+    public void setPosition(double position) {
+        POSITION = position;
     }
 
     @Override
     public void periodic() {
-        deflector.setPosition(POSITION);
+        servo.setPosition(POSITION);
     }
 }
