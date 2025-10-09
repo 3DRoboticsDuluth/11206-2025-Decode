@@ -8,11 +8,13 @@ public class Subsystems {
     public static TimingSubsystem timing;
     public static DepositSubsystem deposit;
     public static DeflectorSubsystem deflector;
+    public static IntakeSubsystem intake;
 
     public static void initialize() {
         config = new ConfigSubsystem();
         deposit = new DepositSubsystem();
         deflector = new DeflectorSubsystem();
+        intake = new IntakeSubsystem();
 //        nav = new NavSubsystem();
 //        drive = new DriveSubsystem();
 //        vision = new VisionSubsystem();
