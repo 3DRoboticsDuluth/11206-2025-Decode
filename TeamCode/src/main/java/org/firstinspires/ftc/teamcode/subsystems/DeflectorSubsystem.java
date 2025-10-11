@@ -1,11 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static androidx.core.math.MathUtils.clamp;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class DeflectorSubsystem extends HardwareSubsystem {
-    public static double POSITION = 0.5;
+    public static double MAX = 1;
+
+    public static double MIN = 0;
+
+    public static double POS = 0.5;
+
+    public static double INC = 0.1;
 
     public Servo servo;
 
@@ -13,12 +21,24 @@ public class DeflectorSubsystem extends HardwareSubsystem {
         servo = getDevice(Servo.class, "deflector");
     }
 
-    public void setPosition(double position) {
-        POSITION = position;
-    }
-
     @Override
     public void periodic() {
-        servo.setPosition(POSITION);
+        servo.setPosition(POS);
+    }
+
+    public void setPosition(double position) {
+        POS = position;
+    }
+
+    public void up() {
+        POS = clamp(POS + INC, MIN, MAX);
+    }
+
+    public void down() {
+        POS = clamp(POS - INC, MIN, MAX);
     }
 }
+
+
+
+

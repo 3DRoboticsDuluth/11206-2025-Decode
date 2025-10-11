@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.INC;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.deflector;
 import static org.mockito.Mockito.verify;
 
@@ -19,17 +20,32 @@ public class DeflectorSubsystemTest extends TestHarness {
 
     @Test
     public void testSetPosition() {
-        DeflectorSubsystem.POSITION = 0;
+        DeflectorSubsystem.POS = 0;
         deflector.setPosition(1);
-        assert DeflectorSubsystem.POSITION == 1;
+        assert DeflectorSubsystem.POS == 1;
     }
 
     @Test
     public void testPeriodic() {
-        DeflectorSubsystem.POSITION = 1;
+        DeflectorSubsystem.POS = 1;
         deflector.periodic();
         verify(deflector.servo).setPosition(
-            DeflectorSubsystem.POSITION
+            DeflectorSubsystem.POS
         );
+    }
+
+    @Test
+    public void testUp() {
+        DeflectorSubsystem.POS = 0.5;
+        deflector.up();
+        assert DeflectorSubsystem.POS == 0.5 + INC;
+
+    }
+
+    @Test
+    public void testDown() {
+        DeflectorSubsystem.POS = 0.5;
+        deflector.down();
+        assert DeflectorSubsystem.POS == 0.5 - INC;
     }
 }
