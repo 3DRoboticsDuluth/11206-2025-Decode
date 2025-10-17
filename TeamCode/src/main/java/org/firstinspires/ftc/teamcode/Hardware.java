@@ -3,15 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-
-import android.util.Log;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,11 +16,7 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.MagneticFlux;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -60,6 +52,7 @@ public class Hardware {
     public MotorEx depositLeft;
     public MotorEx depositRight;
 
+    public OpenCvCamera webcam;
     public Limelight3A limelight;
 
     public MagneticFlux magneticLimitSwitch;
@@ -98,6 +91,7 @@ public class Hardware {
         conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
         conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
 
+        webcam = hardwareMap.get(OpenCvCamera.class, "webcam");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
