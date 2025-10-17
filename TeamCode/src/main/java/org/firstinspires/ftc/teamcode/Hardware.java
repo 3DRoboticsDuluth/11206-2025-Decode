@@ -19,6 +19,12 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import com.seattlesolvers.solverslib.hardware.motors.MotorGroup;
 
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.MagneticFlux;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -57,7 +63,7 @@ public class Hardware {
     public Limelight3A limelight;
 
     public MagneticFlux magneticLimitSwitch;
-
+    
     public RevBlinkinLedDriver lightsLeft;
     public RevBlinkinLedDriver lightsRight;
     public Servo lightsIndicator;

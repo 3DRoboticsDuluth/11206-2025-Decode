@@ -25,7 +25,7 @@ public class ExampleRobotActions implements RobotActions {
 
     @Override
     public void intakeRow(int row) {
-        // TODO: call intake subsystem, e.g. intake.intakeRow(row);
+        // TODO: call subsystem, e.g. intake.intakeRow(row);
     }
 
     @Override
