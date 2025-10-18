@@ -46,8 +46,8 @@ public class ExampleRobotActions implements RobotActions {
     }
 
     @Override
-    public void delayMs(int ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException ignored) {}
+    public void delayMs(int s) {
+        try { Thread.sleep(s); } catch (InterruptedException ignored) {}
     }
 
     @Override

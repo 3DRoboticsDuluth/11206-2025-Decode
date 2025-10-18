@@ -39,7 +39,9 @@ repositories {
     maven {
         url = "https://mymaven.bylazar.com/releases"
     }
-    maven { url "https://openftc.org/maven" }
+    maven {
+        url "https://openftc.org/maven"
+    }
 }
 
 dependencies {

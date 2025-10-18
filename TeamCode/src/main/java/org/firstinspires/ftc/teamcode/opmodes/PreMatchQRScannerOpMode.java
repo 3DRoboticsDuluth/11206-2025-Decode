@@ -1,117 +1,107 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.RGBLuminanceSource;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.Result;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.Hardware;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import java.util.List;
 
 @TeleOp(name = "Pre-Match QR Scanner", group = "Setup")
 public class PreMatchQRScannerOpMode extends LinearOpMode {
 
-    private static final String LIMELIGHT_HOST = "limelight.local"; // Update if needed
+    private Hardware hardware;
+    private String lastQr = null;
+    private boolean aPressed = false;
+    private boolean bPressed = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        telemetry.addLine("=== Pre-Match QR Scanner ===");
-        telemetry.addLine("Press A to capture and decode QR code");
-        telemetry.addLine("Press B to clear last QR");
-        telemetry.update();
+        // Initialize hardware
+        hardware = new Hardware(hardwareMap);
 
-        String lastQr = null;
+        // Start the Limelight
+        hardware.limelight.start();
+
+        // Force Limelight to use pipeline 0 (your QR code pipeline)
+        hardware.limelight.pipelineSwitch(0);
+
+        // Set a reasonable poll rate
+        hardware.limelight.setPollRateHz(100);
+
+        sleep(500); // allow pipeline to fully activate
+
+        telemetry.addLine("=== Pre-Match QR Scanner ===");
+        telemetry.addLine("Scanning continuously...");
+        telemetry.addLine("Press A to lock current QR code");
+        telemetry.addLine("Press B to clear locked QR");
+        telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            // Capture QR when A is pressed
-            if (gamepad1.a) {
-                telemetry.addLine("Capturing frame from Limelight...");
-                telemetry.update();
+            // Get latest result from Limelight
+            LLResult result = hardware.limelight.getLatestResult();
 
-                String qr = grabAndDecodeQR();
+            // Clear telemetry for fresh display
+            telemetry.clear();
+            telemetry.addLine("=== QR Scanner Active ===");
+            telemetry.addLine();
 
-                if (qr != null) {
-                    lastQr = qr;
-                    telemetry.addLine("QR Detected!");
-                    telemetry.addData("QR Data", lastQr);
+            // Display current detection status
+            if (result != null && result.isValid()) {
+                telemetry.addData("Status", "✓ Limelight Connected");
+
+                List<LLResultTypes.BarcodeResult> barcodes = result.getBarcodeResults();
+
+                if (!barcodes.isEmpty()) {
+                    telemetry.addLine();
+                    telemetry.addLine("--- LIVE QR DETECTION ---");
+
+                    for (int i = 0; i < barcodes.size(); i++) {
+                        LLResultTypes.BarcodeResult barcode = barcodes.get(i);
+                        telemetry.addData("QR " + (i+1) + " Data", barcode.getData());
+                        telemetry.addData("QR " + (i+1) + " Type", barcode.getFamily());
+                    }
+
+                    // Press A to lock the first QR code
+                    if (gamepad1.a && !aPressed) {
+                        lastQr = barcodes.get(0).getData();
+                        telemetry.addLine();
+                        telemetry.addLine("✓ QR CODE LOCKED!");
+                    }
                 } else {
-                    telemetry.addLine("No QR code detected");
+                    telemetry.addLine();
+                    telemetry.addData("Live Detection", "No QR codes visible");
                 }
-
-                telemetry.update();
-                sleep(1000); // simple debounce
+            } else {
+                telemetry.addData("Status", "✗ No Limelight data");
+                telemetry.addLine("Check connection and pipeline");
             }
 
-            // Clear last QR
-            if (gamepad1.b) {
+            // Button state tracking for debouncing
+            aPressed = gamepad1.a;
+
+            // Press B to clear locked QR
+            if (gamepad1.b && !bPressed) {
                 lastQr = null;
-                telemetry.addLine("Cleared last QR");
-                telemetry.update();
-                sleep(500);
+                telemetry.addLine();
+                telemetry.addLine("✓ Locked QR cleared");
             }
+            bPressed = gamepad1.b;
 
-            // Show status
-            telemetry.addLine("");
-            telemetry.addData("Last QR", lastQr != null ? lastQr : "None");
+            // Always display locked QR at nthe bottom
+            telemetry.addLine();
+            telemetry.addLine("======================");
+            telemetry.addData("LOCKED QR", lastQr != null ? lastQr : "None");
+            telemetry.addLine("======================");
+
             telemetry.update();
 
-            TimeUnit.MILLISECONDS.sleep(50);
-        }
-    }
-
-    private String grabAndDecodeQR() {
-        try {
-            URL url = new URL("http://" + LIMELIGHT_HOST + ":5800/stream.mjpg");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(1000);
-            conn.setReadTimeout(1000);
-            conn.connect();
-
-            InputStream is = conn.getInputStream();
-            Bitmap frame = BitmapFactory.decodeStream(is);
-            is.close();
-            conn.disconnect();
-
-            if (frame == null) {
-                Log.e("QRScanner", "No frame grabbed");
-                return null;
-            }
-
-            int width = frame.getWidth();
-            int height = frame.getHeight();
-            int[] pixels = new int[width * height];
-            frame.getPixels(pixels, 0, width, 0, 0, width, height);
-
-            LuminanceSource source = new RGBLuminanceSource(width, height, pixels);
-            BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-            Result result = null;
-            try {
-                result = new MultiFormatReader().decode(binaryBitmap);
-            } catch (Exception e) {
-                // No QR found
-            }
-
-            return result != null ? result.getText() : null;
-
-        } catch (Exception e) {
-            Log.e("QRScanner", "Failed to grab or decode QR", e);
-            return null;
+            sleep(50);
         }
     }
 }

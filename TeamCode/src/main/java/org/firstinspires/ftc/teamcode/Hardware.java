@@ -52,7 +52,6 @@ public class Hardware {
     public MotorEx depositLeft;
     public MotorEx depositRight;
 
-    public OpenCvCamera webcam;
     public Limelight3A limelight;
 
     public MagneticFlux magneticLimitSwitch;
@@ -65,14 +64,14 @@ public class Hardware {
         this.hardwareMap = hardwareMap;
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        drive = new MotorGroup(
-            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
-            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
-            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
-            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
-        );
-
+//
+//        drive = new MotorGroup(
+//            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
+//            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
+//            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
+//            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
+//        );
+//
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
             new IMU.Parameters(
@@ -80,23 +79,22 @@ public class Hardware {
             )
         );
 
-        deflector = hardwareMap.get(Servo.class, "deflector");
+//        deflector = hardwareMap.get(Servo.class, "deflector");
+//
+//        sort = hardwareMap.get(Servo.class, "sort");
+//        vision = hardwareMap.get(Servo.class,"vision");
+//        pivot = hardwareMap.get(Servo.class, "pivot");
+//
+//        intake = hardwareMap.get(MotorEx.class, "intake");
+//
+//        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
+//        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
 
-        sort = hardwareMap.get(Servo.class, "sort");
-        vision = hardwareMap.get(Servo.class,"vision");
-        pivot = hardwareMap.get(Servo.class, "pivot");
-
-        intake = hardwareMap.get(MotorEx.class, "intake");
-
-        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
-        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
-
-        webcam = hardwareMap.get(OpenCvCamera.class, "webcam");
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
-        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
-        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
+//
+//        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
+//        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
+//        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
 
 //        magneticLimitSwitch = hardwareMap.get(MagneticFlux.class, "magneticLimitSwitch");
 
