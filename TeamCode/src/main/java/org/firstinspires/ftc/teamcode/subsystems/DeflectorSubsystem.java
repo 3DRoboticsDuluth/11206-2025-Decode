@@ -38,7 +38,3 @@ public class DeflectorSubsystem extends HardwareSubsystem {
         POS = clamp(POS - INC, MIN, MAX);
     }
 }
-
-
-
-
