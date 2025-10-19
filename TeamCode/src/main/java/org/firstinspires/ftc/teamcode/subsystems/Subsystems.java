@@ -6,14 +6,14 @@ public class Subsystems {
     public static DriveSubsystem drive;
     public static VisionSubsystem vision;
     public static TimingSubsystem timing;
-    public static DepositSubsystem deposit;
+    public static FlywheelSubsystem flywheel;
 
     public static void initialize() {
         config = new ConfigSubsystem();
-        deposit = new DepositSubsystem();
-//        nav = new NavSubsystem();
-//        drive = new DriveSubsystem();
-//        vision = new VisionSubsystem();
-//        timing = new TimingSubsystem();
+        flywheel = new FlywheelSubsystem();
+        //nav = new NavSubsystem();
+        //drive = new DriveSubsystem();
+        //vision = new VisionSubsystem();
+        //timing = new TimingSubsystem();
     }
 }

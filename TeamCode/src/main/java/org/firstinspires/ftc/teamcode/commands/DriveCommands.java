@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
@@ -7,52 +8,41 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIG
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
-import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
-import static java.lang.Math.signum;
 import static java.lang.Math.sin;
-import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
-import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
-import org.firstinspires.ftc.teamcode.game.Alliance;
-import org.firstinspires.ftc.teamcode.game.Pose;
-import org.firstinspires.ftc.teamcode.game.Side;
+import org.firstinspires.ftc.robotcore.external.Consumer;
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
-import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
-/** @noinspection DataFlowIssue*/
 @SuppressWarnings({"unused"})
 public class DriveCommands {
-//    private final HashMap<Location, Function<Pose, Pose>> locationPoses =
-//        new HashMap<Location, Function<Pose, Pose>>() {{
-//        }};
-
-    PathBuilder pathBuilder;// = new PathBuilder();
-
     public Command setPowerLow() {
-        return new InstantCommand(() -> drive.power = POWER_LOW);
+        return new InstantCommand(() -> DriveSubsystem.POWER = POWER_LOW);
     }
 
     public Command setPowerMedium() {
-        return new InstantCommand(() -> drive.power = POWER_MEDIUM);
+        return new InstantCommand(() -> DriveSubsystem.POWER = POWER_MEDIUM);
     }
 
     public Command setPowerHigh() {
-        return new InstantCommand(() -> drive.power = POWER_HIGH);
+        return new InstantCommand(() -> DriveSubsystem.POWER = POWER_HIGH);
     }
 
     public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
@@ -66,31 +56,17 @@ public class DriveCommands {
     }
 
     public Command toStart() {
-        return to(nav.getStartPose());
+        return to(nav.getStartPose(), true);
     }
 
-    public Command toNearAprilTag() {
-        return new SelectCommand(
-            () -> to(
-                nav.createPose(
-                    signum(config.pose.x) * TILE_WIDTH * 2,
-                    signum(config.pose.y) * TILE_WIDTH * 2,
-                    toRadians(90 - signum(config.pose.x) * 90)
-                )
-            )
-        );
+    public Command toMidLaunch() {
+        return to(nav.getMidLaunchPose(), true);
     }
 
-//    public Command to(Location location, Position position) {
-//        return to(locationPoses.get(location).apply(
-//            location.offsets.get(position)
-//        ));
-//    }
-//
-    public Command to(double x, double y, double heading) {
-        return to(
-            nav.createPose(x, y, heading)
-        );
+    public Command toDistance(double distance) {
+        return distance > 0 ?
+            wait.until(() -> drive.follower.getDistanceTraveledOnPath() >= distance) :
+            wait.until(() -> drive.follower.getDistanceRemaining() < -distance);
     }
 
     public boolean toFar(Pose pose) {
@@ -98,13 +74,6 @@ public class DriveCommands {
             config.pose != null &&
             pose != null &&
             abs(pose.hypot(config.pose)) > TO_FAR;
-    }
-
-    public Command shake() {
-        return rumble().andThen(
-            turn(-10),
-            turn(10)
-        );
     }
 
     public Command rumble() {
@@ -133,62 +102,63 @@ public class DriveCommands {
         );
     }
 
-    public Command to(Pose pose) {
-        return wait.noop();
-//        return new SelectCommand(() ->
-//            pose == null || compare(config.pose, pose, true) ?
-//                toFar(pose) || config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN ?
-//                    shake() : wait.noop() : (
-//                compare(config.pose, pose, false) ?
-//                    turn(toDegrees(pose.heading - config.pose.heading)) :
-//                    follow(pb -> pb.addPath(new BezierCurve(
-//                        new Pose(config.pose.x, config.pose.y, config.pose.heading),
-//                        new Pose(pose.x, pose.y, pose.heading)
-//                    )).setLinearHeadingInterpolation(config.pose.heading, pose.heading))
-//            )
-//        );
-    }
-
     public Command forward(double distance) {
         double heading = config.pose.heading;
-        return wait.noop();
-//        return follow(
-//            pb -> pb.addPath(new BezierCurve(
-//                new Point(config.pose.x, config.pose.y),
-//                new Point(
-//                    config.pose.x + cos(heading) * distance,
-//                    config.pose.y + sin(heading) * distance
-//                )
-//            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading)
-//        );
+        return follow(
+            pb -> pb.addPath(new BezierCurve(
+                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                new com.pedropathing.geometry.Pose(
+                    config.pose.x + cos(heading) * distance,
+                    config.pose.y + sin(heading) * distance
+                )
+            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
+            true
+        );
     }
 
     public Command strafe(double distance) {
         double heading = config.pose.heading;
         double bearing = heading + Math.toRadians(90);
-        return wait.noop();
-//        return follow(
-//            pb -> pb.addPath(new BezierCurve(
-//                new Point(config.pose.x, config.pose.y),
-//                new Point(
-//                    config.pose.x + cos(bearing) * distance,
-//                    config.pose.y + sin(bearing) * distance
-//                )
-//            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading)
-//        );
+        return follow(
+            pb -> pb.addPath(new BezierCurve(
+                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                new com.pedropathing.geometry.Pose(
+                    config.pose.x + cos(bearing) * distance,
+                    config.pose.y + sin(bearing) * distance
+                )
+            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
+            true
+        );
     }
 
     public Command turn(double heading) {
         return follow(
-            pb -> pb.setConstantHeadingInterpolation(config.pose.heading + Math.toRadians(heading))
+            pb -> pb.setConstantHeadingInterpolation(config.pose.heading + Math.toRadians(heading)),
+            true
         );
     }
 
-    public Command follow(Consumer<PathBuilder> pathBuilderConsumer) {
+    public Command to(Pose pose, boolean holdEnd) {
+        com.pedropathing.geometry.Pose startPose = toPedroPose(config.pose);
+        com.pedropathing.geometry.Pose endPose = toPedroPose(pose);
+
+        PathChain pathChain = drive.follower.pathBuilder()
+            .addPath(new BezierLine(startPose, endPose))
+            .setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
+            .build();
+
+        return follow(pathChain, holdEnd);
+    }
+
+    public Command follow(Consumer<PathBuilder> pathBuilderConsumer, boolean holdEnd) {
         PathBuilder pathBuilder = drive.follower.pathBuilder();
         pathBuilderConsumer.accept(pathBuilder);
         PathChain pathChain = pathBuilder.build();
-        return new FollowPathCommand(drive.follower, pathChain, true);
+        return follow(pathChain, holdEnd);
+    }
+
+    public Command follow(PathChain pathChain, boolean holdEnd) {
+        return new FollowPathCommand(drive.follower, pathChain, holdEnd);
     }
 
     private static boolean compare(Pose expected, Pose actual, boolean includeHeading) {

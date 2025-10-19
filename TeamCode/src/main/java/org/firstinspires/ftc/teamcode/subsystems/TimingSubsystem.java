@@ -6,11 +6,11 @@ import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
 import android.annotation.SuppressLint;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-@Config
+@Configurable
 public class TimingSubsystem extends SubsystemBase {
     public static ElapsedTime playTimer = new ElapsedTime();
     public static ElapsedTime periodicTimer = new ElapsedTime();

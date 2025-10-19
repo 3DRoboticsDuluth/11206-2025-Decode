@@ -12,47 +12,56 @@
 // Custom definitions may go here
 
 // Include common definitions from above.
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = 'https://www.matthewo.tech/maven/' }
+    }
+    dependencies {
+        classpath 'org.team11260:fast-load-plugin:0.1.2'
+    }
+}
+
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'org.team11260.fast-load-plugin'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
-    androidResources {
-        noCompress 'tflite'
-    }
 
     packagingOptions {
-        jniLibs {
-            pickFirsts += ['**/*.so']
-        }
         jniLibs.useLegacyPackaging true
     }
 }
 
 repositories {
-    maven {
-        url "https://repo.dairy.foundation/releases"
-    }
-    maven {
-        url "https://repo.dairy.foundation/snapshots"
-    }
-    maven {
-        url = "https://mymaven.bylazar.com/releases"
-    }
+    maven { url = 'https://www.matthewo.tech/maven/' }
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://maven.pedropathing.com' }
+    maven { url = 'https://mymaven.bylazar.com/releases' }
+    maven { url = "https://repo.dairy.foundation/releases" }
+    maven { url = "https://repo.dairy.foundation/snapshots" }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    implementation "org.solverslib:core:SNAPSHOT-7cdcc66" // core
-    implementation "org.solverslib:pedroPathing:SNAPSHOT-7cdcc66" // pedroPathing
+    // Fast Load
+    implementation 'org.team11260:fast-load:0.1.2'
+
+    // SolversLib
+    implementation "org.solverslib:core:SNAPSHOT-7cdcc66"
+    implementation "org.solverslib:pedroPathing:SNAPSHOT-7cdcc66"
+
+    // Pedro Pathing
+    implementation 'com.pedropathing:ftc:2.0.2'
+    implementation 'com.pedropathing:telemetry:1.0.0'
+
+    // Panels Dashboard
+    implementation "com.bylazar:fullpanels:1.0.7"
 
     implementation 'org.mockito:mockito-core:5.20.0'
     implementation 'junit:junit:4.13.2'
-
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
-
-    implementation "com.bylazar:docs:1.0.4"
 }
