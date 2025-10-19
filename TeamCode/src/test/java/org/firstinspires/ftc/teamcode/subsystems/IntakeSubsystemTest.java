@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.deflector;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
 import static org.mockito.Mockito.verify;
+
+//import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.junit.Test;
@@ -26,7 +29,7 @@ public class IntakeSubsystemTest extends  TestHarness {
     public void testReverse() {
         IntakeSubsystem.VELOCITY = -0;
         intake.reverse();
-        assert IntakeSubsystem.VELOCITY == -1;
+        assert  IntakeSubsystem.VELOCITY == -1;
     }
 
     @Test
@@ -41,7 +44,7 @@ public class IntakeSubsystemTest extends  TestHarness {
         IntakeSubsystem.VELOCITY = 1;
         intake.periodic();
         verify(intake.motor).setVelocity(
-            IntakeSubsystem.VELOCITY
+                IntakeSubsystem.VELOCITY
         );
     }
 }
