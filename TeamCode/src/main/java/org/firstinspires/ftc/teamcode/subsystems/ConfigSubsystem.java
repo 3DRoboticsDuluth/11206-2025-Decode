@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTime
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@com.acmerobotics.dashboard.config.Config
+@Configurable
 public class ConfigSubsystem extends SubsystemBase {
     private static final String fileName = "config.json";
     private static final Gson gson =
@@ -100,6 +101,8 @@ public class ConfigSubsystem extends SubsystemBase {
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
+        super.periodic();
+
         for (Item item : items) telemetry.addData(getCaption(item.key), item.telemetrySupplier);
         telemetry.addLine("-----------------------------------------------------------------------------");
 

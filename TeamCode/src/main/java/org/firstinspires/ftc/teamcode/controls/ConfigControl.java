@@ -12,9 +12,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.N
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.PREV;
 
 public class ConfigControl {
-
-    private static final double JOYSTICK_THRESHOLD = 0.5;
-
     public ConfigControl() {
         gamepad1.getGamepadButton(BACK)
              .or(gamepad2.getGamepadButton(BACK))

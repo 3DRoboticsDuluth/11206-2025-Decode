@@ -6,16 +6,14 @@ public class Commands {
     public static DriveCommands drive;
     public static VisionCommands vision;
     public static AutoCommands auto;
-    public static DepositCommands deposit;
-    public static DeflectorCommands deflector;
+    public static FlywheelCommands flywheel;
 
     public static void initialize() {
         wait = new WaitCommands();
         config = new ConfigCommands();
-//        drive = new DriveCommands();
-//        vision = new VisionCommands();
-//        auto = new AutoCommands();
-        deposit = new DepositCommands();
-        deflector = new DeflectorCommands();
+        drive = new DriveCommands();
+        vision = new VisionCommands();
+        auto = new AutoCommands();
+        flywheel = new FlywheelCommands();
     }
 }

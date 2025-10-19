@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection.UP;
-import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
+import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+
+import android.util.Log;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -36,12 +40,11 @@ public class Hardware {
     public MotorEx driveBackLeft;
     public MotorEx driveBackRight;
 
-//    public Servo deflector;
+    public Servo deflector;
     public Servo sort;
     public Servo vision;
     public Servo pivot;
     public MotorEx intake;
-    public Servo gate;
     public CRServo conveyorLeft;
     public CRServo conveyorRight;
 //    public Servo conveyorFront;
@@ -64,12 +67,12 @@ public class Hardware {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-//        drive = new MotorGroup(
-//            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
-//            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
-//            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
-//            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
-//        );
+        drive = new MotorGroup(
+            driveFrontLeft = new MotorEx(hardwareMap, "frontLeft", RPM_1150),
+            driveFrontRight = new MotorEx(hardwareMap, "fFrontRight", RPM_1150),
+            driveBackLeft = new MotorEx(hardwareMap, "backLeft", RPM_1150),
+            driveBackRight = new MotorEx(hardwareMap, "backRight", RPM_1150)
+        );
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(
@@ -78,29 +81,22 @@ public class Hardware {
             )
         );
 
-//        deflector = hardwareMap.get(Servo.class, "deflector");
+        deflector = hardwareMap.get(Servo.class, "deflector");
 
-        depositRight = new MotorEx(hardwareMap, "depositRight", BARE);
-        depositLeft = new MotorEx(hardwareMap, "depositLeft", BARE);
+        sort = hardwareMap.get(Servo.class, "sort");
+        vision = hardwareMap.get(Servo.class,"vision");
+        pivot = hardwareMap.get(Servo.class, "pivot");
 
-        depositLeft.setInverted(true);
+        intake = hardwareMap.get(MotorEx.class, "intake");
 
-//        sort = hardwareMap.get(Servo.class, "sort");
-//        vision = hardwareMap.get(Servo.class,"vision");
-//        pivot = hardwareMap.get(Servo.class, "pivot");
+        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
+        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
 
-//        intake = hardwareMap.get(MotorEx.class, "intake", RMP_);
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-//        gate = hardwareMap.get(Servo.class, "gate");
-
-//        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
-//        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
-
-//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-//        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
-//        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
-//        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
+        lightsLeft = hardwareMap.get(RevBlinkinLedDriver.class, "lightsLeft");
+        lightsRight = hardwareMap.get(RevBlinkinLedDriver.class, "lightsRight");
+        lightsIndicator = hardwareMap.get(Servo.class, "lightsIndicator");
 
 //        magneticLimitSwitch = hardwareMap.get(MagneticFlux.class, "magneticLimitSwitch");
 

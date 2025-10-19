@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.adaptations.ftcdashboard;
 
 import android.util.Log;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.function.Supplier;
 
-@Config
+@Configurable
 public class SampledTelemetry {
     public static double SAMPLES_PER_SECOND = 4;
 

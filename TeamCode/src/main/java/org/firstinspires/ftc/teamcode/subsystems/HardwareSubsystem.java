@@ -3,53 +3,61 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
+import com.pedropathing.follower.Follower;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants;
 
 import java.util.ArrayList;
 
 public class HardwareSubsystem extends SubsystemBase {
     ArrayList<String> errors = new ArrayList<>();
 
-    @Override
-    public void periodic() {
+    protected boolean hasErrors() {
         for (String error : errors)
             telemetry.addData("Error", () -> error);
-
-        if (errors.isEmpty())
-            super.periodic();
+        return !errors.isEmpty();
     }
 
-    public <T> T getDevice(Class<? extends T> classOrInterface, String deviceName) {
+    protected Follower getFollower() {
         try {
-            return hardwareMap.get(classOrInterface, deviceName);
+            return Constants.createFollower(hardwareMap);
         } catch (Exception e) {
             errors.add(e.getMessage());
             return null;
         }
     }
 
-    public <T> T getDevice(Class<? extends T> classOrInterface, String deviceName, Consumer<T> consumer) {
-        T device = getDevice(classOrInterface, deviceName);
-        if (device != null) consumer.accept(device);
-        return device;
+    protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName) {
+        return getDevice(classOrInterface, deviceName, m -> {});
     }
 
-    public MotorEx getMotor(String id, Motor.GoBILDA gobildaType) {
+    protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName, Consumer<T> consumer) {
         try {
-            return new MotorEx(hardwareMap, id, gobildaType);
+            T device = hardwareMap.get(classOrInterface, deviceName);
+            consumer.accept(device);
+            return device;
         } catch (Exception e) {
             errors.add(e.getMessage());
             return null;
         }
     }
 
-    public MotorEx getMotor(String id, Motor.GoBILDA gobildaType, Consumer<MotorEx> consumer) {
-        MotorEx motor = getMotor(id, gobildaType);
-        if (motor != null) consumer.accept(motor);
-        return motor;
+    protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType) {
+        return getMotor(id, gobildaType, m -> {});
+    }
+
+    protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType, Consumer<MotorEx> consumer) {
+        try {
+            MotorEx motor = new MotorEx(hardwareMap, id, gobildaType);
+            consumer.accept(motor);
+            return motor;
+        } catch (Exception e) {
+            errors.add(e.getMessage());
+            return null;
+        }
     }
 }

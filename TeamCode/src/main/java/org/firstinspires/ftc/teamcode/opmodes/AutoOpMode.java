@@ -24,10 +24,6 @@ public class AutoOpMode extends OpMode {
 
         Controls.initializeAuto();
 
-        schedule(
-            wait.forInterruptA()
-        );
-
         waitForStart();
         
         if (isStopRequested()) return;

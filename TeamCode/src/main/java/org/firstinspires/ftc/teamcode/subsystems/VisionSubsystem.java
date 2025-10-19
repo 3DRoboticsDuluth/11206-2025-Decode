@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Pipeline.APRILTAG;
-import static org.firstinspires.ftc.teamcode.opmodes.OpMode.hardware;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
@@ -10,19 +9,20 @@ import static java.lang.Math.toRadians;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.game.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 
 import java.util.List;
 
-@Config
-public class VisionSubsystem extends SubsystemBase {
+@Configurable
+public class VisionSubsystem extends HardwareSubsystem {
     public static boolean CAMERA_UPSIDE_DOWN = true;
     public static double CAMERA_X_INCHES = 5.905512;
     public static double CAMERA_Y_INCHES = -5.11811;
@@ -42,19 +42,27 @@ public class VisionSubsystem extends SubsystemBase {
     public int detectionCount = 0;
     public Pose elementPose = null;
 
+    public final Limelight3A limelight;
+
+    public final Servo turret;
+
     public VisionSubsystem() {
-        if (hardware.limelight == null) return;
-        switchPipeline(PIPELINE, true);
-        hardware.limelight.start();
+        limelight = getDevice(
+            Limelight3A.class,
+            "limelight",
+            l -> {
+                switchPipeline(PIPELINE, true);
+                l.start();
+            }
+        );
+
+        turret = getDevice(Servo.class, "turret");
     }
 
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
-        if (hardware.limelight == null) {
-            telemetry.addData("Vision", () -> "Not initialized in Hardware");
-            return;
-        }
+        if (hasErrors()) return;
 
         switchPipeline(PIPELINE, false);
 
@@ -62,9 +70,9 @@ public class VisionSubsystem extends SubsystemBase {
 
         double yaw = toDegrees(config.pose.heading);
 
-        hardware.limelight.updateRobotOrientation(yaw);
+        limelight.updateRobotOrientation(yaw);
 
-        LLResult result = hardware.limelight.getLatestResult();
+        LLResult result = limelight.getLatestResult();
 
         if (result == null || !result.isValid()) {
             telemetry.addData("Vision", () -> "No data available");
@@ -76,9 +84,9 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public void switchPipeline(int pipeline, boolean elementReset) {
-        if (hardware.limelight == null) return;
+        if (limelight == null) return;
         if (elementReset) elementPose = null;
-        hardware.limelight.pipelineSwitch(PIPELINE = pipeline);
+        limelight.pipelineSwitch(PIPELINE = pipeline);
     }
 
     @SuppressLint("DefaultLocale")

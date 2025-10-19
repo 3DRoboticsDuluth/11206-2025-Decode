@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.game;
 
-@com.acmerobotics.dashboard.config.Config
+import com.bylazar.configurables.annotations.Configurable;
+
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+
+@Configurable
 public class Config {
     public static Config config;
     public transient boolean auto;

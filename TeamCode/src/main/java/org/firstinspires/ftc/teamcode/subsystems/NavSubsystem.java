@@ -2,20 +2,18 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
-import static java.lang.Math.signum;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.teamcode.game.Alliance;
-import org.firstinspires.ftc.teamcode.game.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.game.Side;
 
 /** @noinspection UnaryPlus, unused */
-@Config
+@Configurable
 public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
     public static double ROBOT_LENGTH = 14;
@@ -41,6 +39,10 @@ public class NavSubsystem {
                 config.alliance.sign * toRadians(-90),
                 Axial.BACK
             );
+    }
+
+    public Pose getMidLaunchPose() {
+        return createPose(0, 0, 0); // TODO: Update values
     }
 
     public enum Axial {
