@@ -43,7 +43,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     public DriveSubsystem() {
         POWER = POWER_MEDIUM;
         follower = getFollower();
-        resetPose();
+        if (follower != null)
+            resetPose();
     }
 
     @Override

@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 
-import android.annotation.SuppressLint;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
@@ -24,7 +22,6 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     @Override
-    @SuppressLint("DefaultLocale")
     public void periodic() {
         if (hasErrors()) return;
         motorLeft.setFeedforwardCoefficients(KS, KA, KV);

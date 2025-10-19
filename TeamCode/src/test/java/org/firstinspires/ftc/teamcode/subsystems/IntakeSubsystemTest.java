@@ -9,42 +9,45 @@ import static org.mockito.Mockito.verify;
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 public class IntakeSubsystemTest extends  TestHarness {
     @Override
     public void setUp() {
         super.setUp();
         intake = new IntakeSubsystem() {{
+            errors = new ArrayList<>();
             motor = mockMotor();
         }};
     }
 
     @Test
     public void testForward() {
-        IntakeSubsystem.VELOCITY = 0;
+        IntakeSubsystem.VEL = 0;
         intake.forward();
-        assert IntakeSubsystem.VELOCITY == 1;
+        assert IntakeSubsystem.VEL == 1;
     }
 
     @Test
     public void testReverse() {
-        IntakeSubsystem.VELOCITY = -0;
+        IntakeSubsystem.VEL = -0;
         intake.reverse();
-        assert  IntakeSubsystem.VELOCITY == -1;
+        assert IntakeSubsystem.VEL == -1;
     }
 
     @Test
     public void testStopped() {
-        IntakeSubsystem.VELOCITY = 1;
+        IntakeSubsystem.VEL = 1;
         intake.stop();
-        assert IntakeSubsystem.VELOCITY == 0;
+        assert IntakeSubsystem.VEL == 0;
     }
 
     @Test
     public void testPeriodic() {
-        IntakeSubsystem.VELOCITY = 1;
+        IntakeSubsystem.VEL = 1;
         intake.periodic();
         verify(intake.motor).setVelocity(
-                IntakeSubsystem.VELOCITY
+            IntakeSubsystem.VEL
         );
     }
 }

@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants;
 import java.util.ArrayList;
 
 public class HardwareSubsystem extends SubsystemBase {
-    ArrayList<String> errors = new ArrayList<>();
+    public ArrayList<String> errors = new ArrayList<>();
 
     protected boolean hasErrors() {
         for (String error : errors)

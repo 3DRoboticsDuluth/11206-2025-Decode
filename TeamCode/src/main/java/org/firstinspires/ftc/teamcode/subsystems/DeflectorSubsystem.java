@@ -23,18 +23,19 @@ public class DeflectorSubsystem extends HardwareSubsystem {
 
     @Override
     public void periodic() {
+        if (hasErrors()) return;
         servo.setPosition(POS);
     }
 
-    public void setPosition(double position) {
-        POS = position;
-    }
-
     public void up() {
-        POS = clamp(POS + INC, MIN, MAX);
+        setPosition(POS + INC);
     }
 
     public void down() {
-        POS = clamp(POS - INC, MIN, MAX);
+        setPosition(POS - INC);
+    }
+
+    private void setPosition(double position) {
+        POS = clamp(position, MIN, MAX);
     }
 }

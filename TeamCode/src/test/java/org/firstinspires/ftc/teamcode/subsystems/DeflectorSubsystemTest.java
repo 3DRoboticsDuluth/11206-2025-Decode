@@ -19,13 +19,6 @@ public class DeflectorSubsystemTest extends TestHarness {
     }
 
     @Test
-    public void testSetPosition() {
-        DeflectorSubsystem.POS = 0;
-        deflector.setPosition(1);
-        assert DeflectorSubsystem.POS == 1;
-    }
-
-    @Test
     public void testPeriodic() {
         DeflectorSubsystem.POS = 1;
         deflector.periodic();
