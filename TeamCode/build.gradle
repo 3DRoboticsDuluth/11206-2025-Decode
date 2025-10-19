@@ -16,16 +16,16 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url = 'https://www.matthewo.tech/maven/' }
+        maven { url = 'https://repo.dairy.foundation/releases' }
     }
     dependencies {
-        classpath 'org.team11260:fast-load-plugin:0.1.2'
+        classpath 'dev.frozenmilk:Load:0.2.4'
     }
 }
 
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
-apply plugin: 'org.team11260.fast-load-plugin'
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -40,23 +40,23 @@ repositories {
     maven { url = 'https://maven.brott.dev/' }
     maven { url = 'https://maven.pedropathing.com' }
     maven { url = 'https://mymaven.bylazar.com/releases' }
-    maven { url = "https://repo.dairy.foundation/releases" }
-    maven { url = "https://repo.dairy.foundation/snapshots" }
+    maven { url = 'https://repo.dairy.foundation/releases' }
+    maven { url = 'https://repo.dairy.foundation/snapshots' }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    // Fast Load
-    implementation 'org.team11260:fast-load:0.1.2'
+    // Sloth (successor to Fast Load)
+    implementation('dev.frozenmilk.sinister:Sloth:0.2.4')
 
     // SolversLib
-    implementation "org.solverslib:core:SNAPSHOT-7cdcc66"
-    implementation "org.solverslib:pedroPathing:SNAPSHOT-7cdcc66"
+    implementation 'org.solverslib:core:SNAPSHOT-7cdcc66'
+    implementation 'org.solverslib:pedroPathing:SNAPSHOT-7cdcc66'
 
     // Pedro Pathing
-    implementation 'com.pedropathing:ftc:2.0.2'
+    implementation 'com.pedropathing:ftc:2.0.3'
     implementation 'com.pedropathing:telemetry:1.0.0'
 
     // Panels Dashboard
