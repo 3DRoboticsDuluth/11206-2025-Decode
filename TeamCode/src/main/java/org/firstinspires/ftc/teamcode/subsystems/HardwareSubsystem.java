@@ -3,32 +3,32 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
+import android.util.Log;
+
 import com.pedropathing.follower.Follower;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public class HardwareSubsystem extends SubsystemBase {
-    public ArrayList<String> errors = new ArrayList<>();
+    ArrayList<String> errors = new ArrayList<>();
 
     protected boolean hasErrors() {
-        for (String error : errors)
-            telemetry.addData("Error", () -> error);
+        if (!errors.isEmpty())
+            telemetry.addData(this.getClass().getSimpleName(), () -> "Disabled (see logs)");
         return !errors.isEmpty();
     }
 
     protected Follower getFollower() {
-        try {
-            return Constants.createFollower(hardwareMap);
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-            return null;
-        }
+        return getHardware(
+            () -> Constants.createFollower(hardwareMap)
+        );
     }
 
     protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName) {
@@ -36,14 +36,11 @@ public class HardwareSubsystem extends SubsystemBase {
     }
 
     protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName, Consumer<T> consumer) {
-        try {
+        return getHardware(() -> {
             T device = hardwareMap.get(classOrInterface, deviceName);
             consumer.accept(device);
             return device;
-        } catch (Exception e) {
-            errors.add(e.getMessage());
-            return null;
-        }
+        });
     }
 
     protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType) {
@@ -51,11 +48,19 @@ public class HardwareSubsystem extends SubsystemBase {
     }
 
     protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType, Consumer<MotorEx> consumer) {
-        try {
+        return getHardware(() -> {
             MotorEx motor = new MotorEx(hardwareMap, id, gobildaType);
             consumer.accept(motor);
             return motor;
+        });
+    }
+
+    private <T> T getHardware(Supplier<T> supplier) {
+        try {
+            return supplier.get();
         } catch (Exception e) {
+            //noinspection DataFlowIssue
+            Log.e(this.getClass().getSimpleName(), e.getMessage());
             errors.add(e.getMessage());
             return null;
         }

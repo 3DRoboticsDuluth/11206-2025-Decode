@@ -4,30 +4,30 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
+
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 @Configurable
 public class FlywheelSubsystem extends HardwareSubsystem {
+    public static boolean TELEM = false;
     public static double VEL = 0;
     public static double KS = 0;
+    public static double KV = 1;
     public static double KA = 0;
-    public static double KV = 0;
 
     public MotorEx motorLeft;
     public MotorEx motorRight;
 
     public FlywheelSubsystem() {
-        motorLeft = getMotor("flywheelLeft", BARE, this::configure);
-        motorRight = getMotor("flywheelRight", BARE, this::configure);
+        motorLeft = getMotor("flywheelLeft", BARE, m -> configure(m, true));
+        motorRight = getMotor("flywheelRight", BARE, m -> configure(m, false));
     }
 
     @Override
     public void periodic() {
         if (hasErrors()) return;
-        motorLeft.setFeedforwardCoefficients(KS, KA, KV);
-        motorRight.setFeedforwardCoefficients(KS, KA, KV);
-        motorLeft.setVelocity(VEL);
-        motorRight.setVelocity(VEL);
+        set(motorLeft, "Flywheel Left");
+        set(motorRight, "Flywheel Right");
     }
 
     public void start() {
@@ -38,13 +38,15 @@ public class FlywheelSubsystem extends HardwareSubsystem {
         VEL = 0;
     }
 
-    private void configure(MotorEx motor) {
+    private void configure(MotorEx motor, boolean inverted) {
+        motor.setInverted(inverted);
+        motor.stopAndResetEncoder();
         motor.setRunMode(VelocityControl);
+    }
 
-        double[] coefficients = motor.getFeedforwardCoefficients();
-
-        KS = coefficients[0];
-        KA = coefficients[1];
-        KV = coefficients[2];
+    private void set(MotorEx motor, String name) {
+        motor.setFeedforwardCoefficients(KS, KV, KA);
+        motor.setVelocityPercentage(VEL);
+        motor.addTelemetry(name, TELEM);
     }
 }

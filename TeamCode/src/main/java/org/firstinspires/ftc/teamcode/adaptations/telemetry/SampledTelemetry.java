@@ -29,30 +29,31 @@ public class SampledTelemetry {
     }
 
     public void addData(String caption, Supplier<String> supplier) {
-        if (sample) {
-            try {
-                telemetry.addData(caption, supplier.get());
-            } catch (Exception e) {
-                // TODO: Determine why april tag metadata is crashing the bot sometimes
-                Log.e("SampledTelemetry", "Error adding telemetry while evaluating `func.value()`", e);
-            }
-        }
+        attempt(() -> telemetry.addData(caption, supplier.get()));
     }
 
     public void addLine() {
-        if (sample) telemetry.addLine();
+        attempt(telemetry::addLine);
     }
 
     public void addLine(String caption) {
-        if (sample) telemetry.addLine(caption);
+        attempt(() -> telemetry.addLine(caption));
     }
 
     public void update() {
-        if (sample) {
+        attempt(() -> {
             telemetry.update();
             timer.reset();
-        }
+        });
 
         sample = timer.seconds() > 1 / SAMPLES_PER_SECOND;
+    }
+
+    public void attempt(Runnable runnable) {
+        try {
+            if (sample) runnable.run();
+        } catch (Exception e) {
+            Log.e("SampledTelemetry", "Error invoking telemetry`", e);
+        }
     }
 }

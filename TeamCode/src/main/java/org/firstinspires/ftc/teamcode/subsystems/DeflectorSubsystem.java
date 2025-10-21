@@ -8,11 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Configurable
 public class DeflectorSubsystem extends HardwareSubsystem {
     public static double MAX = 1;
-
     public static double MIN = 0;
-
     public static double POS = 0.5;
-
     public static double INC = 0.1;
 
     public Servo servo;
@@ -24,18 +21,16 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     @Override
     public void periodic() {
         if (hasErrors()) return;
-        servo.setPosition(POS);
+        servo.setPosition(
+            POS = clamp(POS, MIN, MAX)
+        );
     }
 
     public void up() {
-        setPosition(POS + INC);
+        POS += INC;
     }
 
     public void down() {
-        setPosition(POS - INC);
-    }
-
-    private void setPosition(double position) {
-        POS = clamp(position, MIN, MAX);
+        POS -= INC;
     }
 }

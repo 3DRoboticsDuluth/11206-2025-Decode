@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.telemetry.SampledTelemetry;
 import org.firstinspires.ftc.teamcode.commands.Commands;
 import org.firstinspires.ftc.teamcode.commands.ConfigCommands;

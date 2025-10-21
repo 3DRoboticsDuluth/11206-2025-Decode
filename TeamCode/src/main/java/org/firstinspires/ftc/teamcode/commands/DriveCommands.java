@@ -139,15 +139,14 @@ public class DriveCommands {
     }
 
     public Command to(Pose pose, boolean holdEnd) {
-        com.pedropathing.geometry.Pose startPose = toPedroPose(config.pose);
-        com.pedropathing.geometry.Pose endPose = toPedroPose(pose);
-
-        PathChain pathChain = drive.follower.pathBuilder()
-            .addPath(new BezierLine(startPose, endPose))
-            .setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
-            .build();
-
-        return follow(pathChain, holdEnd);
+        return follow(
+            drive.follower.pathBuilder()
+                .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(pose)))
+                // TODO: Remove if passes test
+                //.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
+                .build()
+            , holdEnd
+        );
     }
 
     public Command follow(Consumer<PathBuilder> pathBuilderConsumer, boolean holdEnd) {

@@ -13,26 +13,13 @@
 
 // Include common definitions from above.
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url = 'https://repo.dairy.foundation/releases' }
-    }
-    dependencies {
-        classpath 'dev.frozenmilk:Load:0.2.4'
-    }
-}
-
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
-apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
-
-    packagingOptions {
-        jniLibs.useLegacyPackaging true
-    }
+    packagingOptions { jniLibs.useLegacyPackaging true }
+    testOptions { unitTests.returnDefaultValues = true }
 }
 
 repositories {
@@ -48,9 +35,6 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    // Sloth (successor to Fast Load)
-    implementation('dev.frozenmilk.sinister:Sloth:0.2.4')
-
     // SolversLib
     implementation 'org.solverslib:core:SNAPSHOT-7cdcc66'
     implementation 'org.solverslib:pedroPathing:SNAPSHOT-7cdcc66'
@@ -62,6 +46,7 @@ dependencies {
     // Panels Dashboard
     implementation "com.bylazar:fullpanels:1.0.7"
 
+    // Unit Testing
     implementation 'org.mockito:mockito-core:5.20.0'
     implementation 'junit:junit:4.13.2'
 }

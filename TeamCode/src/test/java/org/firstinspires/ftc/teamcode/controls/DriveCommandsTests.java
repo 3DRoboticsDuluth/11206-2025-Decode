@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
-import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.game.Position.TARGET;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 

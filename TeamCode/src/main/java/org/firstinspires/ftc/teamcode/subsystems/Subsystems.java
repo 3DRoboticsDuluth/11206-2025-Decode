@@ -4,20 +4,20 @@ public class Subsystems {
     public static ConfigSubsystem config;
     public static NavSubsystem nav;
     public static DriveSubsystem drive;
+    public static IntakeSubsystem intake;
+    public static DeflectorSubsystem deflector;
+    public static FlywheelSubsystem flywheel;
     public static VisionSubsystem vision;
     public static TimingSubsystem timing;
-    public static FlywheelSubsystem flywheel;
-    public static DeflectorSubsystem deflector;
-    public static IntakeSubsystem intake;
 
     public static void initialize() {
         config = new ConfigSubsystem();
-        flywheel = new FlywheelSubsystem();
-        deflector = new DeflectorSubsystem();
+        nav = new NavSubsystem();
+        drive = new DriveSubsystem();
         intake = new IntakeSubsystem();
-//        nav = new NavSubsystem();
-//        drive = new DriveSubsystem();
-//        vision = new VisionSubsystem();
-//        timing = new TimingSubsystem();
+        deflector = new DeflectorSubsystem();
+        flywheel = new FlywheelSubsystem();
+        vision = new VisionSubsystem();
+        timing = new TimingSubsystem();
     }
 }
