@@ -39,18 +39,13 @@ public class Hardware {
     public MotorEx driveFrontRight;
     public MotorEx driveBackLeft;
     public MotorEx driveBackRight;
-
     public Servo deflector;
     public Servo sort;
     public Servo vision;
     public Servo pivot;
     public MotorEx intake;
-    public CRServo conveyorLeft;
-    public CRServo conveyorRight;
-//    public Servo conveyorFront;
-//    public Servo conveyorMiddle;
-//    public Servo conveyorBack;
-
+    public MotorEx conveyorLeft;
+    public MotorEx conveyorRight;
     public MotorEx depositLeft;
     public MotorEx depositRight;
 
@@ -89,8 +84,8 @@ public class Hardware {
 
         intake = hardwareMap.get(MotorEx.class, "intake");
 
-        conveyorLeft = hardwareMap.get(CRServo.class, "conveyorLeft");
-        conveyorRight = hardwareMap.get(CRServo.class, "conveyorRight");
+        conveyorLeft = hardwareMap.get(MotorEx.class, "conveyorLeft");
+        conveyorRight = hardwareMap.get(MotorEx.class, "conveyorRight");
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 

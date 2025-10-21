@@ -9,6 +9,7 @@ public class Subsystems {
     public static FlywheelSubsystem flywheel;
     public static VisionSubsystem vision;
     public static TimingSubsystem timing;
+    public static ConveyorSubsystem conveyor;
 
     public static void initialize() {
         config = new ConfigSubsystem();
@@ -19,5 +20,6 @@ public class Subsystems {
         flywheel = new FlywheelSubsystem();
         vision = new VisionSubsystem();
         timing = new TimingSubsystem();
+        conveyor = new ConveyorSubsystem();
     }
 }
