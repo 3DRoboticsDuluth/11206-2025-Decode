@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.telemetry.SampledTelemetry;
 import org.firstinspires.ftc.teamcode.commands.Commands;
 import org.firstinspires.ftc.teamcode.commands.ConfigCommands;
+import org.firstinspires.ftc.teamcode.commands.ConveyorCommands;
 import org.firstinspires.ftc.teamcode.commands.DriveCommands;
 import org.firstinspires.ftc.teamcode.commands.VisionCommands;
 import org.firstinspires.ftc.teamcode.commands.WaitCommands;
@@ -31,6 +32,7 @@ import org.firstinspires.ftc.teamcode.game.Config;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 import org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
@@ -62,6 +64,7 @@ public class TestHarness {
         Subsystems.config = mock(ConfigSubsystem.class);
         Subsystems.nav = mock(NavSubsystem.class);
         Subsystems.drive = mock(DriveSubsystem.class);
+        Subsystems.conveyor = mock(ConveyorSubsystem.class);
         Subsystems.vision = mock(VisionSubsystem.class);
         Subsystems.vision.elementPose = new Pose(0, 0, 0);
         Subsystems.timing = mock(TimingSubsystem.class);
@@ -71,6 +74,7 @@ public class TestHarness {
         Commands.wait = mock(WaitCommands.class, invocation -> new InstantCommand());
         Commands.config = mock(ConfigCommands.class, RETURNS_DEEP_STUBS);
         Commands.drive = mock(DriveCommands.class, RETURNS_DEEP_STUBS);
+        Commands.conveyor = mock(ConveyorCommands.class, RETURNS_DEEP_STUBS);
         Commands.vision = mock(VisionCommands.class, RETURNS_DEEP_STUBS);
     }
 

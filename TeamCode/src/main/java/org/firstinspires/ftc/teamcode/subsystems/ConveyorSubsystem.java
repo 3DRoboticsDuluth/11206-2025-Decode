@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 
+import android.annotation.SuppressLint;
+
 import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
@@ -15,16 +17,15 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     public MotorEx motor;
 
     public ConveyorSubsystem() {
-        motor = getMotor("conveyorLeft", RPM_1150, this::configure);
-        motor = getMotor("conveyorRight", RPM_1150, this::configure);
+        motor = getMotor("conveyor", RPM_1150, this::configure);
     }
 
     @Override
+    @SuppressLint("DefaultLocale")
     public void periodic() {
         if (hasErrors()) return;
         motor.setVelocityPercentage(VEL);
-        motor.addTelemetry("conveyorLeft", TELEM);
-        motor.addTelemetry("conveyorRight", TELEM);
+        motor.addTelemetry("conveyor", TELEM);
     }
 
     public void forward() {
@@ -40,7 +41,6 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     }
 
     private void configure(MotorEx motor) {
-        motor.setInverted(true);
         motor.stopAndResetEncoder();
         motor.setRunMode(VelocityControl);
     }
