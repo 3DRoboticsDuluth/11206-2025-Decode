@@ -6,9 +6,10 @@ public class Commands {
     public static DriveCommands drive;
     public static ConveyorCommands conveyor;
     public static GateCommands gate;
+    public static DeflectorCommands deflector;
+    public static FlywheelCommands flywheel;
     public static VisionCommands vision;
     public static AutoCommands auto;
-    public static FlywheelCommands flywheel;
 
     public static void initialize() {
         wait = new WaitCommands();
@@ -16,8 +17,9 @@ public class Commands {
         drive = new DriveCommands();
         conveyor = new ConveyorCommands();
         gate = new GateCommands();
+        deflector = new DeflectorCommands();
+        flywheel = new FlywheelCommands();
         vision = new VisionCommands();
         auto = new AutoCommands();
-        flywheel = new FlywheelCommands();
     }
 }
