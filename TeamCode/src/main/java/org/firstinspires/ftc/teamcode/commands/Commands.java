@@ -5,6 +5,7 @@ public class Commands {
     public static ConfigCommands config;
     public static DriveCommands drive;
     public static ConveyorCommands conveyor;
+    public static GateCommands gate;
     public static VisionCommands vision;
     public static AutoCommands auto;
     public static FlywheelCommands flywheel;
@@ -14,6 +15,7 @@ public class Commands {
         config = new ConfigCommands();
         drive = new DriveCommands();
         conveyor = new ConveyorCommands();
+        gate = new GateCommands();
         vision = new VisionCommands();
         auto = new AutoCommands();
         flywheel = new FlywheelCommands();

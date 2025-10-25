@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.deflector;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.gate;
 import static org.mockito.Mockito.verify;
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,7 +22,21 @@ public class GateSubsystemTest extends TestHarness {
         GateSubsystem.POS = 1;
         gate.periodic();
         verify(gate.servo).setPosition(
-                GateSubsystem.POS
+            GateSubsystem.POS
         );
+    }
+
+    @Test
+    public void testOpen() {
+        GateSubsystem.POS = GateSubsystem.MIN;
+        gate.open();
+        assert GateSubsystem.POS == GateSubsystem.MAX;
+    }
+
+    @Test
+    public void testClose() {
+        GateSubsystem.POS = GateSubsystem.MAX;
+        gate.close();
+        assert GateSubsystem.POS == GateSubsystem.MIN;
     }
 }

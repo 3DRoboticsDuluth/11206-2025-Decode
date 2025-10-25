@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.opmodes.OpMode;
 import org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.GateSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem;
@@ -65,6 +66,7 @@ public class TestHarness {
         Subsystems.nav = mock(NavSubsystem.class);
         Subsystems.drive = mock(DriveSubsystem.class);
         Subsystems.conveyor = mock(ConveyorSubsystem.class);
+        Subsystems.gate = mock(GateSubsystem.class);
         Subsystems.vision = mock(VisionSubsystem.class);
         Subsystems.vision.elementPose = new Pose(0, 0, 0);
         Subsystems.timing = mock(TimingSubsystem.class);

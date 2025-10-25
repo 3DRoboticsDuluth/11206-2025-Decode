@@ -26,10 +26,10 @@ public class GateSubsystem extends HardwareSubsystem {
     }
 
     public void open() {
-        POS += MAX;
+        POS = MAX;
     }
 
     public void close() {
-        POS -= MIN;
+        POS = MIN;
     }
 }
