@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 @Configurable
 public class ConveyorSubsystem extends HardwareSubsystem {
-    public static boolean TELEM = false;
+    public static boolean TEL = false;
     public static double VEL = 0;
 
     public MotorEx motor;
@@ -23,9 +23,9 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
-        if (hasErrors()) return;
+        if (unready()) return;
         motor.setVelocityPercentage(VEL);
-        motor.addTelemetry("conveyor", TELEM);
+        motor.addTelemetry("conveyor", TEL);
     }
 
     public void forward() {

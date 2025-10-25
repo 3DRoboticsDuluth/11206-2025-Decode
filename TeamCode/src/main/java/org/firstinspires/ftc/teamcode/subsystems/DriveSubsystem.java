@@ -50,7 +50,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
-        if (hasErrors()) return;
+        if (unready()) return;
 
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
@@ -81,6 +81,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public void inputs(double forward, double strafe, double turn) {
+        if (unready()) return;
         if (isBusy() && forward + strafe + turn != 0) follower.startTeleopDrive();
         else if (isBusy()) return;
         follower.setTeleOpDrive(

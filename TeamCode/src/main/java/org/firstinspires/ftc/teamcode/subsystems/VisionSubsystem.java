@@ -62,7 +62,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
-        if (hasErrors()) return;
+        if (unready()) return;
 
         switchPipeline(PIPELINE, false);
 

@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.FLOAT;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
+import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
-import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 @Configurable
 public class FlywheelSubsystem extends HardwareSubsystem {
-    public static boolean TELEM = false;
+    public static boolean TEL = false;
+    public static PIDFCoefficients PIDF = new PIDFCoefficients(10, 3, 0, 0);
     public static double VEL = 0;
-    public static double KS = 0;
-    public static double KV = 1;
-    public static double KA = 0;
 
     public MotorEx motorLeft;
     public MotorEx motorRight;
@@ -25,9 +28,9 @@ public class FlywheelSubsystem extends HardwareSubsystem {
 
     @Override
     public void periodic() {
-        if (hasErrors()) return;
-        set(motorLeft, "Flywheel Left");
-        set(motorRight, "Flywheel Right");
+        if (unready()) return;
+        set(motorLeft, "flywheelLeft");
+        set(motorRight, "flywheelRight");
     }
 
     public void start() {
@@ -39,14 +42,16 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     private void configure(MotorEx motor, boolean inverted) {
-        motor.setInverted(inverted);
-        motor.stopAndResetEncoder();
-        motor.setRunMode(VelocityControl);
+        motor.motor.setZeroPowerBehavior(FLOAT);
+        motor.motor.setDirection(inverted ? REVERSE : FORWARD);
+        motor.motor.setMode(STOP_AND_RESET_ENCODER);
+        motor.motor.setMode(RUN_USING_ENCODER);
+
     }
 
     private void set(MotorEx motor, String name) {
-        motor.setFeedforwardCoefficients(KS, KV, KA);
-        motor.setVelocityPercentage(VEL);
-        motor.addTelemetry(name, TELEM);
+        motor.motorEx.setPIDFCoefficients(RUN_USING_ENCODER, PIDF);
+        motor.motor.setPower(VEL);
+        motor.addTelemetry(name, TEL);
     }
 }

@@ -4,6 +4,7 @@ public class Commands {
     public static WaitCommands wait;
     public static ConfigCommands config;
     public static DriveCommands drive;
+    public static IntakeCommands intake;
     public static ConveyorCommands conveyor;
     public static GateCommands gate;
     public static DeflectorCommands deflector;
@@ -15,6 +16,7 @@ public class Commands {
         wait = new WaitCommands();
         config = new ConfigCommands();
         drive = new DriveCommands();
+        intake = new IntakeCommands();
         conveyor = new ConveyorCommands();
         gate = new GateCommands();
         deflector = new DeflectorCommands();

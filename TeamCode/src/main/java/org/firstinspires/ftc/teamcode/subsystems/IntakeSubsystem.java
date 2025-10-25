@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1620;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 
@@ -10,7 +9,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 @Configurable
 public class IntakeSubsystem extends HardwareSubsystem {
-    public static boolean TELEM = false;
+    public static boolean TEL = false;
     public static double VEL = 0;
 
     public MotorEx motor;
@@ -21,9 +20,9 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
     @Override
     public void periodic() {
-        if (hasErrors()) return;
+        if (unready()) return;
         motor.setVelocityPercentage(VEL);
-        motor.addTelemetry("intake", TELEM);
+        motor.addTelemetry("intake", TEL);
     }
 
     public void forward() {

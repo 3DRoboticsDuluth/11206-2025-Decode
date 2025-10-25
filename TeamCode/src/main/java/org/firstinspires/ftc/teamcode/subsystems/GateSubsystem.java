@@ -19,7 +19,7 @@ public class GateSubsystem extends HardwareSubsystem {
 
     @Override
     public void periodic() {
-        if (hasErrors()) return;
+        if (unready()) return;
         servo.setPosition(
             POS = clamp(POS, MIN, MAX)
         );

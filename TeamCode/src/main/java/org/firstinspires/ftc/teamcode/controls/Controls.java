@@ -8,7 +8,9 @@ public class Controls {
     public static void initializeTeleop() {
         new ConfigControl();
         new DriveControl();
-        new AutoControl();
+        new IntakeControl();
+        new DeflectorControl();
         new FlywheelControl();
+        new AutoControl();
     }
 }

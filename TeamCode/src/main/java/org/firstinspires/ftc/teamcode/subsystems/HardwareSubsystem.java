@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 public class HardwareSubsystem extends SubsystemBase {
     ArrayList<String> errors = new ArrayList<>();
 
-    protected boolean hasErrors() {
+    protected boolean unready() {
         if (!errors.isEmpty())
             telemetry.addData(this.getClass().getSimpleName(), () -> "Disabled (see logs)");
         return !errors.isEmpty();
@@ -31,6 +31,7 @@ public class HardwareSubsystem extends SubsystemBase {
         );
     }
 
+    /** @noinspection SameParameterValue*/
     protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName) {
         return getDevice(classOrInterface, deviceName, m -> {});
     }
@@ -43,6 +44,7 @@ public class HardwareSubsystem extends SubsystemBase {
         });
     }
 
+    /** @noinspection unused, SameParameterValue */
     protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType) {
         return getMotor(id, gobildaType, m -> {});
     }
