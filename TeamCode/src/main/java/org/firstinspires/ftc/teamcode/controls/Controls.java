@@ -13,6 +13,6 @@ public class Controls {
         new FlywheelControl();
         new AutoControl();
         new GateControl();
-        new ParkingControl();
+        new KickstandControl();
     }
 }
