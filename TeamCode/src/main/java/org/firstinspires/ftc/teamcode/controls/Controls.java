@@ -12,5 +12,6 @@ public class Controls {
         new DeflectorControl();
         new FlywheelControl();
         new AutoControl();
+        new GateControl();
     }
 }

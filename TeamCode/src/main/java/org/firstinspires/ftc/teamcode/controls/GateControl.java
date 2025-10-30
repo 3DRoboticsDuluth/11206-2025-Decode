@@ -1,24 +1,24 @@
 package org.firstinspires.ftc.teamcode.controls;
 
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.B;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.BACK;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
-import static org.firstinspires.ftc.teamcode.commands.Commands.deflector;
+import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 
-public class DeflectorControl {
-    public DeflectorControl() {
+
+public class GateControl {
+    public GateControl() {
         gamepad2.getGamepadButton(START).negate()
-            .and(gamepad2.getGamepadButton(Y))
+            .and(gamepad2.getGamepadButton(BACK))
             .and(gamepad2.getGamepadButton(DPAD_UP))
-            .toggleWhenActive(deflector.up());
+            .whenActive(gate.open());
 
         gamepad2.getGamepadButton(START).negate()
-            .and(gamepad2.getGamepadButton(Y))
+            .and(gamepad2.getGamepadButton(BACK))
             .and(gamepad2.getGamepadButton(DPAD_DOWN))
-            .toggleWhenActive(deflector.down());
+            .whenActive(gate.close());
     }
 }
