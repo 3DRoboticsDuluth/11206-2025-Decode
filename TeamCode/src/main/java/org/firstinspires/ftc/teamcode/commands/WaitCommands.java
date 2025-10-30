@@ -47,10 +47,6 @@ public class WaitCommands {
             )
         );
     }
-
-    public Command forFlyWheelReady() {
-        return wait.until(Subsystems.flywheel::isAtTargetVelocity);
-    }
     
     public Command doherty() {
         return doherty(1);

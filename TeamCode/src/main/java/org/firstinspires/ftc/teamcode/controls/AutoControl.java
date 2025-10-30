@@ -10,6 +10,7 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.X;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
+import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 
 public class AutoControl {
@@ -51,11 +52,11 @@ public class AutoControl {
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(X))
             .and(gamepad1.getGamepadButton(DPAD_UP))
-            .whenActive(auto.gateOpen());
+            .whenActive(gate.gateOpen());
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(X))
             .and(gamepad1.getGamepadButton(DPAD_DOWN))
-            .whenActive(auto.gateClose());
+            .whenActive(gate.gateClose());
     }
 }
