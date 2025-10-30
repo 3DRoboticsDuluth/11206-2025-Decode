@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import net.bytebuddy.TypeCache;
+
 public class Commands {
     public static WaitCommands wait;
     public static ConfigCommands config;
@@ -11,6 +13,7 @@ public class Commands {
     public static FlywheelCommands flywheel;
     public static VisionCommands vision;
     public static AutoCommands auto;
+    public static SortingCommands sorting;
 
     public static void initialize() {
         wait = new WaitCommands();
@@ -23,5 +26,6 @@ public class Commands {
         flywheel = new FlywheelCommands();
         vision = new VisionCommands();
         auto = new AutoCommands();
+        sorting = new SortingCommands();
     }
 }
