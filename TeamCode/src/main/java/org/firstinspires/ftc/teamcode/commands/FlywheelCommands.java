@@ -14,6 +14,10 @@ public class FlywheelCommands {
         return complete(flywheel::stop);
     }
 
+    public Command reverse() {
+        return complete(flywheel::reverse);
+    }
+
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable, flywheel);
     }
