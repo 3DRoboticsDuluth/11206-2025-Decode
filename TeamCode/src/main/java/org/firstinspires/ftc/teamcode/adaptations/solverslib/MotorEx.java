@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.adaptations.solverslib;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
@@ -11,40 +12,45 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @SuppressWarnings("unused")
 public class MotorEx extends com.seattlesolvers.solverslib.hardware.motors.MotorEx {
-    public MotorEx(@NonNull HardwareMap hMap, String id) {
-        super(hMap, id);
-    }
+    private static final double cachingTolerance = 0.0001;
 
-    public MotorEx(@NonNull HardwareMap hMap, String id, @NonNull GoBILDA gobildaType) {
-        super(hMap, id, gobildaType);
-    }
+    public String id;
 
-    public MotorEx(@NonNull HardwareMap hMap, String id, double cpr, double rpm) {
-        super(hMap, id, cpr, rpm);
+    public MotorEx(@NonNull HardwareMap hMap, String id, @NonNull GoBILDA type) {
+        super(hMap, id, type);
+        this.id = id;
     }
 
     public void setVelocityPercentage(double percentage) {
         super.setVelocity(percentage * ACHIEVABLE_MAX_TICKS_PER_SECOND);
     }
 
-    /** @noinspection NullableProblems*/
-    @SuppressLint("DefaultLocale")
-    public String toString() {
-        return String.format(
-            "%.2f amps, %.2f pow, %.1f dis, %.1f vel",
-            this.motorEx.getCurrent(AMPS),
-            this.motor.getPower(),
-            this.encoder.getDistance(),
-            this.encoder.getRawVelocity()
-        );
+    @Override
+    public void set(double output) {
+        if (runmode == RunMode.VelocityControl && (motor.getZeroPowerBehavior() == BRAKE || output != 0)) {
+            double speed = bufferFraction * output * ACHIEVABLE_MAX_TICKS_PER_SECOND;
+            double velocity = veloController.calculate(getCorrectedVelocity(), speed) + feedforward.calculate(speed, getAcceleration());
+            setPower(velocity / ACHIEVABLE_MAX_TICKS_PER_SECOND);
+        } else if (runmode == RunMode.PositionControl) {
+            double error = positionController.calculate(encoder.getPosition());
+            setPower(output * error);
+        } else {
+            setPower(output);
+        }
+    }
+
+    private void setPower(double power) {
+        if ((Math.abs(power - motorEx.getPower()) > cachingTolerance) || (power == 0 && motorEx.getPower() != 0)) {
+            motorEx.setPower(power);
+        }
     }
 
     @SuppressLint("DefaultLocale")
-    public void addTelemetry(String name, boolean enabled) {
+    public void addTelemetry(boolean enabled) {
         if (!enabled) return;
-        telemetry.addData(name + " (amp)", () -> String.format("%.2f", this.motorEx.getCurrent(AMPS)));
-        telemetry.addData(name + " (pow)", () -> String.format("%.2f", this.motorEx.getPower()));
-        telemetry.addData(name + " (vel)", () -> String.format("%.0f", this.motorEx.getVelocity()));
-        telemetry.addData(name + " (pos)", () -> String.format("%d", this.motorEx.getCurrentPosition()));
+        telemetry.addData(id + " (amp)", () -> String.format("%.2f", this.motorEx.getCurrent(AMPS)));
+        telemetry.addData(id + " (pow)", () -> String.format("%.2f", this.motorEx.getPower()));
+        telemetry.addData(id + " (rpm)", () -> String.format("%.0f", this.motorEx.getVelocity() / this.type.getCPR() * 60));
+        telemetry.addData(id + " (pos)", () -> String.format("%d", this.motorEx.getCurrentPosition()));
     }
 }

@@ -13,16 +13,17 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 
 import java.util.List;
 
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
+    public static boolean TEL = false;
     public static boolean CAMERA_UPSIDE_DOWN = true;
     public static double CAMERA_X_INCHES = 5.905512;
     public static double CAMERA_Y_INCHES = -5.11811;
@@ -44,7 +45,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public final Limelight3A limelight;
 
-    public final Servo turret;
+    public final Servo servo;
 
     public VisionSubsystem() {
         limelight = getDevice(
@@ -56,7 +57,7 @@ public class VisionSubsystem extends HardwareSubsystem {
             }
         );
 
-        turret = getDevice(Servo.class, "turret");
+        servo = getServo("turret");
     }
 
     @Override
@@ -73,6 +74,8 @@ public class VisionSubsystem extends HardwareSubsystem {
         limelight.updateRobotOrientation(yaw);
 
         LLResult result = limelight.getLatestResult();
+
+        servo.addTelemetry(TEL);
 
         if (result == null || !result.isValid()) {
             telemetry.addData("Vision", () -> "No data available");

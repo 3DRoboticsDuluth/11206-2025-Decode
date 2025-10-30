@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1620;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
+import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
 import com.bylazar.configurables.annotations.Configurable;
 
@@ -22,7 +23,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
         motor.setVelocityPercentage(VEL);
-        motor.addTelemetry("intake", TEL);
+        motor.addTelemetry(TEL);
     }
 
     public void forward() {
@@ -40,6 +41,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
     private void configure(MotorEx motor) {
         motor.setInverted(true);
         motor.stopAndResetEncoder();
+        motor.setZeroPowerBehavior(FLOAT);
         motor.setRunMode(VelocityControl);
     }
 }

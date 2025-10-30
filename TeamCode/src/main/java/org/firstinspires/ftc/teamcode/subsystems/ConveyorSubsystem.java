@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
+import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
 import android.annotation.SuppressLint;
 
@@ -25,7 +26,7 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
         motor.setVelocityPercentage(VEL);
-        motor.addTelemetry("conveyor", TEL);
+        motor.addTelemetry(TEL);
     }
 
     public void forward() {
@@ -42,6 +43,7 @@ public class ConveyorSubsystem extends HardwareSubsystem {
 
     private void configure(MotorEx motor) {
         motor.stopAndResetEncoder();
+        motor.setZeroPowerBehavior(FLOAT);
         motor.setRunMode(VelocityControl);
     }
 }

@@ -1,1 +1,1 @@
-%LOCALAPPDATA%\Android\sdk\platform-tools\adb start-server
+"%LOCALAPPDATA%\Android\sdk\platform-tools\adb" start-server

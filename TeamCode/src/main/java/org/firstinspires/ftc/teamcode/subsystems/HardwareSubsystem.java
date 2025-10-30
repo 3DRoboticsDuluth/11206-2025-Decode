@@ -10,7 +10,9 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
+import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.CRServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 import java.util.ArrayList;
@@ -31,27 +33,43 @@ public class HardwareSubsystem extends SubsystemBase {
         );
     }
 
-    /** @noinspection SameParameterValue*/
-    protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName) {
-        return getDevice(classOrInterface, deviceName, m -> {});
+    protected Servo getServo(String id) {
+        return new Servo(id, getDevice(com.qualcomm.robotcore.hardware.Servo.class, id));
     }
 
-    protected <T> T getDevice(Class<? extends T> classOrInterface, String deviceName, Consumer<T> consumer) {
+    protected CRServoEx getCRServo(String id) {
+        return getCRServo(id, s -> {});
+    }
+
+    protected CRServoEx getCRServo(String id, Consumer<CRServoEx> consumer) {
         return getHardware(() -> {
-            T device = hardwareMap.get(classOrInterface, deviceName);
+            CRServoEx servo = new CRServoEx(hardwareMap, id);
+            consumer.accept(servo);
+            return servo;
+        });
+    }
+
+    /** @noinspection SameParameterValue*/
+    protected <T> T getDevice(Class<? extends T> type, String deviceName) {
+        return getDevice(type, deviceName, m -> {});
+    }
+
+    protected <T> T getDevice(Class<? extends T> type, String deviceName, Consumer<T> consumer) {
+        return getHardware(() -> {
+            T device = hardwareMap.get(type, deviceName);
             consumer.accept(device);
             return device;
         });
     }
 
     /** @noinspection unused, SameParameterValue */
-    protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType) {
-        return getMotor(id, gobildaType, m -> {});
+    protected MotorEx getMotor(String id, Motor.GoBILDA type) {
+        return getMotor(id, type, m -> {});
     }
 
-    protected MotorEx getMotor(String id, Motor.GoBILDA gobildaType, Consumer<MotorEx> consumer) {
+    protected MotorEx getMotor(String id, Motor.GoBILDA type, Consumer<MotorEx> consumer) {
         return getHardware(() -> {
-            MotorEx motor = new MotorEx(hardwareMap, id, gobildaType);
+            MotorEx motor = new MotorEx(hardwareMap, id, type);
             consumer.accept(motor);
             return motor;
         });

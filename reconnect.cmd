@@ -1,1 +1,1 @@
-%LOCALAPPDATA%\Android\sdk\platform-tools\adb reconnect
+"%LOCALAPPDATA%\Android\sdk\platform-tools\adb" reconnect

@@ -52,6 +52,6 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     private void set(MotorEx motor, String name) {
         motor.motorEx.setPIDFCoefficients(RUN_USING_ENCODER, PIDF);
         motor.motor.setPower(VEL);
-        motor.addTelemetry(name, TEL);
+        motor.addTelemetry(TEL);
     }
 }

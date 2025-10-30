@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.gate;
 import static org.mockito.Mockito.verify;
 
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.TestHarness;
+import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.junit.Test;
 
 public class GateSubsystemTest extends TestHarness {
