@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.controls;
+package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
-import org.firstinspires.ftc.teamcode.commands.DriveCommands;
 import org.junit.Test;
 
 public class DriveCommandsTests extends TestHarness {

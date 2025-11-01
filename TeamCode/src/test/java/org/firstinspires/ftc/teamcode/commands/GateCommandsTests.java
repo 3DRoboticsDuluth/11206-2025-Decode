@@ -16,13 +16,13 @@ public class GateCommandsTests extends TestHarness {
     }
     
     @Test
-    public void testForward() {
+    public void testOpen() {
         gate.open().initialize();
         verify(Subsystems.gate, times(1)).open();
     }
     
     @Test
-    public void testReverse() {
+    public void testClose() {
         gate.close().initialize();
         verify(Subsystems.gate, times(1)).close();
     }
