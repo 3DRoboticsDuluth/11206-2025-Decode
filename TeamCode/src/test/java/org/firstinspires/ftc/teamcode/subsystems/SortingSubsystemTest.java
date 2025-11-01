@@ -19,14 +19,14 @@ public class SortingSubsystemTest extends TestHarness {
     }
 
     @Test
-    public void testOpen() {
+    public void testSort() {
         SortingSubsystem.POS = SortingSubsystem.PASS;
         sorting.sort();
         assert SortingSubsystem.POS == SortingSubsystem.SORT;
     }
 
     @Test
-    public void testClose() {
+    public void testPass() {
         SortingSubsystem.POS = SortingSubsystem.SORT;
         sorting.pass();
         assert SortingSubsystem.POS == SortingSubsystem.SORT;

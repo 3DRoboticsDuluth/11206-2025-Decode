@@ -24,29 +24,29 @@ public class AutoControl {
             .and(gamepad1.getGamepadButton(DPAD_DOWN))
             .whenActive(auto.spitArtifact());
 
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(A))
-            .and((gamepad1.getGamepadButton(DPAD_LEFT)).or(gamepad1.getGamepadButton(DPAD_RIGHT)))
-            .whenActive(auto.autoArtifact());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(B))
-            .and(gamepad1.getGamepadButton(DPAD_UP))
-            .whenActive(auto.depositNear());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(B))
-            .and(gamepad1.getGamepadButton(DPAD_DOWN))
-            .whenActive(auto.depositFar());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(B))
-            .and((gamepad1.getGamepadButton(DPAD_LEFT)).or(gamepad1.getGamepadButton(DPAD_RIGHT)))
-            .whenActive(auto.depositFromPose());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(Y))
-            .whenActive(auto.humanPlayerZone());
+//        gamepad1.getGamepadButton(START).negate()
+//            .and(gamepad1.getGamepadButton(A))
+//            .and((gamepad1.getGamepadButton(DPAD_LEFT)).or(gamepad1.getGamepadButton(DPAD_RIGHT)))
+//            .whenActive(auto.autoArtifact());
+//
+//        gamepad1.getGamepadButton(START).negate()
+//            .and(gamepad1.getGamepadButton(B))
+//            .and(gamepad1.getGamepadButton(DPAD_UP))
+//            .whenActive(auto.depositNear());
+//
+//        gamepad1.getGamepadButton(START).negate()
+//            .and(gamepad1.getGamepadButton(B))
+//            .and(gamepad1.getGamepadButton(DPAD_DOWN))
+//            .whenActive(auto.depositFar());
+//
+//        gamepad1.getGamepadButton(START).negate()
+//            .and(gamepad1.getGamepadButton(B))
+//            .and((gamepad1.getGamepadButton(DPAD_LEFT)).or(gamepad1.getGamepadButton(DPAD_RIGHT)))
+//            .whenActive(auto.depositFromPose());
+//
+//        gamepad1.getGamepadButton(START).negate()
+//            .and(gamepad1.getGamepadButton(Y))
+//            .whenActive(auto.humanPlayerZone());
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(X))
