@@ -11,6 +11,7 @@ public class Commands {
     public static FlywheelCommands flywheel;
     public static VisionCommands vision;
     public static AutoCommands auto;
+    public static KickstandCommands kickstand;
 
     public static void initialize() {
         wait = new WaitCommands();
@@ -23,5 +24,6 @@ public class Commands {
         flywheel = new FlywheelCommands();
         vision = new VisionCommands();
         auto = new AutoCommands();
+        kickstand = new KickstandCommands();
     }
 }

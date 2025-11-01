@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.commands.DriveCommands;
 import org.firstinspires.ftc.teamcode.commands.FlywheelCommands;
 import org.firstinspires.ftc.teamcode.commands.GateCommands;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommands;
+import org.firstinspires.ftc.teamcode.commands.KickstandCommands;
 import org.firstinspires.ftc.teamcode.commands.VisionCommands;
 import org.firstinspires.ftc.teamcode.commands.WaitCommands;
 import org.firstinspires.ftc.teamcode.game.Config;
@@ -43,6 +44,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.GateSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.KickstandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem;
@@ -81,6 +83,7 @@ public class TestHarness {
         Subsystems.vision = mock(VisionSubsystem.class);
         Subsystems.vision.elementPose = new Pose(0, 0, 0);
         Subsystems.timing = mock(TimingSubsystem.class);
+        Subsystems.kickstand = mock(KickstandSubsystem.class);
 
         playTimer = mock(ElapsedTime.class);
 
@@ -93,6 +96,7 @@ public class TestHarness {
         Commands.deflector = mock(DeflectorCommands.class, RETURNS_DEEP_STUBS);
         Commands.flywheel = mock(FlywheelCommands.class, RETURNS_DEEP_STUBS);
         Commands.vision = mock(VisionCommands.class, RETURNS_DEEP_STUBS);
+        Commands.kickstand = mock(KickstandCommands.class, RETURNS_DEEP_STUBS);
     }
 
     public void input(Runnable runnable) {
