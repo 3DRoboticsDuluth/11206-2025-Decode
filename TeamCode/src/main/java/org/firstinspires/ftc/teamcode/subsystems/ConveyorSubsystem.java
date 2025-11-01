@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class ConveyorSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
-    public static double VEL = 1;
+    public static double VEL = 0;
 
     public MotorEx motor;
 
@@ -30,11 +30,11 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     }
 
     public void forward() {
-        VEL = 0.5;
+        VEL = 1;
     }
 
     public void reverse() {
-        VEL = -0.25;
+        VEL = -1;
     }
 
     public void stop() {

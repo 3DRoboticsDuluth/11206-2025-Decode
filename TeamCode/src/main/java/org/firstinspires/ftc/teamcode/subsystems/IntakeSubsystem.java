@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class IntakeSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
-    public static double VEL = 0.25;
+    public static double VEL = 0;
 
     public MotorEx motor;
 
@@ -27,7 +27,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
     }
 
     public void forward() {
-        VEL = 0.5;
+        VEL = 0.25;
     }
 
     public void reverse() {
