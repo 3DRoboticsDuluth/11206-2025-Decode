@@ -27,7 +27,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
     }
 
     public void forward() {
-        VEL = 0.5;
+        VEL = 0.25;
     }
 
     public void reverse() {

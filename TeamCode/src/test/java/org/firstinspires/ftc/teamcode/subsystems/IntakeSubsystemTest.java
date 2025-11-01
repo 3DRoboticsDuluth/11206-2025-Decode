@@ -22,7 +22,7 @@ public class IntakeSubsystemTest extends  TestHarness {
     public void testForward() {
         IntakeSubsystem.VEL = 0;
         intake.forward();
-        assert IntakeSubsystem.VEL == 0.5;
+        assert IntakeSubsystem.VEL == 0.25;
     }
 
     @Test

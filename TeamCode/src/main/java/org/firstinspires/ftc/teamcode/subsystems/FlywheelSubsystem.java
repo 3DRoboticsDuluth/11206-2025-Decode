@@ -34,7 +34,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     public void start() {
-        VEL = 0.5;
+        VEL = 0.75;
     }
 
     public void stop() {
