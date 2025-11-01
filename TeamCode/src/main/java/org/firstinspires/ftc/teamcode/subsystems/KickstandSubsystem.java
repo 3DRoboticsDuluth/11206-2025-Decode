@@ -13,7 +13,7 @@ public class KickstandSubsystem extends HardwareSubsystem{
     public Servo servo;
 
     public KickstandSubsystem() {
-        servo = getDevice(Servo.class, "park");
+        servo = getDevice(Servo.class, "kickstand");
     }
 
     @Override
