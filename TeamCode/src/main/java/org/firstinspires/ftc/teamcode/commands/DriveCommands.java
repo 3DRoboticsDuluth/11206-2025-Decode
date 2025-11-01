@@ -63,6 +63,26 @@ public class DriveCommands {
         return to(nav.getMidLaunchPose(), true);
     }
 
+    public Command toClosestArtifact() {
+        return to(nav.getClosestArtifactPose(), true);
+    }
+
+    public Command toDepositNear() {
+        return to(nav.getDepositNearPose(), true);
+    }
+
+    public Command toDepositFar() {
+        return to(nav.getDepositFarPose(), true);
+    }
+
+    public Command toDepositAlign() {
+        return to(nav.getDepositAlignPose(), true);
+    }
+
+    public Command toHumanPlayerZone() {
+        return to(nav.getHumanPlayerZonePose(), true);
+    }
+
     public Command toDistance(double distance) {
         return distance > 0 ?
             wait.until(() -> drive.follower.getDistanceTraveledOnPath() >= distance) :

@@ -41,6 +41,26 @@ public class NavSubsystem {
             );
     }
 
+    public Pose getClosestArtifactPose() {
+        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    }
+
+    public Pose getDepositNearPose() {
+        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    }
+
+    public Pose getDepositFarPose() {
+        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    }
+
+    public Pose getDepositAlignPose() {
+        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    }
+
+    public Pose getHumanPlayerZonePose() {
+        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    }
+
     public Pose getMidLaunchPose() {
         return createPose(0, 0, 0); // TODO: Update values
     }
