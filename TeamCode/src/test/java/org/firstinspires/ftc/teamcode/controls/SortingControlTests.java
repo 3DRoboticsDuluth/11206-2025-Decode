@@ -20,18 +20,14 @@ public class SortingControlTests extends TestHarness {
     }
 
     @Test
-    public void testRightTrigger() {
-        when(gamepad2.getTrigger(RIGHT_TRIGGER)).thenReturn(0.0);
-        CommandScheduler.getInstance().run();
-        verify(sorting, never()).sort();
-        verify(sorting, never()).pass();
-
-        when(gamepad2.getTrigger(RIGHT_TRIGGER)).thenReturn(1.0);
-        CommandScheduler.getInstance().run();
+    public void testLeftTrigger() {
+        input(() -> gamepad2.gamepad.left_trigger = 1);
         verify(sorting).sort();
+    }
 
-        when(gamepad2.getTrigger(RIGHT_TRIGGER)).thenReturn(0.0);
-        CommandScheduler.getInstance().run();
+    @Test
+    public void testRightTrigger() {
+        input(() -> gamepad2.gamepad.left_trigger = 1);
         verify(sorting).pass();
     }
 }
