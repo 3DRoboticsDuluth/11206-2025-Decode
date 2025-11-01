@@ -38,8 +38,8 @@ public class AutoCommands {
         return new SelectCommand(
             () -> intake.forward().andThen(
                 conveyor.forward(),
-                gate.open(),
-                deflector.compensateForDropOff()
+                gate.open()//,
+//                deflector.compensateForDropOff()
             )
         );
     }
@@ -64,48 +64,48 @@ public class AutoCommands {
 
     public Command autoArtifact() {
         return new SelectCommand(
-            () -> drive.toClosestArtifact().alongWith(
+            () -> /*drive.toClosestArtifact().alongWith(*/
                 auto.intakeArtifact()
-            )
+//            )
         );
     }
 
     public Command depositNear() {
         return new SelectCommand(
-            () -> drive.toDepositNear().alongWith(
-                prepareDeposit()
+                () -> /*drive.toDepositNear().alongWith( */
+                        prepareDeposit()
                 .andThen(
                     deposit()
                 )
-            )
+//            )
         );
     }
 
     public Command depositFar() {
         return new SelectCommand(
-            () -> drive.toDepositFar().alongWith(
+            () -> /*drive.toDepositFar().alongWith(*/
                 prepareDeposit()
             ).andThen(
                 deposit()
-            )
+//            )
         );
     }
 
     public Command depositFromPose() {
         return new SelectCommand(
-            () -> drive.toDepositAlign().alongWith(
+            () -> /*drive.toDepositAlign().alongWith( */
                 prepareDeposit()
             ).andThen(
                 deposit()
-            )
+//            )
         );
     }
 
     public Command humanPlayerZone() {
         return new SelectCommand(
-            () -> drive.toHumanPlayerZone().alongWith(
+            () -> /*drive.toHumanPlayerZone().alongWith(*/
                 gate.close()
-            )
+//            )
         );
     }
 }
