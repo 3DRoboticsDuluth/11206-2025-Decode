@@ -47,4 +47,11 @@ public class FlywheelSubsystemTest extends  TestHarness {
         flywheel.stop();
         assert FlywheelSubsystem.VEL == 0;
     }
+
+    @Test
+    public void testReverse() {
+        FlywheelSubsystem.VEL = 1;
+        flywheel.reverse();
+        assert FlywheelSubsystem.VEL == 0;
+    }
 }
