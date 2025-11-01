@@ -34,7 +34,7 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     }
 
     public void reverse() {
-        VEL = -1;
+        VEL = -0.2;
     }
 
     public void stop() {
