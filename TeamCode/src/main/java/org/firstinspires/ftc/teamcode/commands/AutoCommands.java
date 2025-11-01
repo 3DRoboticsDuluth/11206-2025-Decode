@@ -71,7 +71,7 @@ public class AutoCommands {
 
     public Command depositNear() {
         return new SelectCommand(
-            () -> drive.toDepositNear().alongWith(
+            () -> drive.toLaunchNear().alongWith(
                 auto.prepareDeposit()
             ).andThen(
                 auto.deposit()
@@ -81,7 +81,7 @@ public class AutoCommands {
 
     public Command depositFar() {
         return new SelectCommand(
-            () -> drive.toDepositFar().alongWith(
+            () -> drive.toLaunchFar().alongWith(
                 prepareDeposit()
             ).andThen(
                 auto.deposit()
@@ -91,7 +91,7 @@ public class AutoCommands {
 
     public Command depositFromPose() {
         return new SelectCommand(
-            () -> drive.toDepositAlign().alongWith(
+            () -> drive.toLaunchAlign().alongWith(
                 auto.prepareDeposit()
             ).andThen(
                 auto.deposit()
@@ -101,7 +101,7 @@ public class AutoCommands {
 
     public Command humanPlayerZone() {
         return new SelectCommand(
-            () -> drive.toHumanPlayerZone().alongWith(
+            () -> drive.toLoadingZone().alongWith(
                 gate.close()
             )
         );

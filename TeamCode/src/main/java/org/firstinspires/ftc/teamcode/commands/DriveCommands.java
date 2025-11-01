@@ -59,28 +59,24 @@ public class DriveCommands {
         return to(nav.getStartPose(), true);
     }
 
-    public Command toMidLaunch() {
-        return to(nav.getMidLaunchPose(), true);
+    public Command toLaunchNear() {
+        return to(nav.getLaunchNearPose(), true);
+    }
+
+    public Command toLaunchFar() {
+        return to(nav.getLaunchFarPose(), true);
+    }
+
+    public Command toLoadingZone() {
+        return to(nav.getLoadingZonePose(), true);
+    }
+
+    public Command toLaunchAlign() {
+        return to(nav.getLaunchAlignPose(), true);
     }
 
     public Command toClosestArtifact() {
-        return to(nav.getClosestArtifactPose(), true);
-    }
-
-    public Command toDepositNear() {
-        return to(nav.getDepositNearPose(), true);
-    }
-
-    public Command toDepositFar() {
-        return to(nav.getDepositFarPose(), true);
-    }
-
-    public Command toDepositAlign() {
-        return to(nav.getDepositAlignPose(), true);
-    }
-
-    public Command toHumanPlayerZone() {
-        return to(nav.getHumanPlayerZonePose(), true);
+        return wait.noop(); // TODO: Add Chase
     }
 
     public Command toDistance(double distance) {

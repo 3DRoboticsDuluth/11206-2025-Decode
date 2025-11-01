@@ -75,7 +75,7 @@ public class AutoCommandsTests extends TestHarness {
     @Test
     public void testDepositNear() {
         auto.depositNear().initialize();
-        verify(drive).toDepositNear();
+        verify(drive).toLaunchNear();
         verify(auto).prepareDeposit();
         verify(auto).deposit();
     }
@@ -83,7 +83,7 @@ public class AutoCommandsTests extends TestHarness {
     @Test
     public void testDepositFar() {
         auto.depositFar().initialize();
-        verify(drive).toDepositFar();
+        verify(drive).toLaunchFar();
         verify(auto).prepareDeposit();
         verify(auto).deposit();
     }
@@ -91,7 +91,7 @@ public class AutoCommandsTests extends TestHarness {
     @Test
     public void testDepositFromPose() {
         auto.depositFromPose().initialize();
-        verify(drive).toDepositAlign();
+        verify(drive).toLaunchAlign();
         verify(auto).prepareDeposit();
         verify(auto).deposit();
     }
@@ -99,7 +99,7 @@ public class AutoCommandsTests extends TestHarness {
     @Test
     public void testHumanPlayerZone() {
         auto.humanPlayerZone().initialize();
-        verify(drive).toHumanPlayerZone();
+        verify(drive).toLoadingZone();
         verify(gate).close();
     }
 }

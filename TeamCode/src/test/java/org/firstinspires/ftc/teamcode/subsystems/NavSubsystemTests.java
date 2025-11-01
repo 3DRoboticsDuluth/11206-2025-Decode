@@ -1,71 +1,122 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.game.Alliance.BLUE;
+import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
+import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
-import org.junit.Test;
+import org.firstinspires.ftc.teamcode.game.Alliance;
+import org.firstinspires.ftc.teamcode.game.Side;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
 
+@RunWith(Theories.class)
 public class NavSubsystemTests extends  TestHarness {
+    @DataPoints
+    public static Alliance[] alliances = { RED, BLUE };
+
+    @DataPoints
+    public static Side[] sides = { NORTH, SOUTH };
+
     @Override
     public void setUp() {
         super.setUp();
         nav = new NavSubsystem();
     }
 
-    @Test
-    public void testGetClosestArtifactPose() {
-        compare(
-            new Pose(0, 0, 0),
-            nav.getClosestArtifactPose()
+    @Theory
+    public void testGetLaunchNearPose(Alliance alliance, Side side) {
+        config.alliance = alliance;
+        config.side = side;
+
+        Pose expected = new Pose(
+            0.5 * TILE_WIDTH,
+            config.alliance.sign * 0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 45)
         );
+
+        Pose actual = nav.getLaunchNearPose();
+
+        compare(expected, actual);
+
+        assert actual.x > -0.5 * TILE_WIDTH;
+        assert alliance.sign * actual.heading > 0;
     }
 
-    @Test
-    public void testGetDepositNearPose() {
-        compare(
-            new Pose(0, 0, 0),
-            nav.getDepositNearPose()
+    @Theory
+    public void testGetLaunchFarPose(Alliance alliance, Side side) {
+        config.alliance = alliance;
+        config.side = side;
+
+        Pose expected = new Pose(
+            -2.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 30)
         );
+
+        Pose actual = nav.getLaunchFarPose();
+
+        compare(expected, actual);
+
+        assert actual.x < -2 * TILE_WIDTH;
+        assert actual.x > -3 * TILE_WIDTH;
+        assert alliance.sign * actual.y < 1 * TILE_WIDTH;
+        assert alliance.sign * actual.y > -1 * TILE_WIDTH;
+        assert alliance.sign * actual.heading > 0;
     }
 
-    @Test
-    public void testGetDepositFarPose() {
-        compare(
-            new Pose(0, 0, 0),
-            nav.getDepositFarPose()
+    @Theory
+    public void testGetLaunchAlignPose(Alliance alliance, Side side) {
+        config.alliance = alliance;
+        config.side = side;
+
+        Pose expected = new Pose(
+            0, 0, 0
         );
+
+        Pose actual = nav.getLaunchAlignPose();
+
+        compare(expected, actual);
+
+        // TODO
+        //assert alliance.sign * actual.y > 0;
+        //assert side.sign * actual.x > 0;
+        //assert alliance.sign * actual.heading < 0;
     }
 
-    @Test
-    public void testGetDepositAlignPose() {
-        compare(
-            new Pose(0, 0, 0),
-            nav.getDepositAlignPose()
-        );
-    }
+    @Theory
+    public void testGetLoadingZonePose(Alliance alliance, Side side) {
+        config.alliance = alliance;
+        config.side = side;
 
-    @Test
-    public void testGetHumanPlayerZonePose() {
-        compare(
-            new Pose(0, 0, 0),
-            nav.getHumanPlayerZonePose()
+        Pose expected = new Pose(
+            -2.5 * TILE_WIDTH,
+            config.alliance.sign * -2.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
         );
-    }
 
-    @Test
-    public void testGetMidLaunchPose() {
-        compare(
-            new Pose(0, 0, 0),
-            nav.getMidLaunchPose()
-        );
+        Pose actual = nav.getLoadingZonePose();
+
+        compare(expected, actual);
+
+        assert actual.x < -1.5 * TILE_WIDTH;
+        assert alliance.sign * actual.y < -1.5 * TILE_WIDTH;
+        assert alliance.sign * actual.heading > 0;
     }
 
     private static void compare(Pose expected, Pose actual) {
-        assert abs(expected.x - actual.x) < .1;
-        assert abs(expected.y - actual.y) < .1;
-        assert abs(expected.heading - actual.heading) < .1;
+        assert abs(expected.x - actual.x) < 0.1;
+        assert abs(expected.y - actual.y) < 0.1;
+        assert abs(expected.heading - actual.heading) < 0.1;
     }
 }

@@ -28,42 +28,100 @@ public class NavSubsystem {
     public static double MIN_ACCEL = -MAX_ACCEL * MIN_ACCEL_SCALAR;
     public static double MAX_ANG_VEL = PI * ANG_SCALAR;
     public static double MAX_ANG_ACCEL = MAX_ANG_VEL;
-    public Pose createPose;
 
     public Pose getStartPose() {
         return config.side == null || config.side == Side.UNKNOWN ||
             config.alliance == null || config.alliance == Alliance.UNKNOWN ?
             new Pose(0, 0, 0) :
-            createPose(
-                config.side.sign * 7,
-                config.alliance.sign * 3 * TILE_WIDTH,
-                config.alliance.sign * toRadians(-90),
-                Axial.BACK
-            );
+                config.side == Side.NORTH ?
+                    getStartNorthPose() :
+                    getStartSouthPose();
     }
 
-    public Pose getClosestArtifactPose() {
-        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    protected Pose getStartNorthPose() {
+        return createPose(
+            2 * TILE_WIDTH,
+            config.alliance.sign * 2.75 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0) // TODO: Determine Heading
+        );
     }
 
-    public Pose getDepositNearPose() {
-        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    protected Pose getStartSouthPose() {
+        return createPose(
+            -3 * TILE_WIDTH,
+            config.alliance.sign * 0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0) // TODO: Determine Heading
+        );
     }
 
-    public Pose getDepositFarPose() {
-        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    public Pose getSpikeNearPose() {
+        return createPose(
+            -1.5 * TILE_WIDTH,
+            config.alliance.sign * 1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
     }
 
-    public Pose getDepositAlignPose() {
-        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    public Pose getSpikeMiddlePose() {
+        return createPose(
+            -0.5 * TILE_WIDTH,
+            config.alliance.sign * 1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
     }
 
-    public Pose getHumanPlayerZonePose() {
-        return createPose(0,0,0); // TODO: Update Pose w/ AJs
+    public Pose getSpikeFarPose() {
+        return createPose(
+            0.5 * TILE_WIDTH,
+            config.alliance.sign * 1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
     }
 
-    public Pose getMidLaunchPose() {
-        return createPose(0, 0, 0); // TODO: Update Pose w/ AJs
+    public Pose getLoadingZonePose() {
+        return createPose(
+            -2.5 * TILE_WIDTH,
+            config.alliance.sign * -2.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getLaunchNearPose() {
+        return createPose(
+            0.5 * TILE_WIDTH,
+            config.alliance.sign * 0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 45)
+        );
+    }
+
+    public Pose getLaunchFarPose() {
+        return createPose(
+            -2.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 30)
+        );
+    }
+
+    public Pose getLaunchAlignPose() {
+        // TODO: Calculate from current pose ... OR ...
+        // TODO: Vision based close-loop on target.
+        return createPose(0, 0, 0);
+    }
+
+    public Pose getGatePose() {
+        return createPose(
+            0 * TILE_WIDTH,
+            config.alliance.sign * 2 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -90)
+        );
+    }
+
+    public Pose getBasePose() {
+        return createPose(
+            -2 * TILE_WIDTH,
+            config.alliance.sign * -1.4 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 180)
+        );
     }
 
     public enum Axial {
@@ -86,94 +144,14 @@ public class NavSubsystem {
         }
     }
 
-    public Pose getLaunchNearPose(Pose offset) {
-        return createPose(
-                0.5 * TILE_WIDTH,
-                config.alliance.sign * -0.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * -45) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
+    public Pose createPose(Pose pose, Axial axial) {
+        return createPose(pose, axial, Lateral.CENTER);
     }
 
-    public Pose getLaunchFarPose(Pose offset) {
-        return createPose(
-                -2 * TILE_WIDTH,
-                config.alliance.sign * 1 * TILE_WIDTH,
-                toRadians(config.alliance.sign * -30) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
+    public Pose createPose(Pose pose, Lateral lateral) {
+        return createPose(pose, Axial.CENTER, lateral);
     }
 
-    public Pose getSpikeNearPose(Pose offset) {
-        return createPose(
-                -2 * TILE_WIDTH,
-                config.alliance.sign * 1.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 90) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
-    }
-
-    public Pose getSpikeMiddlePose(Pose offset) {
-        return createPose(
-                -1 * TILE_WIDTH,
-                config.alliance.sign * 1.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 90) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
-    }
-
-    public Pose getSpikeFarPose(Pose offset) {
-        return createPose(
-                1 * TILE_WIDTH,
-                config.alliance.sign * 1.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 90) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
-    }
-
-    public Pose getLoadingPose(Pose offset) {
-        return createPose(
-                -2.5 * TILE_WIDTH,
-                config.alliance.sign * 2.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 90) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
-    }
-
-    public Pose getGatePose(Pose offset) {
-        return createPose(
-                0 * TILE_WIDTH,
-                config.alliance.sign * -2 * TILE_WIDTH,
-                toRadians(config.alliance.sign * -90) + offset.heading,
-                Axial.CENTER, Lateral.CENTER
-        );
-    }
-
-    public Pose getBasePose(Pose offset) {
-        return createPose(
-                -2 * TILE_WIDTH,
-                config.alliance.sign * 2 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 180) + offset.heading,
-                Axial.FRONT, Lateral.LEFT
-        );
-    }
-
-    public Pose getParkingNorthPose(Pose offset) {
-        return createPose(
-                2 * TILE_WIDTH,
-                config.alliance.sign * 3 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 0) + offset.heading,
-                Axial.FRONT, Lateral.CENTER
-        );
-    }
-    public Pose getParkingSouthPose(Pose offset) {
-        return createPose(
-                -3 * TILE_WIDTH,
-                config.alliance.sign * -1/2 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 0) + offset.heading,
-                Axial.BACK, Lateral.CENTER
-        );
-    }
     public Pose createPose(Pose pose, Axial axial, Lateral lateral) {
         return createPose(pose.x, pose.y, pose.heading, axial, lateral);
     }

@@ -48,38 +48,32 @@ public class DriveCommandsTests extends TestHarness {
     }
 
     @Test
-    public void testToMidLaunch() {
-        drive.toMidLaunch().initialize();
-        verify(Subsystems.nav, times(1)).getMidLaunchPose();
-    }
-
-    @Test
     public void testToClosestArtifact() {
         drive.toClosestArtifact().initialize();
-        verify(Subsystems.nav, times(1)).getClosestArtifactPose();
+        // TODO: Add verification
     }
 
     @Test
-    public void testToDepositNear() {
-        drive.toDepositNear().initialize();
-        verify(Subsystems.nav, times(1)).getDepositNearPose();
+    public void testToLaunchNear() {
+        drive.toLaunchNear().initialize();
+        verify(Subsystems.nav, times(1)).getLaunchNearPose();
     }
 
     @Test
-    public void testToDepositFar() {
-        drive.toDepositFar().initialize();
-        verify(Subsystems.nav, times(1)).getDepositFarPose();
+    public void testToLaunchFar() {
+        drive.toLaunchFar().initialize();
+        verify(Subsystems.nav, times(1)).getLaunchFarPose();
     }
 
     @Test
-    public void testToDepositAlign() {
-        drive.toDepositAlign().initialize();
-        verify(Subsystems.nav, times(1)).getDepositAlignPose();
+    public void testToLaunchAlign() {
+        drive.toLaunchAlign().initialize();
+        verify(Subsystems.nav, times(1)).getLaunchAlignPose();
     }
 
     @Test
-    public void testToHumanPlayerZone() {
-        drive.toHumanPlayerZone().initialize();
-        verify(Subsystems.nav, times(1)).getHumanPlayerZonePose();
+    public void testToLoadingZone() {
+        drive.toLoadingZone().initialize();
+        verify(Subsystems.nav, times(1)).getLoadingZonePose();
     }
 }
