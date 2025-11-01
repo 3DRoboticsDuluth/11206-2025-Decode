@@ -41,6 +41,13 @@ public class FlywheelSubsystem extends HardwareSubsystem {
         VEL = 0;
     }
 
+    public void reverse() {
+        VEL = -0.5;
+    }
+
+    public static final double TARGET_VELOCITY = 1500;
+    public static final double VELOCITY_TOLERANCE = 50;
+
     private void configure(MotorEx motor, boolean inverted) {
         motor.motor.setZeroPowerBehavior(FLOAT);
         motor.motor.setDirection(inverted ? REVERSE : FORWARD);
@@ -53,5 +60,13 @@ public class FlywheelSubsystem extends HardwareSubsystem {
         motor.motorEx.setPIDFCoefficients(RUN_USING_ENCODER, PIDF);
         motor.motor.setPower(VEL);
         motor.addTelemetry(TEL);
+    }
+
+    public boolean isAtTargetVelocity() {
+        double currentLeftVelocity = motorLeft.getVelocity();
+        double currentRightVelocity = motorRight.getVelocity();
+
+        return Math.abs(currentLeftVelocity - TARGET_VELOCITY) < VELOCITY_TOLERANCE &&
+               Math.abs(currentRightVelocity - TARGET_VELOCITY) < VELOCITY_TOLERANCE;
     }
 }

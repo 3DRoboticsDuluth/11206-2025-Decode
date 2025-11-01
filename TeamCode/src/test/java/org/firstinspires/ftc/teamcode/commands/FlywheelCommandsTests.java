@@ -26,4 +26,10 @@ public class FlywheelCommandsTests extends TestHarness {
         flywheel.stop().initialize();
         verify(Subsystems.flywheel, times(1)).stop();
     }
+
+    @Test
+    public void testReverse() {
+        flywheel.reverse().initialize();
+        verify(Subsystems.flywheel, times(1)).reverse();
+    }
 }
