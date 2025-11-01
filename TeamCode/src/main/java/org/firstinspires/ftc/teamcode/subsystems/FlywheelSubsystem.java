@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 public class FlywheelSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static PIDFCoefficients PIDF = new PIDFCoefficients(10, 3, 0, 0);
-    public static double VEL = 0;
+    public static double VEL = 0.75;
 
     public MotorEx motorLeft;
     public MotorEx motorRight;
