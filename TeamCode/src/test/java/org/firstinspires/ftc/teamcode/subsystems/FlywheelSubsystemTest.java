@@ -31,7 +31,7 @@ public class FlywheelSubsystemTest extends  TestHarness {
     public void testStart() {
         FlywheelSubsystem.VEL = 0;
         flywheel.start();
-        assert FlywheelSubsystem.VEL == 0.5;
+        assert FlywheelSubsystem.VEL == 0.75;
     }
 
     @Test

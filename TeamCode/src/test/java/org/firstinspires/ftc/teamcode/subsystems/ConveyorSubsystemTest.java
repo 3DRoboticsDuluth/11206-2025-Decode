@@ -22,14 +22,14 @@ public class ConveyorSubsystemTest extends  TestHarness {
     public void testForward() {
         ConveyorSubsystem.VEL = 0;
         conveyor.forward();
-        assert ConveyorSubsystem.VEL == 0.5;
+        assert ConveyorSubsystem.VEL == 1;
     }
 
     @Test
     public void testReverse() {
         ConveyorSubsystem.VEL = 0;
         conveyor.reverse();
-        assert ConveyorSubsystem.VEL == -0.25;
+        assert ConveyorSubsystem.VEL == -1;
     }
 
     @Test
