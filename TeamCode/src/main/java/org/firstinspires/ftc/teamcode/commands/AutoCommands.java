@@ -27,7 +27,7 @@ public class AutoCommands {
     public Command prepareDeposit() {
         return new SelectCommand(
             () -> gate.close().alongWith(
-                flywheel.start(),
+                flywheel.forward(),
                 flywheel.isReady()
             )
         );

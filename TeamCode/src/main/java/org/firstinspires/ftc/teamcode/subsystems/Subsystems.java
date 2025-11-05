@@ -6,6 +6,7 @@ public class Subsystems {
     public static DriveSubsystem drive;
     public static IntakeSubsystem intake;
     public static ConveyorSubsystem conveyor;
+    public static SortingSubsystem sorting;
     public static GateSubsystem gate;
     public static DeflectorSubsystem deflector;
     public static FlywheelSubsystem flywheel;
@@ -19,6 +20,7 @@ public class Subsystems {
         drive = new DriveSubsystem();
         intake = new IntakeSubsystem();
         conveyor = new ConveyorSubsystem();
+        sorting = new SortingSubsystem();
         gate = new GateSubsystem();
         deflector = new DeflectorSubsystem();
         flywheel = new FlywheelSubsystem();

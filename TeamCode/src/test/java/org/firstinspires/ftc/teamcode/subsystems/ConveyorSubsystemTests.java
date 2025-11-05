@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.FWD;
+import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.REV;
+import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.STOP;
+import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.VEL;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.conveyor;
 import static org.mockito.Mockito.verify;
 
@@ -8,7 +12,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-public class ConveyorSubsystemTests extends  TestHarness {
+public class ConveyorSubsystemTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();
@@ -19,32 +23,30 @@ public class ConveyorSubsystemTests extends  TestHarness {
     }
 
     @Test
+    public void testPeriodic() {
+        VEL = FWD;
+        conveyor.periodic();
+        verify(conveyor.motor).setVelocityPercentage(VEL);
+    }
+
+    @Test
     public void testForward() {
-        ConveyorSubsystem.VEL = 0;
+        VEL = STOP;
         conveyor.forward();
-        assert ConveyorSubsystem.VEL == 1;
+        assert VEL == FWD;
     }
 
     @Test
     public void testReverse() {
-        ConveyorSubsystem.VEL = 0;
+        VEL = STOP;
         conveyor.reverse();
-        assert ConveyorSubsystem.VEL == -0.2;
+        assert VEL == REV;
     }
 
     @Test
     public void testStopped() {
-        ConveyorSubsystem.VEL = 1;
+        VEL = FWD;
         conveyor.stop();
-        assert ConveyorSubsystem.VEL == 0;
-    }
-
-    @Test
-    public void testPeriodic() {
-        ConveyorSubsystem.VEL = 1;
-        conveyor.periodic();
-        verify(conveyor.motor).setVelocityPercentage(
-            ConveyorSubsystem.VEL
-        );
+        assert VEL == STOP;
     }
 }

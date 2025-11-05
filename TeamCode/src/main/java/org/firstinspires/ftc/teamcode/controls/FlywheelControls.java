@@ -13,10 +13,10 @@ import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 
 import com.seattlesolvers.solverslib.command.button.Trigger;
 
-public class FlywheelControl {
+public class FlywheelControls {
     private static final double TRIGGER_THRESHOLD = 0.5;
 
-    public FlywheelControl() {
+    public FlywheelControls() {
         new Trigger(() -> gamepad2.getTrigger(RIGHT_TRIGGER) > TRIGGER_THRESHOLD
             || gamepad2.getTrigger(LEFT_TRIGGER) > TRIGGER_THRESHOLD)
             .whileActiveOnce(flywheel.forward())

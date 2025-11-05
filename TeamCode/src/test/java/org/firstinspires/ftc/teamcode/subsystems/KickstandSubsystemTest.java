@@ -1,42 +1,45 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.KickstandSubsystem.DISENGAGE;
+import static org.firstinspires.ftc.teamcode.subsystems.KickstandSubsystem.ENGAGE;
+import static org.firstinspires.ftc.teamcode.subsystems.KickstandSubsystem.POS;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.kickstand;
 import static org.mockito.Mockito.verify;
 
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.TestHarness;
+import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 public class KickstandSubsystemTest extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();
         kickstand = new KickstandSubsystem() {{
+            errors = new ArrayList<>();
             servo = mockDevice(Servo.class);
         }};
     }
 
     @Test
     public void testPeriodic() {
-        KickstandSubsystem.POS = 1;
+        POS = ENGAGE;
         kickstand.periodic();
-        verify(kickstand.servo).setPosition(
-            KickstandSubsystem.POS
-        );
+        verify(kickstand.servo).setPosition(POS);
     }
 
     @Test
     public void testEngage() {
-        KickstandSubsystem.POS = KickstandSubsystem.DISENGAGE;
+        POS = DISENGAGE;
         kickstand.engage();
-        assert KickstandSubsystem.POS == KickstandSubsystem.ENGAGE;
+        assert POS == ENGAGE;
     }
 
     @Test
     public void testDisengage() {
-        KickstandSubsystem.POS = KickstandSubsystem.ENGAGE;
+        POS = ENGAGE;
         kickstand.disengage();
-        assert KickstandSubsystem.POS == KickstandSubsystem.DISENGAGE;
+        assert POS == DISENGAGE;
     }
 }

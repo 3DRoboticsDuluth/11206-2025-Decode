@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem.FWD;
+import static org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem.REV;
+import static org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem.STOP;
+import static org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem.THRESH;
+import static org.firstinspires.ftc.teamcode.subsystems.FlywheelSubsystem.VEL;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.flywheel;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +14,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-public class FlywheelSubsystemTests extends  TestHarness {
+public class FlywheelSubsystemTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();
@@ -24,48 +27,41 @@ public class FlywheelSubsystemTests extends  TestHarness {
 
     @Test
     public void testPeriodic() {
-        FlywheelSubsystem.VEL = 1;
+        VEL = FWD;
         flywheel.periodic();
-        verify(flywheel.motorLeft.motor).setPower(FlywheelSubsystem.VEL);
-        verify(flywheel.motorRight.motor).setPower(FlywheelSubsystem.VEL);
+        verify(flywheel.motorLeft.motor).setPower(VEL);
+        verify(flywheel.motorRight.motor).setPower(VEL);
     }
 
     @Test
-    public void testStart() {
-        FlywheelSubsystem.VEL = 0;
-        flywheel.start();
-        assert FlywheelSubsystem.VEL == 0.75;
-    }
-
-    @Test
-    public void testStop() {
-        FlywheelSubsystem.VEL = 1;
-        flywheel.stop();
-        assert FlywheelSubsystem.VEL == 0;
-    }
-
-    @Test
-    public void testStopped() {
-        FlywheelSubsystem.VEL = 1;
-        flywheel.stop();
-        assert FlywheelSubsystem.VEL == 0;
+    public void testForward() {
+        VEL = STOP;
+        flywheel.forward();
+        assert VEL == FWD;
     }
 
     @Test
     public void testReverse() {
-        FlywheelSubsystem.VEL = 1;
+        VEL = FWD;
         flywheel.reverse();
-        assert FlywheelSubsystem.VEL == -0.5;
+        assert VEL == REV;
+    }
+
+    @Test
+    public void testStop() {
+        VEL = FWD;
+        flywheel.stop();
+        assert VEL == STOP;
     }
 
     @Test
     public void testIsReady() {
-        FlywheelSubsystem.VEL = 1;
-        when(flywheel.motorLeft.getVelocityPercentage()).thenReturn(0.5);
-        when(flywheel.motorRight.getVelocityPercentage()).thenReturn(0.5);
+        VEL = FWD;
+        when(flywheel.motorLeft.getVelocityPercentage()).thenReturn(FWD * THRESH / 2);
+        when(flywheel.motorRight.getVelocityPercentage()).thenReturn(FWD * THRESH / 2);
         assert !flywheel.isReady();
-        when(flywheel.motorLeft.getVelocityPercentage()).thenReturn(0.99);
-        when(flywheel.motorRight.getVelocityPercentage()).thenReturn(0.99);
+        when(flywheel.motorLeft.getVelocityPercentage()).thenReturn(FWD * THRESH);
+        when(flywheel.motorRight.getVelocityPercentage()).thenReturn(FWD * THRESH);
         assert flywheel.isReady();
     }
 }

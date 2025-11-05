@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+/** @noinspection unused*/
 public class HardwareSubsystem extends SubsystemBase {
     ArrayList<String> errors = new ArrayList<>();
 

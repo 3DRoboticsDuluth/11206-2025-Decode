@@ -8,11 +8,11 @@ import static org.mockito.Mockito.verify;
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.junit.Test;
 
-public class FlywheelControlTests extends TestHarness {
+public class FlywheelControlsTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();
-        new FlywheelControl();
+        new FlywheelControls();
     }
 
     @Test

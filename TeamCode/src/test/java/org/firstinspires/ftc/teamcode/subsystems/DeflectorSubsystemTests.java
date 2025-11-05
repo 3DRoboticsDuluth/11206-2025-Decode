@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.INC;
+import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.MAX;
+import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.MID;
+import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.MIN;
+import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.POS;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.deflector;
 import static org.mockito.Mockito.verify;
 
@@ -7,44 +12,43 @@ import org.firstinspires.ftc.teamcode.TestHarness;
 import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 public class DeflectorSubsystemTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();
         deflector = new DeflectorSubsystem() {{
+            errors = new ArrayList<>();
             servo = mockDevice(Servo.class);
         }};
     }
 
     @Test
     public void testPeriodic() {
-        DeflectorSubsystem.POS = 1;
+        POS = MAX;
         deflector.periodic();
-        verify(deflector.servo).setPosition(
-            DeflectorSubsystem.POS
-        );
+        verify(deflector.servo).setPosition(POS);
     }
 
     @Test
     public void testUp() {
-        double startPos = 0.5;
-        DeflectorSubsystem.POS = startPos;
+        POS = MID;
         deflector.up();
-        assert DeflectorSubsystem.POS == startPos + DeflectorSubsystem.INC;
+        assert POS == MID + INC;
     }
 
     @Test
     public void testDown() {
-        double startPos = 0.5;
-        DeflectorSubsystem.POS = startPos;
+        POS = MID;
         deflector.down();
-        assert DeflectorSubsystem.POS == startPos - DeflectorSubsystem.INC;
+        assert POS == MID - INC;
     }
 
     @Test
     public void testCompensate() {
-        DeflectorSubsystem.POS = 0;
+        POS = MIN;
         deflector.compensate();
-        assert DeflectorSubsystem.POS == DeflectorSubsystem.MID;
+        assert POS == MID;
     }
 }

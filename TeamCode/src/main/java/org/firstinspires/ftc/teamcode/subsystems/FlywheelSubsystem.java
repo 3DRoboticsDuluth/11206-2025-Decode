@@ -14,10 +14,13 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 @Configurable
 public class FlywheelSubsystem extends HardwareSubsystem {
-    public static boolean TEL = false;
     public static PIDFCoefficients PIDF = new PIDFCoefficients(10, 3, 0, 0);
-    public static double VEL = 0;
-    public static double VEL_THRESH = 0.95;
+    public static double FWD = 0.75;
+    public static double REV = -0.5;
+    public static double STOP = 0;
+    public static double THRESH = 0.95;
+    public static double VEL = STOP;
+    public static boolean TEL = false;
 
     public MotorEx motorLeft;
     public MotorEx motorRight;
@@ -25,30 +28,31 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public FlywheelSubsystem() {
         motorLeft = getMotor("flywheelLeft", BARE, m -> configure(m, true));
         motorRight = getMotor("flywheelRight", BARE, m -> configure(m, false));
+        VEL = STOP;
     }
 
     @Override
     public void periodic() {
         if (unready()) return;
-        set(motorLeft, "flywheelLeft");
-        set(motorRight, "flywheelRight");
+        set(motorLeft);
+        set(motorRight);
     }
 
-    public void start() {
-        VEL = 0.75;
+    public void forward() {
+        VEL = FWD;
     }
 
     public void stop() {
-        VEL = 0;
+        VEL = STOP;
     }
 
     public void reverse() {
-        VEL = -0.5;
+        VEL = REV;
     }
 
     public boolean isReady() {
-        return motorLeft.getVelocityPercentage() >= VEL * VEL_THRESH &&
-            motorRight.getVelocityPercentage() >= VEL * VEL_THRESH;
+        return motorLeft.getVelocityPercentage() >= VEL * THRESH &&
+            motorRight.getVelocityPercentage() >= VEL * THRESH;
     }
 
     private void configure(MotorEx motor, boolean inverted) {
@@ -58,7 +62,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
         motor.motor.setMode(RUN_USING_ENCODER);
     }
 
-    private void set(MotorEx motor, String name) {
+    private void set(MotorEx motor) {
         motor.motorEx.setPIDFCoefficients(RUN_USING_ENCODER, PIDF);
         motor.motor.setPower(VEL);
         motor.addTelemetry(TEL);

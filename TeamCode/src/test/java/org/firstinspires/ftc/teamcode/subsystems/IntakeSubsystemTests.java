@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.FWD;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.REV;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.STOP;
+import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.VEL;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
 import static org.mockito.Mockito.verify;
 
@@ -8,7 +12,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-public class IntakeSubsystemTests extends  TestHarness {
+public class IntakeSubsystemTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();
@@ -19,32 +23,30 @@ public class IntakeSubsystemTests extends  TestHarness {
     }
 
     @Test
+    public void testPeriodic() {
+        VEL = FWD;
+        intake.periodic();
+        verify(intake.motor).setVelocityPercentage(VEL);
+    }
+
+    @Test
     public void testForward() {
-        IntakeSubsystem.VEL = 0;
+        VEL = STOP;
         intake.forward();
-        assert IntakeSubsystem.VEL == 0.25;
+        assert VEL == FWD;
     }
 
     @Test
     public void testReverse() {
-        IntakeSubsystem.VEL = 0;
+        VEL = STOP;
         intake.reverse();
-        assert IntakeSubsystem.VEL == -0.25;
+        assert VEL == REV;
     }
 
     @Test
-    public void testStopped() {
-        IntakeSubsystem.VEL = 1;
+    public void testStop() {
+        VEL = FWD;
         intake.stop();
-        assert IntakeSubsystem.VEL == 0;
-    }
-
-    @Test
-    public void testPeriodic() {
-        IntakeSubsystem.VEL = 1;
-        intake.periodic();
-        verify(intake.motor).setVelocityPercentage(
-            IntakeSubsystem.VEL
-        );
+        assert VEL == STOP;
     }
 }

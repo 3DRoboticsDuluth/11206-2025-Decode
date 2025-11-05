@@ -36,7 +36,7 @@ public class AutoCommandsTests extends TestHarness {
     public void testPrepareDeposit() {
         auto.prepareDeposit().initialize();
         verify(gate).close();
-        verify(flywheel).start();
+        verify(flywheel).forward();
         verify(flywheel).isReady();
     }
 

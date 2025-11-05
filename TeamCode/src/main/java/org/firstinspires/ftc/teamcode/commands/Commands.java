@@ -6,6 +6,7 @@ public class Commands {
     public static DriveCommands drive;
     public static IntakeCommands intake;
     public static ConveyorCommands conveyor;
+    public static SortingCommands sorting;
     public static GateCommands gate;
     public static DeflectorCommands deflector;
     public static FlywheelCommands flywheel;
@@ -19,6 +20,7 @@ public class Commands {
         drive = new DriveCommands();
         intake = new IntakeCommands();
         conveyor = new ConveyorCommands();
+        sorting = new SortingCommands();
         gate = new GateCommands();
         deflector = new DeflectorCommands();
         flywheel = new FlywheelCommands();
