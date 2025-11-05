@@ -1,14 +1,8 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
-import static org.firstinspires.ftc.teamcode.commands.Commands.config;
-import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
-import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.NEXT;
-import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.PREV;
 import static org.mockito.Mockito.verify;
-
-import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.junit.Test;

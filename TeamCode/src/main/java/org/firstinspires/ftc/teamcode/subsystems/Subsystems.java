@@ -10,6 +10,7 @@ public class Subsystems {
     public static DeflectorSubsystem deflector;
     public static FlywheelSubsystem flywheel;
     public static VisionSubsystem vision;
+    public static KickstandSubsystem kickstand;
     public static TimingSubsystem timing;
 
     public static void initialize() {
@@ -22,6 +23,7 @@ public class Subsystems {
         deflector = new DeflectorSubsystem();
         flywheel = new FlywheelSubsystem();
         vision = new VisionSubsystem();
+        kickstand = new KickstandSubsystem();
         timing = new TimingSubsystem();
     }
 }

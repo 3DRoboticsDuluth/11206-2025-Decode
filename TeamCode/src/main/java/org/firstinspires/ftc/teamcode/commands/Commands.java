@@ -10,6 +10,7 @@ public class Commands {
     public static DeflectorCommands deflector;
     public static FlywheelCommands flywheel;
     public static VisionCommands vision;
+    public static KickstandCommands kickstand;
     public static AutoCommands auto;
 
     public static void initialize() {
@@ -22,6 +23,7 @@ public class Commands {
         deflector = new DeflectorCommands();
         flywheel = new FlywheelCommands();
         vision = new VisionCommands();
+        kickstand = new KickstandCommands();
         auto = new AutoCommands();
     }
 }

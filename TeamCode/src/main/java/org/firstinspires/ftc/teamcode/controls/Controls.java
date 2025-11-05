@@ -9,9 +9,10 @@ public class Controls {
         new ConfigControl();
         new DriveControl();
         new IntakeControl();
+        new GateControl();
         new DeflectorControl();
         new FlywheelControl();
+        new KickstandControl();
         new AutoControl();
-        new GateControl();
     }
 }
