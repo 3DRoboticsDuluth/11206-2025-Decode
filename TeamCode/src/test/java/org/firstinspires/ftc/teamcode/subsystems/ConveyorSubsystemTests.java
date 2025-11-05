@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-public class ConveyorSubsystemTest extends  TestHarness {
+public class ConveyorSubsystemTests extends  TestHarness {
     @Override
     public void setUp() {
         super.setUp();

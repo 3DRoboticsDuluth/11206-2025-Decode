@@ -62,7 +62,7 @@ public class NavSubsystem {
     }
 
     public Pose getMidLaunchPose() {
-        return createPose(0, 0, 0); // TODO: Update values
+        return createPose(0, 0, 0); // TODO: Update Pose w/ AJs
     }
 
     public enum Axial {

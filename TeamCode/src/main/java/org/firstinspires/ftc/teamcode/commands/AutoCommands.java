@@ -15,8 +15,7 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 
 public class AutoCommands {
     public Command execute() {
-        return auto.delayStart().andThen(
-        );
+        return auto.delayStart();
     }
     
     public Command delayStart() {
@@ -29,7 +28,7 @@ public class AutoCommands {
         return new SelectCommand(
             () -> gate.close().alongWith(
                 flywheel.start(),
-                flywheel.forFlyWheelReady()
+                flywheel.isReady()
             )
         );
     }
@@ -39,7 +38,7 @@ public class AutoCommands {
             () -> intake.forward().andThen(
                 conveyor.forward(),
                 gate.open(),
-                deflector.compensateForDropOff()
+                deflector.compensate()
             )
         );
     }
@@ -72,11 +71,10 @@ public class AutoCommands {
 
     public Command depositNear() {
         return new SelectCommand(
-                () -> drive.toDepositNear().alongWith( 
-                        prepareDeposit()
-                .andThen(
-                    deposit()
-                )
+            () -> drive.toDepositNear().alongWith(
+                auto.prepareDeposit()
+            ).andThen(
+                auto.deposit()
             )
         );
     }
@@ -86,7 +84,7 @@ public class AutoCommands {
             () -> drive.toDepositFar().alongWith(
                 prepareDeposit()
             ).andThen(
-                deposit()
+                auto.deposit()
             )
         );
     }
@@ -94,9 +92,9 @@ public class AutoCommands {
     public Command depositFromPose() {
         return new SelectCommand(
             () -> drive.toDepositAlign().alongWith(
-                prepareDeposit()
+                auto.prepareDeposit()
             ).andThen(
-                deposit()
+                auto.deposit()
             )
         );
     }

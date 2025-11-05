@@ -19,32 +19,32 @@ public class ConfigControlTests extends TestHarness {
     @Test
     public void testBackButtonActivatesEditableMode() {
         input(() -> gamepad1.gamepad.back = true);
-        verify(config).setEditable(true);
+        verify(config.setEditable(true)).schedule(true);
         input(() -> gamepad1.gamepad.back = false);
-        verify(config).setEditable(false);
+        verify(config.setEditable(false)).schedule(true);
     }
     
     @Test
     public void testDpadUpChangesItemPrev() {
         input(() -> gamepad1.gamepad.dpad_up = true);
-        verify(config).changeItem(PREV);
+        verify(config.changeItem(PREV)).schedule(true);
     }
     
     @Test
     public void testDpadDownChangesItemNext() {
         input(() -> gamepad1.gamepad.dpad_down = true);
-        verify(config).changeItem(NEXT);
+        verify(config.changeItem(NEXT)).schedule(true);
     }
     
     @Test
     public void testDpadLeftChangesValuePrev() {
         input(() -> gamepad1.gamepad.dpad_left = true);
-        verify(config).changeValue(PREV);
+        verify(config.changeValue(PREV)).schedule(true);
     }
     
     @Test
     public void testDpadRightChangesValueNext() {
         input(() -> gamepad1.gamepad.dpad_right = true);
-        verify(config).changeValue(NEXT);
+        verify(config.changeValue(NEXT)).schedule(true);
     }
 }

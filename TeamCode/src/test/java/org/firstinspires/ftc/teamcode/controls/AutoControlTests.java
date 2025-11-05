@@ -24,69 +24,53 @@ public class AutoControlTests extends TestHarness {
     public void testAAndDpadUpIntakesArtifact() {
         input(() -> gamepad1.gamepad.a = true);
         input(() -> gamepad1.gamepad.dpad_up = true);
-        verify(auto).intakeArtifact();
+        verify(auto.intakeArtifact()).schedule(true);
     }
     
     @Test
     public void testAAndDpadDownSpitArtifact() {
         input(() -> gamepad1.gamepad.a = true);
         input(() -> gamepad1.gamepad.dpad_down = true);
-        verify(auto).spitArtifact();
+        verify(auto.spitArtifact()).schedule(true);
     }
     
     @Test
     public void testAAndDpadLeftAndRightDoesAutoArtifact() {
         input(() -> gamepad1.gamepad.dpad_left = true);
         input(() -> gamepad1.gamepad.a = true);
-        verify(auto).autoArtifact();
-
+        verify(auto.autoArtifact()).schedule(true);
         input(() -> gamepad1.gamepad.dpad_right = true);
         input(() -> gamepad1.gamepad.a = true);
-        verify(auto).autoArtifact();
+        verify(auto.autoArtifact()).schedule(true);
     }
     
     @Test
     public void testBAndDpadUpDepositsNear() {
         input(() -> gamepad1.gamepad.dpad_up = true);
         input(() -> gamepad1.gamepad.b = true);
-        verify(auto).depositNear();
+        verify(auto.depositNear()).schedule(true);
     }
     
     @Test
     public void testBAndDpadDownDepositsFar() {
         input(() -> gamepad1.gamepad.dpad_down = true);
         input(() -> gamepad1.gamepad.b = true);
-        verify(auto).depositFar();
+        verify(auto.depositFar()).schedule(true);
     }
 
     @Test
     public void testBAndDpadLeftOrDpadRightDeposits() {
         input(() -> gamepad1.gamepad.dpad_right = true);
         input(() -> gamepad1.gamepad.b = true);
-        verify(auto).depositFromPose();
-
+        verify(auto.depositFromPose()).schedule(true);
         input(() -> gamepad1.gamepad.dpad_left = true);
         input(() -> gamepad1.gamepad.b = true);
-        verify(auto).depositFromPose();
+        verify(auto.depositFromPose()).schedule(true);
     }
 
     @Test
     public void testYHumanPlayerZone() {
         input(() -> gamepad1.gamepad.y = true);
-        verify(auto).humanPlayerZone();
-    }
-
-    @Test
-    public void testXAndDpadUpOpensGate() {
-        input(() -> gamepad1.gamepad.dpad_up = true);
-        input(() -> gamepad1.gamepad.x = true);
-        verify(gate).gateOpen();
-    }
-
-    @Test
-    public void testXAndDpadDownClosesGate() {
-        input(() -> gamepad1.gamepad.dpad_down = true);
-        input(() -> gamepad1.gamepad.x = true);
-        verify(gate).gateClose();
+        verify(auto.humanPlayerZone()).schedule(true);
     }
 }

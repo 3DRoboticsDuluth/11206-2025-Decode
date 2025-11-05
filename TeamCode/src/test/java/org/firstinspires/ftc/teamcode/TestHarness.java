@@ -23,6 +23,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.telemetry.SampledTelemetry;
+import org.firstinspires.ftc.teamcode.commands.AutoCommands;
 import org.firstinspires.ftc.teamcode.commands.Commands;
 import org.firstinspires.ftc.teamcode.commands.ConfigCommands;
 import org.firstinspires.ftc.teamcode.commands.ConveyorCommands;
@@ -93,6 +94,7 @@ public class TestHarness {
         Commands.deflector = mock(DeflectorCommands.class, RETURNS_DEEP_STUBS);
         Commands.flywheel = mock(FlywheelCommands.class, RETURNS_DEEP_STUBS);
         Commands.vision = mock(VisionCommands.class, RETURNS_DEEP_STUBS);
+        Commands.auto = mock(AutoCommands.class, RETURNS_DEEP_STUBS);
     }
 
     public void input(Runnable runnable) {

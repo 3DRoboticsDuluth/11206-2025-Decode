@@ -6,8 +6,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.flywheel;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
-import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
-
 public class FlywheelCommands {
     public Command start() {
         return complete(flywheel::start);
@@ -20,9 +18,11 @@ public class FlywheelCommands {
     public Command reverse() {
         return complete(flywheel::reverse);
     }
-    public Command forFlyWheelReady() {
-        return wait.until(flywheel::isAtTargetVelocity);
+
+    public Command isReady() {
+        return wait.until(flywheel::isReady);
     }
+
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable, flywheel);
     }

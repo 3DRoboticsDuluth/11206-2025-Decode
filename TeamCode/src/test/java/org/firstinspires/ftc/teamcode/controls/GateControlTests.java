@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import static org.mockito.Mockito.verify;
 
@@ -17,12 +18,14 @@ public class GateControlTests extends TestHarness {
     @Test
     public void testBackAndDpadUpOpensGate() {
         input(() -> gamepad2.gamepad.back = true);
-        verify(gate).open();
+        input(() -> gamepad2.gamepad.dpad_up = true);
+        verify(gate.open()).schedule(true);
     }
 
     @Test
     public void testBackAndDpadDownClosesGate() {
         input(() -> gamepad2.gamepad.back = true);
-        verify(gate).close();
+        input(() -> gamepad2.gamepad.dpad_down = true);
+        verify(gate.close()).schedule(true);
     }
 }

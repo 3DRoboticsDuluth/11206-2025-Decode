@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;

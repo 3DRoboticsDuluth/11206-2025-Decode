@@ -27,7 +27,8 @@ public class AutoControl {
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(A))
-            .and((gamepad1.getGamepadButton(DPAD_LEFT)).or(gamepad1.getGamepadButton(DPAD_RIGHT)))
+            .and((gamepad1.getGamepadButton(DPAD_LEFT))
+                .or(gamepad1.getGamepadButton(DPAD_RIGHT)))
             .whenActive(auto.autoArtifact());
 
         gamepad1.getGamepadButton(START).negate()
@@ -42,21 +43,12 @@ public class AutoControl {
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(B))
-            .and((gamepad1.getGamepadButton(DPAD_LEFT)).or(gamepad1.getGamepadButton(DPAD_RIGHT)))
+            .and((gamepad1.getGamepadButton(DPAD_LEFT))
+                .or(gamepad1.getGamepadButton(DPAD_RIGHT)))
             .whenActive(auto.depositFromPose());
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(Y))
             .whenActive(auto.humanPlayerZone());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(X))
-            .and(gamepad1.getGamepadButton(DPAD_UP))
-            .whenActive(gate.gateOpen());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(X))
-            .and(gamepad1.getGamepadButton(DPAD_DOWN))
-            .whenActive(gate.gateClose());
     }
 }

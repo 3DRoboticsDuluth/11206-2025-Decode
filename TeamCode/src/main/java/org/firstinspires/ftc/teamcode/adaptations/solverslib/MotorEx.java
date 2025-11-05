@@ -21,6 +21,10 @@ public class MotorEx extends com.seattlesolvers.solverslib.hardware.motors.Motor
         this.id = id;
     }
 
+    public double getVelocityPercentage() {
+        return super.getVelocity() / ACHIEVABLE_MAX_TICKS_PER_SECOND;
+    }
+
     public void setVelocityPercentage(double percentage) {
         super.setVelocity(percentage * ACHIEVABLE_MAX_TICKS_PER_SECOND);
     }

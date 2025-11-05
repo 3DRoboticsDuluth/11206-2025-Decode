@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 
-public class ConfigSubsystemTest extends TestHarness {
+public class ConfigSubsystemTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();

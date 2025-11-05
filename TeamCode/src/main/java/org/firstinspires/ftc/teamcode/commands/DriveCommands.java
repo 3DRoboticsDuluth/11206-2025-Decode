@@ -33,6 +33,16 @@ import java.util.function.DoubleSupplier;
 
 @SuppressWarnings({"unused"})
 public class DriveCommands {
+    public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
+        return new RunCommand(
+            () -> drive.inputs(
+                forward.getAsDouble(),
+                strafe.getAsDouble(),
+                turn.getAsDouble()
+            ), drive
+        );
+    }
+
     public Command setPowerLow() {
         return new InstantCommand(() -> DriveSubsystem.POWER = POWER_LOW);
     }
@@ -43,16 +53,6 @@ public class DriveCommands {
 
     public Command setPowerHigh() {
         return new InstantCommand(() -> DriveSubsystem.POWER = POWER_HIGH);
-    }
-
-    public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
-        return new RunCommand(
-            () -> drive.inputs(
-                forward.getAsDouble(),
-                strafe.getAsDouble(),
-                turn.getAsDouble()
-            ), drive
-        );
     }
 
     public Command toStart() {

@@ -23,7 +23,8 @@ public class ConveyorControl {
 
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(X))
-            .and((gamepad2.getGamepadButton(DPAD_LEFT)).or(gamepad2.getGamepadButton(DPAD_RIGHT)))
+            .and((gamepad2.getGamepadButton(DPAD_LEFT))
+                .or(gamepad2.getGamepadButton(DPAD_RIGHT)))
             .whenActive(conveyor.stop());
     }
 }

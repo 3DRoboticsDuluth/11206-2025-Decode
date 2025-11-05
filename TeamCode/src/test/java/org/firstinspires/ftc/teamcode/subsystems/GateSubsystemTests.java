@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.TestHarness;
 import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.junit.Test;
 
-public class GateSubsystemTest extends TestHarness {
+public class GateSubsystemTests extends TestHarness {
     @Override
     public void setUp() {
         super.setUp();

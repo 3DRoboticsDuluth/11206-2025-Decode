@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.controls;
 
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.B;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.BACK;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.X;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
-
 
 public class GateControl {
     public GateControl() {

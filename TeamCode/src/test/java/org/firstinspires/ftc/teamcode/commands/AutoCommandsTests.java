@@ -37,7 +37,7 @@ public class AutoCommandsTests extends TestHarness {
         auto.prepareDeposit().initialize();
         verify(gate).close();
         verify(flywheel).start();
-        verify(flywheel).forFlyWheelReady();
+        verify(flywheel).isReady();
     }
 
     @Test
@@ -46,7 +46,7 @@ public class AutoCommandsTests extends TestHarness {
         verify(intake).forward();
         verify(conveyor).forward();
         verify(gate).open();
-        verify(deflector).compensateForDropOff();
+        verify(deflector).compensate();
     }
 
     @Test

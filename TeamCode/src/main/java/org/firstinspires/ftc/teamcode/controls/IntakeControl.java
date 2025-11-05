@@ -23,7 +23,8 @@ public class IntakeControl {
 
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
-            .and((gamepad2.getGamepadButton(DPAD_LEFT)).or(gamepad2.getGamepadButton(DPAD_RIGHT)))
+            .and((gamepad2.getGamepadButton(DPAD_LEFT))
+                .or(gamepad2.getGamepadButton(DPAD_RIGHT)))
             .toggleWhenActive(intake.stop());
     }
 }

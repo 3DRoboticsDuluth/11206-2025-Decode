@@ -18,13 +18,13 @@ public class DeflectorControlTests extends TestHarness {
     public void testXAndDpadUpMoveConveyorForward() {
         input(() -> gamepad2.gamepad.y = true);
         input(() -> gamepad2.gamepad.dpad_up = true);
-        verify(deflector).up();
+        verify(deflector.up()).schedule(true);
     }
     
     @Test
     public void testAAndDpadDownSpitArtifact() {
         input(() -> gamepad2.gamepad.y = true);
         input(() -> gamepad2.gamepad.dpad_down = true);
-        verify(deflector).down();
+        verify(deflector.down()).schedule(true);
     }
 }

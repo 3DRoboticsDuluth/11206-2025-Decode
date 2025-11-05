@@ -14,7 +14,7 @@ public class DeflectorCommands {
         return complete(deflector::down);
     }
 
-    public Command compensateForDropOff() {
+    public Command compensate() {
         return complete(deflector::compensate);
     }
 

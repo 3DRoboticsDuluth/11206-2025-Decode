@@ -17,6 +17,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static PIDFCoefficients PIDF = new PIDFCoefficients(10, 3, 0, 0);
     public static double VEL = 0;
+    public static double VEL_THRESH = 0.95;
 
     public MotorEx motorLeft;
     public MotorEx motorRight;
@@ -45,28 +46,21 @@ public class FlywheelSubsystem extends HardwareSubsystem {
         VEL = -0.5;
     }
 
-    public static final double TARGET_VELOCITY = 1500;
-    public static final double VELOCITY_TOLERANCE = 50;
+    public boolean isReady() {
+        return motorLeft.getVelocityPercentage() >= VEL * VEL_THRESH &&
+            motorRight.getVelocityPercentage() >= VEL * VEL_THRESH;
+    }
 
     private void configure(MotorEx motor, boolean inverted) {
         motor.motor.setZeroPowerBehavior(FLOAT);
         motor.motor.setDirection(inverted ? REVERSE : FORWARD);
         motor.motor.setMode(STOP_AND_RESET_ENCODER);
         motor.motor.setMode(RUN_USING_ENCODER);
-
     }
 
     private void set(MotorEx motor, String name) {
         motor.motorEx.setPIDFCoefficients(RUN_USING_ENCODER, PIDF);
         motor.motor.setPower(VEL);
         motor.addTelemetry(TEL);
-    }
-
-    public boolean isAtTargetVelocity() {
-        double currentLeftVelocity = motorLeft.getVelocity();
-        double currentRightVelocity = motorRight.getVelocity();
-
-        return Math.abs(currentLeftVelocity - TARGET_VELOCITY) < VELOCITY_TOLERANCE &&
-               Math.abs(currentRightVelocity - TARGET_VELOCITY) < VELOCITY_TOLERANCE;
     }
 }

@@ -47,6 +47,16 @@ dependencies {
     implementation 'com.bylazar:fullpanels:1.0.8'
 
     // Unit Testing
-    implementation 'org.mockito:mockito-core:5.20.0'
-    implementation 'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.20.0'
+    testRuntimeOnly 'org.mockito:mockito-core:5.20.0'
+}
+
+tasks.withType(Test).configureEach {
+    doFirst {
+        def agent = classpath.files.find { it.name.contains('mockito-agent') }
+        if (agent) {
+            jvmArgs "-javaagent:${agent.absolutePath}"
+        }
+    }
 }
