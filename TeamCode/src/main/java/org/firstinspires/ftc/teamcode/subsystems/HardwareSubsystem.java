@@ -63,7 +63,7 @@ public class HardwareSubsystem extends SubsystemBase {
         });
     }
 
-    /** @noinspection unused, SameParameterValue */
+    /** @noinspection SameParameterValue */
     protected MotorEx getMotor(String id, Motor.GoBILDA type) {
         return getMotor(id, type, m -> {});
     }

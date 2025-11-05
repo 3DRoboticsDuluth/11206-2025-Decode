@@ -14,36 +14,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-        .mass(8)
-        .forwardZeroPowerAcceleration(-55.044)
-        .lateralZeroPowerAcceleration(-69.317);
+        .mass(10.25119);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
         .maxPower(1)
-//        .rightFrontMotorName("driveFrontRight")
-//        .rightRearMotorName("driveBackRight")
-//        .leftRearMotorName("driveBackLeft")
-//        .leftFrontMotorName("driveFrontLeft")
-        .rightFrontMotorName("driveBackRight")
-        .rightRearMotorName("driveFrontRight")
-        .leftRearMotorName("driveFrontLeft")
-        .leftFrontMotorName("driveBackLeft")
+        .leftFrontMotorName("driveFrontLeft")
+        .rightFrontMotorName("driveFrontRight")
+        .leftRearMotorName("driveBackLeft")
+        .rightRearMotorName("driveBackRight")
         .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
         .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
         .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-        .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-        .xVelocity(55.573)
-        .yVelocity(44.987);
+        .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-        .forwardPodY(-5.5)
-        .strafePodX(-0.55)
+        .forwardPodY(4.75)
+        .strafePodX(2.0625)
         .distanceUnit(DistanceUnit.INCH)
         .hardwareMapName("pinpoint")
         .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-        .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+        .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
         .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static Follower createFollower(HardwareMap hardwareMap) {

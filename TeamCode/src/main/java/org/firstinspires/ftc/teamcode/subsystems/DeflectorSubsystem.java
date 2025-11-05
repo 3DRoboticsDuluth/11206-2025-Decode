@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 
 @Configurable
 public class DeflectorSubsystem extends HardwareSubsystem {
-    public static double MIN = 0;
-    public static double MAX = 1;
+    public static double MIN = 0.49;
+    public static double MAX = 0.57;
     public static double MID = 0.5;
-    public static double INC = 0.1;
+    public static double INC = 0.0025;
     public static double POS = 0.5;
     public static boolean TEL = false;
 

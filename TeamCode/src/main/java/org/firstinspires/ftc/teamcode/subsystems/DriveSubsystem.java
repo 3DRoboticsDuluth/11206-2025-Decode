@@ -93,6 +93,8 @@ public class DriveSubsystem extends HardwareSubsystem {
             drawRobot(pose, style);
         }
 
+        telemetry.addData("Drive (Power)", () -> String.format("%.2f", POWER));
+        telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
 
