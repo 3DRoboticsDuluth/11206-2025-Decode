@@ -40,29 +40,46 @@ public class NavSubsystem {
 
     protected Pose getStartNorthPose() {
         return createPose(
-            2 * TILE_WIDTH,
-            config.alliance.sign * 2.75 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 0) // TODO: Determine Heading
+            3 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0),
+            Axial.FRONT
         );
     }
 
     protected Pose getStartSouthPose() {
         return createPose(
             -3 * TILE_WIDTH,
-            config.alliance.sign * 0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 0) // TODO: Determine Heading
+            config.alliance.sign * -1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0),
+            Axial.BACK
+        );
+    }
+    public Pose getSpike0() {
+        return createPose(
+                2.5 * TILE_WIDTH,
+                config.alliance.sign * 2.5 * TILE_WIDTH,
+                toRadians(config.alliance.sign * 90)
         );
     }
 
-    public Pose getSpikeNearPose() {
+    public Pose getSpike1() {
         return createPose(
-            -1.5 * TILE_WIDTH,
+            1.5 * TILE_WIDTH,
             config.alliance.sign * 1.5 * TILE_WIDTH,
             toRadians(config.alliance.sign * 90)
         );
     }
 
-    public Pose getSpikeMiddlePose() {
+    public Pose getSpike2() {
+        return createPose(
+            0.5 * TILE_WIDTH,
+            config.alliance.sign * 1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getSpike3() {
         return createPose(
             -0.5 * TILE_WIDTH,
             config.alliance.sign * 1.5 * TILE_WIDTH,
@@ -70,35 +87,19 @@ public class NavSubsystem {
         );
     }
 
-    public Pose getSpikeFarPose() {
-        return createPose(
-            0.5 * TILE_WIDTH,
-            config.alliance.sign * 1.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
-        );
-    }
-
-    public Pose getLoadingZonePose() {
-        return createPose(
-            -2.5 * TILE_WIDTH,
-            config.alliance.sign * -2.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
-        );
-    }
-
     public Pose getLaunchNearPose() {
         return createPose(
-            0.5 * TILE_WIDTH,
-            config.alliance.sign * 0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 45)
+            -0.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -135)
         );
     }
 
     public Pose getLaunchFarPose() {
         return createPose(
-            -2.5 * TILE_WIDTH,
+            2.5 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 30)
+            toRadians(config.alliance.sign * 160)
         );
     }
 
@@ -111,16 +112,16 @@ public class NavSubsystem {
     public Pose getGatePose() {
         return createPose(
             0 * TILE_WIDTH,
-            config.alliance.sign * 2 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -90)
+            config.alliance.sign * -2 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
         );
     }
 
     public Pose getBasePose() {
         return createPose(
-            -2 * TILE_WIDTH,
-            config.alliance.sign * -1.4 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 180)
+            2 * TILE_WIDTH,
+            config.alliance.sign * 1.4 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0)
         );
     }
 

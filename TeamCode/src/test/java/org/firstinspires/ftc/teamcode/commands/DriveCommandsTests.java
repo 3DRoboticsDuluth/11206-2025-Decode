@@ -74,6 +74,6 @@ public class DriveCommandsTests extends TestHarness {
     @Test
     public void testToLoadingZone() {
         drive.toLoadingZone().initialize();
-        verify(Subsystems.nav, times(1)).getLoadingZonePose();
+        verify(Subsystems.nav, times(1)).getSpike0();
     }
 }

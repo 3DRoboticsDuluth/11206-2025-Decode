@@ -68,7 +68,7 @@ public class DriveCommands {
     }
 
     public Command toLoadingZone() {
-        return to(nav.getLoadingZonePose(), true);
+        return to(nav.getSpike0(), true);
     }
 
     public Command toLaunchAlign() {

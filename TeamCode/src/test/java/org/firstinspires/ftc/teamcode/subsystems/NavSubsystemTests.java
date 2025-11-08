@@ -105,7 +105,7 @@ public class NavSubsystemTests extends  TestHarness {
             toRadians(config.alliance.sign * 90)
         );
 
-        Pose actual = nav.getLoadingZonePose();
+        Pose actual = nav.getSpike0();
 
         compare(expected, actual);
 
