@@ -6,6 +6,10 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
 public class ConveyorCommands {
+    public Command launch() {
+        return complete(conveyor::launch);
+    }
+
     public Command forward() {
         return complete(conveyor::forward);
     }

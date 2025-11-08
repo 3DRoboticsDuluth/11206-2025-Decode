@@ -33,21 +33,39 @@ public class AutoCommands {
         );
     }
 
-    public Command deposit() {
+    public Command depositStart() {
         return new SelectCommand(
-            () -> intake.forward().andThen(
-                conveyor.forward(),
-                gate.open(),
-                deflector.compensate()
+            () -> conveyor.launch()
+        );
+    }
+
+    public Command depositStop() {
+        return new SelectCommand(
+            () -> conveyor.stop().alongWith(
+                flywheel.stop()
             )
         );
     }
 
-    public Command intakeArtifact() {
+    public Command intakeStart() {
         return new SelectCommand(
             () -> intake.forward().alongWith(
                 conveyor.forward(),
-                gate.close()
+                gate.close(),
+                flywheel.stop()
+            )
+        );
+    }
+
+    public Command intakeStop() {
+        return new SelectCommand(
+            () -> conveyor.reverse().andThen(
+                wait.doherty(3),
+                conveyor.stop(),
+                intake.stop(),
+                gate.open(),
+                wait.doherty(2),
+                flywheel.forward()
             )
         );
     }
@@ -64,7 +82,7 @@ public class AutoCommands {
     public Command autoArtifact() {
         return new SelectCommand(
             () -> drive.toClosestArtifact().alongWith(
-                auto.intakeArtifact()
+                auto.intakeStart()
             )
         );
     }
@@ -74,7 +92,7 @@ public class AutoCommands {
             () -> drive.toLaunchNear().alongWith(
                 auto.prepareDeposit()
             ).andThen(
-                auto.deposit()
+                auto.depositStart()
             )
         );
     }
@@ -84,7 +102,7 @@ public class AutoCommands {
             () -> drive.toLaunchFar().alongWith(
                 prepareDeposit()
             ).andThen(
-                auto.deposit()
+                auto.depositStart()
             )
         );
     }
@@ -94,7 +112,7 @@ public class AutoCommands {
             () -> drive.toLaunchAlign().alongWith(
                 auto.prepareDeposit()
             ).andThen(
-                auto.deposit()
+                auto.depositStart()
             )
         );
     }

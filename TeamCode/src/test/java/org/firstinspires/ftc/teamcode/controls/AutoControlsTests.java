@@ -18,7 +18,7 @@ public class AutoControlsTests extends TestHarness {
     public void testAAndDpadUpIntakesArtifact() {
         input(() -> gamepad1.gamepad.a = true);
         input(() -> gamepad1.gamepad.dpad_up = true);
-        verify(auto.intakeArtifact()).schedule(true);
+        verify(auto.intakeStart()).schedule(true);
     }
     
     @Test

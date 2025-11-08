@@ -42,7 +42,7 @@ public class AutoCommandsTests extends TestHarness {
 
     @Test
     public void testDeposit() {
-        auto.deposit().initialize();
+        auto.depositStart().initialize();
         verify(intake).forward();
         verify(conveyor).forward();
         verify(gate).open();
@@ -51,7 +51,7 @@ public class AutoCommandsTests extends TestHarness {
 
     @Test
     public void testIntakeArtifact() {
-        auto.intakeArtifact().initialize();
+        auto.intakeStart().initialize();
         verify(intake).forward();
         verify(conveyor).forward();
         verify(gate).close();
@@ -69,7 +69,7 @@ public class AutoCommandsTests extends TestHarness {
     public void testAutoArtifact() {
         auto.autoArtifact().initialize();
         verify(drive).toClosestArtifact();
-        verify(auto).intakeArtifact();
+        verify(auto).intakeStart();
     }
 
     @Test
@@ -77,7 +77,7 @@ public class AutoCommandsTests extends TestHarness {
         auto.depositNear().initialize();
         verify(drive).toLaunchNear();
         verify(auto).prepareDeposit();
-        verify(auto).deposit();
+        verify(auto).depositStart();
     }
 
     @Test
@@ -85,7 +85,7 @@ public class AutoCommandsTests extends TestHarness {
         auto.depositFar().initialize();
         verify(drive).toLaunchFar();
         verify(auto).prepareDeposit();
-        verify(auto).deposit();
+        verify(auto).depositStart();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class AutoCommandsTests extends TestHarness {
         auto.depositFromPose().initialize();
         verify(drive).toLaunchAlign();
         verify(auto).prepareDeposit();
-        verify(auto).deposit();
+        verify(auto).depositStart();
     }
 
     @Test
