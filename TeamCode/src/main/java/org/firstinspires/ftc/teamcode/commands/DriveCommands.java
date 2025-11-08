@@ -58,23 +58,19 @@ public class DriveCommands {
     public Command toStart() {
         return to(nav.getStartPose(), true);
     }
-
-    public Command toLaunchNear() {
-        return to(nav.getLaunchNearPose(), true);
-    }
-
+    public Command toSpike0(){return to(nav.getSpike0(), true);}
+    public Command toSpike1(){return to(nav.getSpike1(), true);}
+    public Command toSpike2(){return to(nav.getSpike2(), true);}
+    public Command toSpike3(){return to(nav.getSpike3(), true);}
+    public Command toLaunchNear() {return to(nav.getLaunchNearPose(), true);}
     public Command toLaunchFar() {
         return to(nav.getLaunchFarPose(), true);
     }
-
-    public Command toLoadingZone() {
-        return to(nav.getSpike0(), true);
-    }
-
     public Command toLaunchAlign() {
         return to(nav.getLaunchAlignPose(), true);
     }
-
+    public Command toGetPose(){return to(nav.getGatePose(), true);}
+    public Command toBasePose(){return to(nav.getBasePose(), true);}
     public Command toClosestArtifact() {
         return wait.noop(); // TODO: Add Chase
     }

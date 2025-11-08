@@ -16,8 +16,22 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            drive.toLaunchNear()
-        );
+            drive.toLaunchNear(),
+            wait.seconds(3),
+            drive.toSpike3(),
+            wait.seconds(3),
+            drive.toSpike2(),
+            wait.seconds(3),
+            drive.toSpike1(),
+            wait.seconds(3),
+            drive.toSpike0(),
+            wait.seconds(3),
+            drive.toLaunchFar(),
+            wait.seconds(3),
+            drive.toGetPose(),
+            wait.seconds(3),
+            drive.toBasePose()
+                );
     }
     
     public Command delayStart() {
@@ -120,11 +134,11 @@ public class AutoCommands {
         );
     }
 
-    public Command humanPlayerZone() {
-        return new SelectCommand(
-            () -> drive.toLoadingZone().alongWith(
-                gate.close()
-            )
-        );
-    }
+//    public Command humanPlayerZone() {
+//        return new SelectCommand(
+//            () -> drive.toLoadingZone().alongWith(
+//                gate.close()
+//            )
+//        );
+//    }
 }
