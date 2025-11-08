@@ -38,6 +38,6 @@ public class GateSubsystem extends HardwareSubsystem {
     }
 
     public void close() {
-        POS = CLOSE;
+        POS = OPEN;
     }
 }

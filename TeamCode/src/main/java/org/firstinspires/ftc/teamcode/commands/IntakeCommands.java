@@ -14,6 +14,10 @@ public class IntakeCommands {
         return complete(intake::reverse);
     }
 
+    public Command hold() {
+        return complete(intake::hold);
+    }
+
     public Command stop() {
         return complete(intake::stop);
     }

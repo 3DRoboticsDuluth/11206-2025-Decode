@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class FlywheelSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients PIDF = new PIDFCoefficients(150, 3, 0, 0);
+    public static double HOLD = -0.2;
     public static double FWD = 0.75;
     public static double REV = -0.5;
     public static double STOP = 0;
@@ -49,6 +50,8 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public void reverse() {
         VEL = REV;
     }
+
+    public void hold(){VEL = HOLD;}
 
     public boolean isReady() {
         return motorLeft.getVelocityPercentage() >= VEL * THRESH &&

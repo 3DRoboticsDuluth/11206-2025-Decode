@@ -42,7 +42,8 @@ public class AutoCommands {
     public Command depositStop() {
         return new SelectCommand(
             () -> conveyor.stop().alongWith(
-                flywheel.stop()
+                flywheel.stop(),
+                intake.stop()
             )
         );
     }
@@ -52,7 +53,7 @@ public class AutoCommands {
             () -> intake.forward().alongWith(
                 conveyor.forward(),
                 gate.close(),
-                flywheel.stop()
+                flywheel.hold()
             )
         );
     }
@@ -62,7 +63,7 @@ public class AutoCommands {
             () -> conveyor.reverse().andThen(
                 wait.doherty(3),
                 conveyor.stop(),
-                intake.stop(),
+                intake.hold(),
                 gate.open(),
                 wait.doherty(2),
                 flywheel.forward()
