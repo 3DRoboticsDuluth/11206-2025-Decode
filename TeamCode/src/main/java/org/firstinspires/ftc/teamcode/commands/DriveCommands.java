@@ -158,8 +158,7 @@ public class DriveCommands {
         return follow(
             drive.follower.pathBuilder()
                 .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(pose)))
-                // TODO: Remove if passes test
-                //.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
+                .setLinearHeadingInterpolation(config.pose.heading, pose.heading)
                 .build()
             , holdEnd
         );

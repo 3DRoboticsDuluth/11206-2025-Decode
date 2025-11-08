@@ -91,7 +91,7 @@ public class NavSubsystem {
         return createPose(
             -0.5 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -135)
+            toRadians(config.alliance.sign * 135)
         );
     }
 
