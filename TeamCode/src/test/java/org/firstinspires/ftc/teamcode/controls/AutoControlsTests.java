@@ -32,10 +32,10 @@ public class AutoControlsTests extends TestHarness {
     public void testAAndDpadLeftAndRightDoesAutoArtifact() {
         input(() -> gamepad1.gamepad.dpad_left = true);
         input(() -> gamepad1.gamepad.a = true);
-        verify(auto.autoArtifact()).schedule(true);
+        verify(auto.intakeSpike3()).schedule(true);
         input(() -> gamepad1.gamepad.dpad_right = true);
         input(() -> gamepad1.gamepad.a = true);
-        verify(auto.autoArtifact()).schedule(true);
+        verify(auto.intakeSpike3()).schedule(true);
     }
     
     @Test

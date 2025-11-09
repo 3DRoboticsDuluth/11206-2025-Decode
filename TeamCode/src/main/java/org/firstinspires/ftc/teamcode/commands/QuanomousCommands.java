@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.PurePursuitCommand;
+import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
@@ -42,7 +45,6 @@ public class QuanomousCommands {
             put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
         }};
 
-    // TODO: Change `drive_to` to `drive`.
     public static Command drive(JSONObject obj) throws Exception {
         return drive.to(
             obj.getDouble("x"),
@@ -52,25 +54,34 @@ public class QuanomousCommands {
     }
 
     public static Command intake(JSONObject obj) throws Exception {
-        return drive.toSpike0(); //
+        int spike = obj.getInt("spike");
+        return new SelectCommand(
+            new HashMap<Object, Command>() {{
+                put(0, auto.intakeSpike0());
+                put(1, auto.intakeSpike1());
+                put(2, auto.intakeSpike2());
+                put(3, auto.intakeSpike3());
+            }}, () -> spike
+        );
     }
 
     public static Command delay(JSONObject obj) throws Exception {
         return wait.seconds(
-                obj.getDouble("seconds")
+            obj.getDouble("seconds")
         );
     }
 
     public static Command release(JSONObject obj) throws Exception {
-        return drive.toGate();
+        return auto.releaseGate();
     }
 
     public static Command deposit(JSONObject obj) throws Exception {
-        return drive.toLaunchFar(
-//                obj.getString("locale"),
-//                obj.getString("sorted"),
-//                obj.getDouble("txo"),
-//                obj.getDouble("tyo")
+        String locale = obj.getString("locale");
+        return new SelectCommand(
+                new HashMap<Object, Command>() {{
+                    put("near", auto.depositNear());
+                    put("far", auto.depositFar());
+                }}, () -> locale
         );
     }
 
