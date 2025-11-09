@@ -16,5 +16,6 @@ public class Config {
     public double delay = 0;
     public double responsiveness = 0.33;
     public boolean robotCentric = false;
+    public String quanomous;
     public Pose pose = new Pose(0, 0, 0);
 }
