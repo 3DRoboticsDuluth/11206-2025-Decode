@@ -67,7 +67,7 @@ public class AutoCommandsTests extends TestHarness {
 
     @Test
     public void testAutoArtifact() {
-        auto.autoArtifact().initialize();
+        auto.intakeSpike3().initialize();
         verify(drive).toClosestArtifact();
         verify(auto).intakeStart();
     }

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.conveyor;
-import static org.firstinspires.ftc.teamcode.commands.Commands.deflector;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
@@ -96,11 +95,39 @@ public class AutoCommands {
         );
     }
 
-    public Command autoArtifact() {
+    public Command intakeSpike3() {
         return new SelectCommand(
-            () -> drive.toClosestArtifact().alongWith(
-                auto.intakeStart()
+            () -> drive.toSpike3().andThen(
+                intakeStart(),
+                drive.forward(16)
             )
+        );
+    }
+
+    public Command intakeSpike2() {
+        return new SelectCommand(
+                () -> drive.toSpike2().andThen(
+                        intakeStart(),
+                        drive.forward(16)
+                )
+        );
+    }
+
+    public Command intakeSpike1() {
+        return new SelectCommand(
+                () -> drive.toSpike1().andThen(
+                        intakeStart(),
+                        drive.forward(16)
+                )
+        );
+    }
+
+    public Command intakeSpike0() {
+        return new SelectCommand(
+                () -> drive.toSpike0().andThen(
+                        intakeStart(),
+                        drive.forward(16)
+                )
         );
     }
 
@@ -131,6 +158,16 @@ public class AutoCommands {
             ).andThen(
                 auto.depositStart()
             )
+        );
+    }
+
+    public Command releaseGate() {
+        return new SelectCommand(
+                () -> drive.toGate().andThen(
+                    drive.forward(3),
+                    wait.seconds(1),
+                    drive.forward(-3)
+                )
         );
     }
 
