@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import java.util.function.BooleanSupplier;
 
+/** @noinspection unused*/
 public class WaitCommands {
     public Command seconds(double value) {
         return milliseconds((long)(value * 1000));
@@ -55,8 +56,7 @@ public class WaitCommands {
     public Command noop() {
         return wait.seconds(0);
     }
-    
-    /** @noinspection unused*/
+
     public Command debug() {
         return until(() -> gamepad1.gamepad.back);
     }

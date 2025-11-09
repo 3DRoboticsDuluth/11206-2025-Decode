@@ -2,15 +2,19 @@ package org.firstinspires.ftc.teamcode.controls;
 
 public class Controls {
     public static void initializeAuto() {
-        new ConfigControl();
+        new ConfigControls();
     }
 
     public static void initializeTeleop() {
-        new ConfigControl();
-        new DriveControl();
-        new IntakeControl();
-        new DeflectorControl();
-        new FlywheelControl();
-        new AutoControl();
+        new ConfigControls();
+        new DriveControls();
+        new IntakeControls();
+        new ConveyorControls();
+        new SortingControls();
+        new GateControls();
+        new DeflectorControls();
+        new FlywheelControls();
+        new KickstandControls();
+        new AutoControls();
     }
 }

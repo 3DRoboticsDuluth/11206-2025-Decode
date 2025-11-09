@@ -16,8 +16,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.RESPONSI
 
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
-public class DriveControl {
-    public DriveControl() {
+public class DriveControls {
+    public DriveControls() {
         Subsystems.drive.setDefaultCommand(
             drive.input(
                 () -> -gamepad1.gamepad.left_stick_y,
@@ -26,16 +26,19 @@ public class DriveControl {
             )
         );
 
-        gamepad1.getGamepadButton(DPAD_DOWN)
+        gamepad1.getGamepadButton(BACK)
+            .and(gamepad1.getGamepadButton(DPAD_DOWN))
             .whenActive(drive.setPowerLow());
 
-        gamepad1.getGamepadButton(DPAD_LEFT)
-            .or(gamepad1.getGamepadButton(DPAD_RIGHT))
+        gamepad1.getGamepadButton(BACK)
+            .and(gamepad1.getGamepadButton(DPAD_LEFT)
+                .or(gamepad1.getGamepadButton(DPAD_RIGHT)))
             .whenActive(drive.setPowerMedium());
 
-        gamepad1.getGamepadButton(DPAD_UP)
+        gamepad1.getGamepadButton(BACK)
+            .and(gamepad1.getGamepadButton(DPAD_UP))
             .whenActive(drive.setPowerHigh());
-        
+
         gamepad1.getGamepadButton(LEFT_BUMPER)
             .whenActive(() -> config.responsiveness = clamp(config.responsiveness - RESPONSIVENESS_INCREMENT, 0, 1));
 

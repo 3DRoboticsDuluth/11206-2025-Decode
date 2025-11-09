@@ -33,16 +33,96 @@ public class NavSubsystem {
         return config.side == null || config.side == Side.UNKNOWN ||
             config.alliance == null || config.alliance == Alliance.UNKNOWN ?
             new Pose(0, 0, 0) :
-            createPose(
-                config.side.sign * 7,
-                config.alliance.sign * 3 * TILE_WIDTH,
-                config.alliance.sign * toRadians(-90),
-                Axial.BACK
-            );
+                config.side == Side.NORTH ?
+                    getStartNorthPose() :
+                    getStartSouthPose();
     }
 
-    public Pose getMidLaunchPose() {
-        return createPose(0, 0, 0); // TODO: Update values
+    protected Pose getStartNorthPose() {
+        return createPose(
+            3 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0),
+            Axial.FRONT
+        );
+    }
+
+    protected Pose getStartSouthPose() {
+        return createPose(
+            -3 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0),
+            Axial.BACK
+        );
+    }
+    public Pose getSpike0() {
+        return createPose(
+                2.5 * TILE_WIDTH,
+                config.alliance.sign * -2.5 * TILE_WIDTH,
+                toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getSpike1() {
+        return createPose(
+            1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getSpike2() {
+        return createPose(
+            0.5 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getSpike3() {
+        return createPose(
+            -0.5 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getLaunchNearPose() {
+        return createPose(
+            -0.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 135)
+        );
+    }
+
+    public Pose getLaunchFarPose() {
+        return createPose(
+            2.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 160)
+        );
+    }
+
+    public Pose getLaunchAlignPose() {
+        // TODO: Calculate from current pose ... OR ...
+        // TODO: Vision based close-loop on target.
+        return createPose(0, 0, 0);
+    }
+
+    public Pose getGatePose() {
+        return createPose(
+            0 * TILE_WIDTH,
+            config.alliance.sign * -2 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 90)
+        );
+    }
+
+    public Pose getBasePose() {
+        return createPose(
+            2 * TILE_WIDTH,
+            config.alliance.sign * 1.4 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0)
+        );
     }
 
     public enum Axial {

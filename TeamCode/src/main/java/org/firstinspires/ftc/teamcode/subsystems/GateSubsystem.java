@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 
 @Configurable
 public class GateSubsystem extends HardwareSubsystem {
+    public static double CLOSE = 0.25;
+    public static double OPEN = 0.70;
+    public static double POS = OPEN;
     public static boolean TEL = false;
-    public static double MAX = 1;
-    public static double MIN = 0;
-    public static double POS = 0.5;
 
     public Servo servo;
 
@@ -27,17 +27,17 @@ public class GateSubsystem extends HardwareSubsystem {
         if (unready()) return;
 
         servo.setPosition(
-            POS = clamp(POS, MIN, MAX)
+            POS = clamp(POS, CLOSE, OPEN)
         );
 
         servo.addTelemetry(TEL);
     }
 
     public void open() {
-        POS = MAX;
+        POS = OPEN;
     }
 
     public void close() {
-        POS = MIN;
+        POS = OPEN;
     }
 }

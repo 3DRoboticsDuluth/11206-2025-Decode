@@ -1,0 +1,41 @@
+package org.firstinspires.ftc.teamcode.controls;
+
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.B;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
+import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
+
+import com.seattlesolvers.solverslib.command.button.Trigger;
+
+public class FlywheelControls {
+    private static final double TRIGGER_THRESHOLD = 0.5;
+
+    public FlywheelControls() {
+        new Trigger(() -> gamepad2.getTrigger(RIGHT_TRIGGER) > TRIGGER_THRESHOLD
+            || gamepad2.getTrigger(LEFT_TRIGGER) > TRIGGER_THRESHOLD)
+            .whileActiveOnce(flywheel.forward())
+            .whenInactive(flywheel.stop());
+
+        gamepad2.getGamepadButton(START).negate()
+            .and(gamepad2.getGamepadButton(B))
+            .and(gamepad2.getGamepadButton(DPAD_UP))
+            .whenActive(flywheel.forward());
+
+        gamepad2.getGamepadButton(START).negate()
+            .and(gamepad2.getGamepadButton(B))
+            .and(gamepad2.getGamepadButton(DPAD_DOWN))
+            .whenActive(flywheel.reverse());
+
+        gamepad2.getGamepadButton(START).negate()
+            .and(gamepad2.getGamepadButton(B))
+            .and((gamepad2.getGamepadButton(DPAD_LEFT))
+                .or(gamepad2.getGamepadButton(DPAD_RIGHT)))
+            .whenActive(flywheel.stop());
+    }
+}

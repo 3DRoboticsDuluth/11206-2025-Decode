@@ -33,6 +33,16 @@ import java.util.function.DoubleSupplier;
 
 @SuppressWarnings({"unused"})
 public class DriveCommands {
+    public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
+        return new RunCommand(
+            () -> drive.inputs(
+                forward.getAsDouble(),
+                strafe.getAsDouble(),
+                turn.getAsDouble()
+            ), drive
+        );
+    }
+
     public Command setPowerLow() {
         return new InstantCommand(() -> DriveSubsystem.POWER = POWER_LOW);
     }
@@ -45,22 +55,24 @@ public class DriveCommands {
         return new InstantCommand(() -> DriveSubsystem.POWER = POWER_HIGH);
     }
 
-    public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
-        return new RunCommand(
-            () -> drive.inputs(
-                forward.getAsDouble(),
-                strafe.getAsDouble(),
-                turn.getAsDouble()
-            ), drive
-        );
-    }
-
     public Command toStart() {
         return to(nav.getStartPose(), true);
     }
-
-    public Command toMidLaunch() {
-        return to(nav.getMidLaunchPose(), true);
+    public Command toSpike0(){return to(nav.getSpike0(), true);}
+    public Command toSpike1(){return to(nav.getSpike1(), true);}
+    public Command toSpike2(){return to(nav.getSpike2(), true);}
+    public Command toSpike3(){return to(nav.getSpike3(), true);}
+    public Command toLaunchNear() {return to(nav.getLaunchNearPose(), true);}
+    public Command toLaunchFar() {
+        return to(nav.getLaunchFarPose(), true);
+    }
+    public Command toLaunchAlign() {
+        return to(nav.getLaunchAlignPose(), true);
+    }
+    public Command toGetPose(){return to(nav.getGatePose(), true);}
+    public Command toBasePose(){return to(nav.getBasePose(), true);}
+    public Command toClosestArtifact() {
+        return wait.noop(); // TODO: Add Chase
     }
 
     public Command toDistance(double distance) {
@@ -138,12 +150,19 @@ public class DriveCommands {
         );
     }
 
+    public Command to(double x, double y, double heading) {
+        return to(new Pose(x, y, toRadians(heading)), true);
+    }
+
+    public Command to(double x, double y, double heading, boolean holdEnd) {
+        return to(new Pose(x, y, toRadians(heading)), holdEnd);
+    }
+
     public Command to(Pose pose, boolean holdEnd) {
         return follow(
             drive.follower.pathBuilder()
                 .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(pose)))
-                // TODO: Remove if passes test
-                //.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
+                .setLinearHeadingInterpolation(config.pose.heading, pose.heading)
                 .build()
             , holdEnd
         );

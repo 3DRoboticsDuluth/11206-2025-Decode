@@ -11,8 +11,8 @@ import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.NEXT;
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.PREV;
 
-public class ConfigControl {
-    public ConfigControl() {
+public class ConfigControls {
+    public ConfigControls() {
         gamepad1.getGamepadButton(BACK)
              .or(gamepad2.getGamepadButton(BACK))
              .whenActive(config.setEditable(true))
