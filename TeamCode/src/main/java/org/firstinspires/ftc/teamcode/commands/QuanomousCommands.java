@@ -18,16 +18,15 @@ public class QuanomousCommands {
     // H4sIAAAAAAAAA32PwQoCMQxE/yXnHrrX/opICXZci91W2qAu4r9vdkUoi3gZJpk3gRxedJoCOQo13uGlkKEnOWto3vQCDjGP6t/mi8YsfIWv5aHwqm74F3bNgMSzn5pGKm6wtgsrErjBjyygvnMrLcpaKQG6yOCqUytVoMCZU8MvXGKC//yy2f1D+xPHBcupcmIMAQAA
 
     // [
-    //   { "cmd": "drive_to", "x": 0, "y": 0, "heading": 0 },
-    //   { "cmd": "intake_row", "row": 1 },
-    //   { "cmd": "delay_ms", "ms": 1000 },
-    //   { "cmd": "release_gate" },
-    //   { "cmd": "deposit", "mode": "near", "sorted": false },
-    //   { "cmd": "deposit", "tile_x": 0, "tile_y": 0, "heading": 0, "sorted": false }
-    // ]
+    //   { "cmd": "drive", "tx": 0, "ty": 0, "h": 0 },
+    //   { "cmd": "intake", "spike": 1 },
+    //   { "cmd": "delay", "seconds": 1000 },
+    //   { "cmd": "release" },
+    //   { "cmd": "deposit", "locale": "near", "sorted": false, "txo": 0, "tyo": 0}
 
     private final Map<String, Function<JSONObject, Command>> commands =
         new HashMap<String, Function<JSONObject, Command>>() {{
+            put("drive_to", Lambda.unchecked(QuanomousCommands::drive));
             put("drive_to", Lambda.unchecked(QuanomousCommands::drive));
         }};
 
