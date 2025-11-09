@@ -28,10 +28,10 @@ public class AutoCommands {
             wait.seconds(3),
             drive.toLaunchFar(),
             wait.seconds(3),
-            drive.toGetPose(),
+            drive.toGate(),
             wait.seconds(3),
-            drive.toBasePose()
-                );
+            drive.toBase()
+        );
     }
     
     public Command delayStart() {

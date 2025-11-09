@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
+import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
+import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
 import com.seattlesolvers.solverslib.command.Command;
@@ -26,8 +28,11 @@ public class QuanomousCommands {
 
     private final Map<String, Function<JSONObject, Command>> commands =
         new HashMap<String, Function<JSONObject, Command>>() {{
-            put("drive_to", Lambda.unchecked(QuanomousCommands::drive));
-            put("drive_to", Lambda.unchecked(QuanomousCommands::drive));
+            put("drive", Lambda.unchecked(QuanomousCommands::drive));
+            put("intake", Lambda.unchecked(QuanomousCommands::intake));
+            put("delay", Lambda.unchecked(QuanomousCommands::delay));
+            put("release", Lambda.unchecked(QuanomousCommands::release));
+            put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
         }};
 
     // TODO: Change `drive_to` to `drive`.
@@ -36,6 +41,29 @@ public class QuanomousCommands {
             obj.getDouble("x"),
             obj.getDouble("y"),
             obj.getDouble("h")
+        );
+    }
+
+    public static Command intake(JSONObject obj) throws Exception {
+        return drive.toSpike0(); //
+    }
+
+    public static Command delay(JSONObject obj) throws Exception {
+        return wait.seconds(
+                obj.getDouble("seconds")
+        );
+    }
+
+    public static Command release(JSONObject obj) throws Exception {
+        return drive.toGate();
+    }
+
+    public static Command deposit(JSONObject obj) throws Exception {
+        return drive.toLaunchFar(
+//                obj.getString("locale"),
+//                obj.getString("sorted"),
+//                obj.getDouble("txo"),
+//                obj.getDouble("tyo")
         );
     }
 

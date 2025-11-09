@@ -69,8 +69,8 @@ public class DriveCommands {
     public Command toLaunchAlign() {
         return to(nav.getLaunchAlignPose(), true);
     }
-    public Command toGetPose(){return to(nav.getGatePose(), true);}
-    public Command toBasePose(){return to(nav.getBasePose(), true);}
+    public Command toGate(){return to(nav.getGatePose(), true);}
+    public Command toBase(){return to(nav.getBasePose(), true);}
     public Command toClosestArtifact() {
         return wait.noop(); // TODO: Add Chase
     }
