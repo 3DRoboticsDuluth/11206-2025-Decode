@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.flywheel;
 
 import com.seattlesolvers.solverslib.command.Command;
@@ -29,8 +30,7 @@ public class FlywheelCommands {
     }
 
     public Command wheelUpToSpeed() {
-        return Commands.wait.until(flywheel::isReady)
-            .andThen(drive.rumble());
+        return Commands.wait.until(flywheel::isReady).andThen(Commands.drive.rumble());
     }
 
     private Command complete(Runnable runnable) {
