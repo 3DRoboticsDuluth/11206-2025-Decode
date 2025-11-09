@@ -59,7 +59,7 @@ public class NavSubsystem {
         return createPose(
                 2.5 * TILE_WIDTH,
                 config.alliance.sign * -2.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * 90)
+                toRadians(config.alliance.sign * -90)
         );
     }
 
@@ -67,7 +67,7 @@ public class NavSubsystem {
         return createPose(
             1.5 * TILE_WIDTH,
             config.alliance.sign * -1.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
+            toRadians(config.alliance.sign * -90)
         );
     }
 
@@ -75,7 +75,7 @@ public class NavSubsystem {
         return createPose(
             0.5 * TILE_WIDTH,
             config.alliance.sign * -1.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
+            toRadians(config.alliance.sign * -90)
         );
     }
 
@@ -83,7 +83,7 @@ public class NavSubsystem {
         return createPose(
             -0.5 * TILE_WIDTH,
             config.alliance.sign * -1.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
+            toRadians(config.alliance.sign * -90)
         );
     }
 
@@ -91,7 +91,7 @@ public class NavSubsystem {
         return createPose(
             -0.5 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 135)
+            toRadians(config.alliance.sign * 45)
         );
     }
 
@@ -99,7 +99,7 @@ public class NavSubsystem {
         return createPose(
             2.5 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 200)
+            toRadians(config.alliance.sign * 20)
         );
     }
 
@@ -113,7 +113,7 @@ public class NavSubsystem {
         return createPose(
             0 * TILE_WIDTH,
             config.alliance.sign * -2 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
+            toRadians(config.alliance.sign * -90)
         );
     }
 
