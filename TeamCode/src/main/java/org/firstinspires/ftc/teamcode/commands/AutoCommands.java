@@ -44,7 +44,8 @@ public class AutoCommands {
         return new SelectCommand(
             () -> gate.close().alongWith(
                 flywheel.forward(),
-                flywheel.isReady()
+                flywheel.isReady(),
+                flywheel.wheelUpToSpeed()
             )
         );
     }

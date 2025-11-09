@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.flywheel;
 
@@ -25,6 +26,11 @@ public class FlywheelCommands {
 
     public Command isReady() {
         return wait.until(flywheel::isReady);
+    }
+
+    public Command wheelUpToSpeed() {
+        return Commands.wait.until(flywheel::isReady)
+            .andThen(drive.rumble());
     }
 
     private Command complete(Runnable runnable) {
