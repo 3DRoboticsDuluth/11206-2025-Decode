@@ -150,6 +150,14 @@ public class DriveCommands {
         );
     }
 
+    public Command to(double x, double y, double heading) {
+        return to(new Pose(x, y, toRadians(heading)), true);
+    }
+
+    public Command to(double x, double y, double heading, boolean holdEnd) {
+        return to(new Pose(x, y, toRadians(heading)), holdEnd);
+    }
+
     public Command to(Pose pose, boolean holdEnd) {
         return follow(
             drive.follower.pathBuilder()
