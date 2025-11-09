@@ -58,7 +58,7 @@ public class NavSubsystem {
     public Pose getSpike0() {
         return createPose(
                 2.5 * TILE_WIDTH,
-                config.alliance.sign * 2.5 * TILE_WIDTH,
+                config.alliance.sign * -2.5 * TILE_WIDTH,
                 toRadians(config.alliance.sign * 90)
         );
     }
@@ -66,7 +66,7 @@ public class NavSubsystem {
     public Pose getSpike1() {
         return createPose(
             1.5 * TILE_WIDTH,
-            config.alliance.sign * 1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
             toRadians(config.alliance.sign * 90)
         );
     }
@@ -74,7 +74,7 @@ public class NavSubsystem {
     public Pose getSpike2() {
         return createPose(
             0.5 * TILE_WIDTH,
-            config.alliance.sign * 1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
             toRadians(config.alliance.sign * 90)
         );
     }
@@ -82,7 +82,7 @@ public class NavSubsystem {
     public Pose getSpike3() {
         return createPose(
             -0.5 * TILE_WIDTH,
-            config.alliance.sign * 1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.5 * TILE_WIDTH,
             toRadians(config.alliance.sign * 90)
         );
     }
