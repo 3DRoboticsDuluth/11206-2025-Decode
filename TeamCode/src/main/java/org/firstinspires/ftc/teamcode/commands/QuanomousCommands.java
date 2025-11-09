@@ -26,6 +26,13 @@ public class QuanomousCommands {
     //   { "cmd": "release" },
     //   { "cmd": "deposit", "locale": "near", "sorted": false, "txo": 0, "tyo": 0}
 
+    //    {"cmd":"drive","tx":2,"ty":2,"h":180},
+    //    {"cmd":"drive","x":0,"y":0,"h":0},
+    //    {"cmd":"intake","spike":2},
+    //    {"cmd":"delay","seconds":1},
+    //    {"cmd":"release"}
+    //    {"cmd":"deposit","locale":"near","sorted":false,"txo":2,"tyo":2},
+
     private final Map<String, Function<JSONObject, Command>> commands =
         new HashMap<String, Function<JSONObject, Command>>() {{
             put("drive", Lambda.unchecked(QuanomousCommands::drive));
