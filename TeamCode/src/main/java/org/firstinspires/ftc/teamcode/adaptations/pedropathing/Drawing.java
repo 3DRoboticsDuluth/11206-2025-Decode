@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.adaptations.pedropathing;
 
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_LENGTH;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_WIDTH;
+
+import static java.lang.Math.max;
+
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
@@ -15,9 +20,11 @@ import com.pedropathing.util.PoseHistory;
  *
  * @author Lazar - 19234
  * @version 1.1, 5/19/2025
+ * @noinspection unused
  */
 public class Drawing {
-    public static final double ROBOT_RADIUS = 8;
+    public static final double ROBOT_RADIUS = max(ROBOT_WIDTH, ROBOT_LENGTH) / 2;
+
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
 
     private static final Style robotLook = new Style(

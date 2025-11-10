@@ -26,17 +26,14 @@ public class DriveControls {
             )
         );
 
-        gamepad1.getGamepadButton(BACK)
-            .and(gamepad1.getGamepadButton(DPAD_DOWN))
+        gamepad1.getGamepadButton(DPAD_DOWN)
             .whenActive(drive.setPowerLow());
 
-        gamepad1.getGamepadButton(BACK)
-            .and(gamepad1.getGamepadButton(DPAD_LEFT)
-                .or(gamepad1.getGamepadButton(DPAD_RIGHT)))
+        gamepad1.getGamepadButton(DPAD_LEFT)
+            .or(gamepad1.getGamepadButton(DPAD_RIGHT))
             .whenActive(drive.setPowerMedium());
 
-        gamepad1.getGamepadButton(BACK)
-            .and(gamepad1.getGamepadButton(DPAD_UP))
+        gamepad1.getGamepadButton(DPAD_UP)
             .whenActive(drive.setPowerHigh());
 
         gamepad1.getGamepadButton(LEFT_BUMPER)

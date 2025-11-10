@@ -19,7 +19,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public static double FWD = 0.75;
     public static double REV = -0.5;
     public static double STOP = 0;
-    public static double THRESH = 0.95;
+    public static double THRESH = 0.8;
     public static double VEL = STOP;
     public static boolean TEL = false;
 

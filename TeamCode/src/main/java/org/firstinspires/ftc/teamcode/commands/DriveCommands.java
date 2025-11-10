@@ -22,16 +22,16 @@ import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
+import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
-import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 import java.util.function.DoubleSupplier;
 
-@SuppressWarnings({"unused"})
+/** @noinspection unused*/
 public class DriveCommands {
     public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
         return new RunCommand(
@@ -44,33 +44,63 @@ public class DriveCommands {
     }
 
     public Command setPowerLow() {
-        return new InstantCommand(() -> DriveSubsystem.POWER = POWER_LOW);
+        return new InstantCommand(
+            () -> drive.follower.setMaxPower(POWER_LOW)
+        );
     }
 
     public Command setPowerMedium() {
-        return new InstantCommand(() -> DriveSubsystem.POWER = POWER_MEDIUM);
+        return new InstantCommand(
+            () -> drive.follower.setMaxPower(POWER_MEDIUM)
+        );
     }
 
     public Command setPowerHigh() {
-        return new InstantCommand(() -> DriveSubsystem.POWER = POWER_HIGH);
+        return new InstantCommand(
+            () -> drive.follower.setMaxPower(POWER_HIGH)
+        );
     }
 
     public Command toStart() {
         return to(nav.getStartPose(), true);
     }
-    public Command toSpike0(){return to(nav.getSpike0(), true);}
-    public Command toSpike1(){return to(nav.getSpike1(), true);}
-    public Command toSpike2(){return to(nav.getSpike2(), true);}
-    public Command toSpike3(){return to(nav.getSpike3(), true);}
-    public Command toLaunchNear() {return to(nav.getLaunchNearPose(), true);}
+
+    public Command toSpike0() {
+        return to(nav.getSpike0(), true);
+    }
+
+    public Command toSpike1() {
+        return to(nav.getSpike1(), true);
+    }
+
+    public Command toSpike2() {
+        return to(nav.getSpike2(), true);
+    }
+
+    public Command toSpike3() {
+        return to(nav.getSpike3(), true);
+    }
+
+    public Command toLaunchNear() {
+        return to(nav.getLaunchNearPose(), true);
+    }
+
     public Command toLaunchFar() {
         return to(nav.getLaunchFarPose(), true);
     }
+
     public Command toLaunchAlign() {
         return to(nav.getLaunchAlignPose(), true);
     }
-    public Command toGate(){return to(nav.getGatePose(), true);}
-    public Command toBase(){return to(nav.getBasePose(), true);}
+
+    public Command toGate() {
+        return to(nav.getGatePose(), true);
+    }
+
+    public Command toBase() {
+        return to(nav.getBasePose(), true);
+    }
+
     public Command toClosestArtifact() {
         return wait.noop(); // TODO: Add Chase
     }
@@ -115,38 +145,48 @@ public class DriveCommands {
     }
 
     public Command forward(double distance) {
-        double heading = config.pose.heading;
-        return follow(
-            pb -> pb.addPath(new BezierCurve(
-                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
-                new com.pedropathing.geometry.Pose(
-                    config.pose.x + cos(heading) * distance,
-                    config.pose.y + sin(heading) * distance
-                )
-            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
-            true
+        return new SelectCommand(
+            () -> {
+                double heading = config.pose.heading;
+                return follow(
+                    pb -> pb.addPath(new BezierCurve(
+                        new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                        new com.pedropathing.geometry.Pose(
+                            config.pose.x + cos(heading) * distance,
+                            config.pose.y + sin(heading) * distance
+                        )
+                    )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
+                    true
+                );
+            }
         );
     }
 
     public Command strafe(double distance) {
-        double heading = config.pose.heading;
-        double bearing = heading + Math.toRadians(90);
-        return follow(
-            pb -> pb.addPath(new BezierCurve(
-                new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
-                new com.pedropathing.geometry.Pose(
-                    config.pose.x + cos(bearing) * distance,
-                    config.pose.y + sin(bearing) * distance
-                )
-            )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
-            true
+        return new SelectCommand(
+            () -> {
+                double heading = config.pose.heading;
+                double bearing = heading + Math.toRadians(90);
+                return follow(
+                    pb -> pb.addPath(new BezierCurve(
+                        new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
+                        new com.pedropathing.geometry.Pose(
+                            config.pose.x + cos(bearing) * distance,
+                            config.pose.y + sin(bearing) * distance
+                        )
+                    )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
+                    true
+                );
+            }
         );
     }
 
     public Command turn(double heading) {
-        return follow(
-            pb -> pb.setConstantHeadingInterpolation(config.pose.heading + Math.toRadians(heading)),
-            true
+        return new SelectCommand(
+            () -> follow(
+                pb -> pb.setConstantHeadingInterpolation(config.pose.heading + Math.toRadians(heading)),
+                true
+            )
         );
     }
 
@@ -159,12 +199,14 @@ public class DriveCommands {
     }
 
     public Command to(Pose pose, boolean holdEnd) {
-        return follow(
-            drive.follower.pathBuilder()
-                .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(pose)))
-                .setLinearHeadingInterpolation(config.pose.heading, pose.heading)
-                .build()
-            , holdEnd
+        return new SelectCommand(
+            () -> follow(
+                drive.follower.pathBuilder()
+                    .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(pose)))
+                    .setLinearHeadingInterpolation(config.pose.heading, pose.heading)
+                    .build()
+                , holdEnd
+            )
         );
     }
 

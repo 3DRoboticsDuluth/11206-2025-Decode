@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.conveyor;
-import static org.firstinspires.ftc.teamcode.commands.Commands.deflector;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
@@ -33,73 +32,107 @@ public class AutoCommandsTests extends TestHarness {
     }
 
     @Test
-    public void testPrepareDeposit() {
-        auto.prepareDeposit().initialize();
-        verify(gate).close();
-        verify(flywheel).forward();
-        verify(flywheel).isReady();
-    }
-
-    @Test
-    public void testDeposit() {
-        auto.depositStart().initialize();
-        verify(intake).forward();
-        verify(conveyor).forward();
-        verify(gate).open();
-        verify(deflector).compensate();
-    }
-
-    @Test
-    public void testIntakeArtifact() {
+    public void testIntakeStart() {
         auto.intakeStart().initialize();
         verify(intake).forward();
         verify(conveyor).forward();
         verify(gate).close();
+        verify(flywheel).hold();
     }
 
     @Test
-    public void testSpitArtifact() {
-        auto.spitArtifact().initialize();
-        verify(intake).reverse();
+    public void testIntakeStop() {
+        auto.intakeStop().initialize();
         verify(conveyor).reverse();
-        verify(gate).close();
+        verify(wait).doherty(3);
+        verify(conveyor).stop();
+        verify(intake).hold();
+        verify(gate).open();
+        verify(wait).doherty(2);
+        verify(flywheel).forward();
+        verify(flywheel).isReady();
+        verify(drive).rumble();
     }
 
     @Test
-    public void testAutoArtifact() {
-        auto.intakeSpike3().initialize();
-        verify(drive).toClosestArtifact();
+    public void testIntakeSpike0() {
+        auto.intakeSpike0().initialize();
+        verify(drive).toSpike0();
         verify(auto).intakeStart();
+        verify(drive).forward(16);
+    }
+
+    @Test
+    public void testIntakeSpike1() {
+        auto.intakeSpike1().initialize();
+        verify(drive).toSpike1();
+        verify(auto).intakeStart();
+        verify(drive).forward(16);
+    }
+
+    @Test
+    public void testIntakeSpike2() {
+        auto.intakeSpike2().initialize();
+        verify(drive).toSpike2();
+        verify(auto).intakeStart();
+        verify(drive).forward(16);
+    }
+
+    @Test
+    public void testIntakeSpike3() {
+        auto.intakeSpike3().initialize();
+        verify(drive).toSpike3();
+        verify(auto).intakeStart();
+        verify(drive).forward(16);
+    }
+
+    @Test
+    public void testDepositStart() {
+        auto.depositStart().initialize();
+        verify(flywheel).forward();
+        verify(flywheel).isReady();
+        verify(conveyor).launch();
+    }
+
+    @Test
+    public void testDepositStop() {
+        auto.depositStop().initialize();
+        verify(conveyor).stop();
+        verify(flywheel).stop();
+        verify(intake).stop();
     }
 
     @Test
     public void testDepositNear() {
         auto.depositNear().initialize();
         verify(drive).toLaunchNear();
-        verify(auto).prepareDeposit();
         verify(auto).depositStart();
+        verify(wait).doherty(3);
+        verify(auto).depositStop();
     }
 
     @Test
     public void testDepositFar() {
         auto.depositFar().initialize();
-        verify(drive).toLaunchFar();
-        verify(auto).prepareDeposit();
         verify(auto).depositStart();
+        verify(wait).doherty(3);
+        verify(auto).depositStop();
     }
 
     @Test
     public void testDepositFromPose() {
         auto.depositFromPose().initialize();
-        verify(drive).toLaunchAlign();
-        verify(auto).prepareDeposit();
         verify(auto).depositStart();
+        verify(wait).doherty(3);
+        verify(auto).depositStop();
     }
 
     @Test
-    public void testHumanPlayerZone() {
-        auto.humanPlayerZone().initialize();
-        verify(drive).toLoadingZone();
-        verify(gate).close();
+    public void testReleaseGate() {
+        auto.releaseGate().initialize();
+        verify(drive).toGate();
+        verify(drive).forward(3);
+        verify(wait).seconds(1);
+        verify(drive).forward(-3);
     }
 }

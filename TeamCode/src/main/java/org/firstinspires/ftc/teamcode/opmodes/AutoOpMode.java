@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
-import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,7 +19,7 @@ public class AutoOpMode extends OpMode {
         config.alliance = Alliance.UNKNOWN;
         config.side = Side.UNKNOWN;
         config.delay = 0;
-        config.robotCentric = true;
+        config.robotCentric = false;
 
         Controls.initializeAuto();
 

@@ -65,6 +65,11 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
+        if (!limelight.isConnected()) {
+            telemetry.addData("Vision", () -> "Connection Issue!");
+            return;
+        }
+
         switchPipeline(PIPELINE, false);
 
         detectionPose = null;

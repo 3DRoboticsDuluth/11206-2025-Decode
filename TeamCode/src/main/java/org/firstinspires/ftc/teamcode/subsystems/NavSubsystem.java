@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.game.Side;
 @Configurable
 public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
-    public static double ROBOT_LENGTH = 14;
+    public static double ROBOT_LENGTH = 17.75;
     public static double ROBOT_WIDTH = 14;
     public static double IN_PER_TICK = 0.00196752029;
     public static double VEL_SCALAR = 0.7;
@@ -57,9 +57,9 @@ public class NavSubsystem {
     }
     public Pose getSpike0() {
         return createPose(
-                2.5 * TILE_WIDTH,
-                config.alliance.sign * -2.5 * TILE_WIDTH,
-                toRadians(config.alliance.sign * -90)
+            2.5 * TILE_WIDTH,
+            config.alliance.sign * -2.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -90)
         );
     }
 

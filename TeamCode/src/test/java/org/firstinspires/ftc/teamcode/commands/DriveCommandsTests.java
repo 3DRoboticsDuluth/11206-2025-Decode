@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIGH;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
@@ -26,25 +29,25 @@ public class DriveCommandsTests extends TestHarness {
     @Test
     public void testSetPowerLow() {
         drive.setPowerLow().initialize();
-        verify(drive).setPowerLow();
+        verify(Subsystems.drive.follower).setMaxPower(POWER_LOW);
     }
 
     @Test
     public void testSetPowerMedium() {
         drive.setPowerMedium().initialize();
-        verify(drive).setPowerMedium();
+        verify(Subsystems.drive.follower).setMaxPower(POWER_MEDIUM);
     }
 
     @Test
     public void testSetPowerHigh() {
         drive.setPowerHigh().initialize();
-        verify(drive).setPowerHigh();
+        verify(Subsystems.drive.follower).setMaxPower(POWER_HIGH);
     }
 
     @Test
     public void testToStart() {
         drive.toStart().initialize();
-        verify(Subsystems.nav, times(1)).getStartPose();
+        verify(nav).getStartPose();
     }
 
     @Test
@@ -56,24 +59,30 @@ public class DriveCommandsTests extends TestHarness {
     @Test
     public void testToLaunchNear() {
         drive.toLaunchNear().initialize();
-        verify(Subsystems.nav, times(1)).getLaunchNearPose();
+        verify(nav).getLaunchNearPose();
     }
 
     @Test
     public void testToLaunchFar() {
         drive.toLaunchFar().initialize();
-        verify(Subsystems.nav, times(1)).getLaunchFarPose();
+        verify(nav).getLaunchFarPose();
     }
 
     @Test
     public void testToLaunchAlign() {
         drive.toLaunchAlign().initialize();
-        verify(Subsystems.nav, times(1)).getLaunchAlignPose();
+        verify(nav).getLaunchAlignPose();
     }
 
     @Test
-    public void testToLoadingZone() {
-        drive.toLoadingZone().initialize();
-        verify(Subsystems.nav, times(1)).getSpike0();
+    public void testToGate() {
+        drive.toGate().initialize();
+        verify(nav).getGatePose();
+    }
+
+    @Test
+    public void testBase() {
+        drive.toBase().initialize();
+        verify(nav).getBasePose();
     }
 }

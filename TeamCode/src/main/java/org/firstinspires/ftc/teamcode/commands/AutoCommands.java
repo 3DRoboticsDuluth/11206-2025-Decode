@@ -16,19 +16,19 @@ public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
             drive.toLaunchNear(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toSpike3(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toSpike2(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toSpike1(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toSpike0(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toLaunchFar(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toGate(),
-            wait.seconds(3),
+            wait.forInterruptA(),
             drive.toBase()
         );
     }
@@ -39,145 +39,106 @@ public class AutoCommands {
         );
     }
 
-    public Command prepareDeposit() {
-        return new SelectCommand(
-            () -> gate.close().alongWith(
-                flywheel.forward(),
-                flywheel.isReady().andThen(
-                    flywheel.wheelUpToSpeed()
-                )
-            )
-        );
-    }
-
-    public Command depositStart() {
-        return new SelectCommand(
-            () -> conveyor.launch()
-        );
-    }
-
-    public Command depositStop() {
-        return new SelectCommand(
-            () -> conveyor.stop().alongWith(
-                flywheel.stop(),
-                intake.stop()
-            )
-        );
-    }
-
     public Command intakeStart() {
-        return new SelectCommand(
-            () -> intake.forward().alongWith(
-                conveyor.forward(),
-                gate.close(),
-                flywheel.hold()
-            )
+        return intake.forward().alongWith(
+            conveyor.forward(),
+            gate.close(),
+            flywheel.hold()
         );
     }
 
     public Command intakeStop() {
-        return new SelectCommand(
-            () -> conveyor.reverse().andThen(
-                wait.doherty(3),
-                conveyor.stop(),
-                intake.hold(),
-                gate.open(),
-                wait.doherty(2),
-                flywheel.forward()
+        return conveyor.reverse().andThen(
+            wait.doherty(3),
+            conveyor.stop(),
+            intake.hold(),
+            gate.open(),
+            wait.doherty(2),
+            flywheel.forward().andThen(
+                flywheel.isReady(),
+                drive.rumble()
             )
-        );
-    }
-
-    public Command spitArtifact() {
-        return new SelectCommand(
-            () -> intake.reverse().alongWith(
-                conveyor.reverse(),
-                gate.close()
-            )
-        );
-    }
-
-    public Command intakeSpike3() {
-        return new SelectCommand(
-            () -> drive.toSpike3().andThen(
-                intakeStart(),
-                drive.forward(16)
-            )
-        );
-    }
-
-    public Command intakeSpike2() {
-        return new SelectCommand(
-                () -> drive.toSpike2().andThen(
-                        intakeStart(),
-                        drive.forward(16)
-                )
-        );
-    }
-
-    public Command intakeSpike1() {
-        return new SelectCommand(
-                () -> drive.toSpike1().andThen(
-                        intakeStart(),
-                        drive.forward(16)
-                )
         );
     }
 
     public Command intakeSpike0() {
-        return new SelectCommand(
-                () -> drive.toSpike0().andThen(
-                        intakeStart(),
-                        drive.forward(16)
-                )
+        // TODO: Reuse
+        return drive.toSpike0().andThen(
+            intakeStart(),
+            drive.forward(16)
+        );
+    }
+
+    public Command intakeSpike1() {
+        // TODO: Reuse
+        return drive.toSpike1().andThen(
+            intakeStart(),
+            drive.forward(16)
+        );
+    }
+
+    public Command intakeSpike2() {
+        // TODO: Reuse
+        return drive.toSpike2().andThen(
+            auto.intakeStart(),
+            drive.forward(16)
+        );
+    }
+
+    public Command intakeSpike3() {
+        // TODO: Reuse
+        return drive.toSpike3().andThen(
+            auto.intakeStart(),
+            drive.forward(16)
+        );
+    }
+
+    public Command depositStart() {
+        return flywheel.forward().andThen(
+            flywheel.isReady(),
+            conveyor.launch()
+        );
+    }
+
+    public Command depositStop() {
+        return conveyor.stop().alongWith(
+            flywheel.stop(),
+            intake.stop()
         );
     }
 
     public Command depositNear() {
-        return new SelectCommand(
-            () -> drive.toLaunchNear().alongWith(
-                auto.prepareDeposit()
-            ).andThen(
-                auto.depositStart()
-            )
+        return drive.toLaunchNear().andThen(
+            // TODO: Reuse
+            auto.depositStart(),
+            wait.doherty(3),
+            auto.depositStop()
         );
     }
 
     public Command depositFar() {
-        return new SelectCommand(
-            () -> drive.toLaunchFar().alongWith(
-                prepareDeposit()
-            ).andThen(
-                auto.depositStart()
-            )
+        return drive.toLaunchFar().andThen(
+            // TODO: Reuse
+            auto.depositStart(),
+            wait.doherty(3),
+            auto.depositStop()
         );
     }
 
     public Command depositFromPose() {
-        return new SelectCommand(
-            () -> drive.toLaunchAlign().alongWith(
-                auto.prepareDeposit()
-            ).andThen(
-                auto.depositStart()
-            )
+        return drive.toLaunchAlign().andThen(
+            // TODO: Reuse
+            auto.depositStart(),
+            wait.doherty(3),
+            auto.depositStop()
         );
     }
 
     public Command releaseGate() {
-        return new SelectCommand(
-                () -> drive.toGate().andThen(
-                    drive.forward(3),
-                    wait.seconds(1),
-                    drive.forward(-3)
-                )
+        return drive.toGate().andThen(
+            drive.forward(3),
+            wait.seconds(1),
+            drive.forward(-3)
         );
     }
-
-//    public Command humanPlayerZone() {
-//        return new SelectCommand(
-//            () -> drive.toLoadingZone().alongWith(
-//                gate.close()
-//            )
-//        );
-//    }
 }

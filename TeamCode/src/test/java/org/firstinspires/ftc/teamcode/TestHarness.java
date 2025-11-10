@@ -12,6 +12,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -78,6 +79,7 @@ public class TestHarness {
         Subsystems.config = mock(ConfigSubsystem.class);
         Subsystems.nav = mock(NavSubsystem.class);
         Subsystems.drive = mock(DriveSubsystem.class);
+        Subsystems.drive.follower = mock(Follower.class);
         Subsystems.intake = mock(IntakeSubsystem.class);
         Subsystems.conveyor = mock(ConveyorSubsystem.class);
         Subsystems.sorting = mock(SortingSubsystem.class);

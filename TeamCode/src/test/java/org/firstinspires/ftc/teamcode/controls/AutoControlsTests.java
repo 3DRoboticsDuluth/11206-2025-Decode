@@ -20,14 +20,7 @@ public class AutoControlsTests extends TestHarness {
         input(() -> gamepad1.gamepad.dpad_up = true);
         verify(auto.intakeStart()).schedule(true);
     }
-    
-    @Test
-    public void testAAndDpadDownSpitArtifact() {
-        input(() -> gamepad1.gamepad.a = true);
-        input(() -> gamepad1.gamepad.dpad_down = true);
-        verify(auto.spitArtifact()).schedule(true);
-    }
-    
+
     @Test
     public void testAAndDpadLeftAndRightDoesAutoArtifact() {
         input(() -> gamepad1.gamepad.dpad_left = true);
@@ -60,11 +53,5 @@ public class AutoControlsTests extends TestHarness {
         input(() -> gamepad1.gamepad.dpad_left = true);
         input(() -> gamepad1.gamepad.b = true);
         verify(auto.depositFromPose()).schedule(true);
-    }
-
-    @Test
-    public void testYHumanPlayerZone() {
-        input(() -> gamepad1.gamepad.y = true);
-        verify(auto.humanPlayerZone()).schedule(true);
     }
 }

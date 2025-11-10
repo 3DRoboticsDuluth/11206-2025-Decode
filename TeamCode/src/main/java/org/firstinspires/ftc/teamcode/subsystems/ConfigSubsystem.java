@@ -94,7 +94,7 @@ public class ConfigSubsystem extends SubsystemBase {
 
         config.auto = opMode.getClass().isAnnotationPresent(Autonomous.class);
         config.teleop = !config.auto;
-        config.interrupt = false;
+        config.interrupt = true;
         config.started = false;
     }
 

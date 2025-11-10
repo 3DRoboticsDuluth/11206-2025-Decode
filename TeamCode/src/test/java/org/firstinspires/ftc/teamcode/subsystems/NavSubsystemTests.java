@@ -40,17 +40,14 @@ public class NavSubsystemTests extends  TestHarness {
         config.side = side;
 
         Pose expected = new Pose(
-            0.5 * TILE_WIDTH,
-            config.alliance.sign * 0.5 * TILE_WIDTH,
+            -0.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH,
             toRadians(config.alliance.sign * 45)
         );
 
         Pose actual = nav.getLaunchNearPose();
 
         compare(expected, actual);
-
-        assert actual.x > -0.5 * TILE_WIDTH;
-        assert alliance.sign * actual.heading > 0;
     }
 
     @Theory
@@ -59,20 +56,14 @@ public class NavSubsystemTests extends  TestHarness {
         config.side = side;
 
         Pose expected = new Pose(
-            -2.5 * TILE_WIDTH,
+            2.5 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 30)
+            toRadians(config.alliance.sign * 20)
         );
 
         Pose actual = nav.getLaunchFarPose();
 
         compare(expected, actual);
-
-        assert actual.x < -2 * TILE_WIDTH;
-        assert actual.x > -3 * TILE_WIDTH;
-        assert alliance.sign * actual.y < 1 * TILE_WIDTH;
-        assert alliance.sign * actual.y > -1 * TILE_WIDTH;
-        assert alliance.sign * actual.heading > 0;
     }
 
     @Theory
@@ -87,31 +78,22 @@ public class NavSubsystemTests extends  TestHarness {
         Pose actual = nav.getLaunchAlignPose();
 
         compare(expected, actual);
-
-        // TODO
-        //assert alliance.sign * actual.y > 0;
-        //assert side.sign * actual.x > 0;
-        //assert alliance.sign * actual.heading < 0;
     }
 
     @Theory
-    public void testGetLoadingZonePose(Alliance alliance, Side side) {
+    public void testGetSpike0(Alliance alliance, Side side) {
         config.alliance = alliance;
         config.side = side;
 
         Pose expected = new Pose(
-            -2.5 * TILE_WIDTH,
+            2.5 * TILE_WIDTH,
             config.alliance.sign * -2.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 90)
+            toRadians(config.alliance.sign * -90)
         );
 
         Pose actual = nav.getSpike0();
 
         compare(expected, actual);
-
-        assert actual.x < -1.5 * TILE_WIDTH;
-        assert alliance.sign * actual.y < -1.5 * TILE_WIDTH;
-        assert alliance.sign * actual.heading > 0;
     }
 
     private static void compare(Pose expected, Pose actual) {

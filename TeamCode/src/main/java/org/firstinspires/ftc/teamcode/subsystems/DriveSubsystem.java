@@ -30,9 +30,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 public class DriveSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
-    public static double POWER = 0;
-    public static double POWER_LOW = 0.33;
-    public static double POWER_MEDIUM = 0.67;
+    public static double POWER_LOW = 0.50;
+    public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
     public static double TO_FAR = TILE_WIDTH * 3;
 
@@ -52,8 +51,6 @@ public class DriveSubsystem extends HardwareSubsystem {
     private double turn = 0;
 
     public DriveSubsystem() {
-        POWER = POWER_MEDIUM;
-
         follower = getFollower();
         if (follower != null)
             resetPose();
@@ -93,7 +90,7 @@ public class DriveSubsystem extends HardwareSubsystem {
             drawRobot(pose, style);
         }
 
-        telemetry.addData("Drive (Power)", () -> String.format("%.2f", POWER));
+        telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
@@ -108,12 +105,12 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (unready()) return;
         if (isBusy() && forward + strafe + turn != 0) follower.startTeleopDrive();
         else if (isBusy()) return;
-        double headingOffset = isNaN(config.alliance.sign) ? 0 : config.alliance.sign * 90;
+        double headingOffset = isNaN(config.alliance.sign) ? 0 : 90;
         Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
-            this.forward += pForward.calculate(this.forward, driveVector.getX() * POWER),
-            this.strafe += pStrafe.calculate(this.strafe, driveVector.getY() * POWER),
-            this.turn += pTurn.calculate(this.turn, turn * POWER),
+            this.forward += pForward.calculate(this.forward, driveVector.getX()),
+            this.strafe += pStrafe.calculate(this.strafe, driveVector.getY()),
+            this.turn += pTurn.calculate(this.turn, turn),
             config.robotCentric
         );
     }
@@ -137,10 +134,10 @@ public class DriveSubsystem extends HardwareSubsystem {
         // current pose which produces the wrong result. As a work around the follower is recreated.
         follower = getFollower();
         follower.startTeleopDrive();
+        follower.setMaxPower(config.auto ? POWER_LOW : POWER_MEDIUM); // TODO
+        if (config.auto) config.pose = nav.getStartPose();
         follower.setStartingPose(
-            toPedroPose(
-                config.pose = nav.getStartPose()
-            )
+            toPedroPose(config.pose)
         );
     }
 }
