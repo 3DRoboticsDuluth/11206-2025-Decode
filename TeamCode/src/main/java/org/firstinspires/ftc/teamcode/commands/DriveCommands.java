@@ -44,19 +44,19 @@ public class DriveCommands {
     }
 
     public Command setPowerLow() {
-        return new InstantCommand(
+        return complete(
             () -> drive.follower.setMaxPower(POWER_LOW)
         );
     }
 
     public Command setPowerMedium() {
-        return new InstantCommand(
+        return complete(
             () -> drive.follower.setMaxPower(POWER_MEDIUM)
         );
     }
 
     public Command setPowerHigh() {
-        return new InstantCommand(
+        return complete(
             () -> drive.follower.setMaxPower(POWER_HIGH)
         );
     }
@@ -218,7 +218,21 @@ public class DriveCommands {
     }
 
     public Command follow(PathChain pathChain, boolean holdEnd) {
-        return new FollowPathCommand(drive.follower, pathChain, holdEnd);
+        return controlsReset().andThen(
+            new FollowPathCommand(drive.follower, pathChain, holdEnd).andThen(
+                new InstantCommand(() -> drive.follower.startTeleopDrive())
+            )
+        );
+    }
+
+    public Command controlsReset() {
+        return new SelectCommand(
+            () -> complete(() -> drive.controlsReset = false)
+        );
+    }
+
+    private Command complete(Runnable runnable) {
+        return new InstantCommand(runnable, drive);
     }
 
     private static boolean compare(Pose expected, Pose actual, boolean includeHeading) {

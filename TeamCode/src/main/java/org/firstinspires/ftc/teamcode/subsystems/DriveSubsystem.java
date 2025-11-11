@@ -42,6 +42,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     public MotorEx driveBackLeft;
     public MotorEx driveBackRight;
 
+    public boolean controlsReset = false;
+
     private final PController pForward = new PController(config.responsiveness);
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
@@ -75,11 +77,11 @@ public class DriveSubsystem extends HardwareSubsystem {
             inputs(0,0,0);
         }
 
+        follower.update();
+
         config.pose = fromPedroPose(
             follower.getPose()
         );
-
-        follower.update();
 
         drawDebug(follower);
 
@@ -103,8 +105,9 @@ public class DriveSubsystem extends HardwareSubsystem {
 
     public void inputs(double forward, double strafe, double turn) {
         if (unready()) return;
-        if (isBusy() && forward + strafe + turn != 0) follower.startTeleopDrive();
-        else if (isBusy()) return;
+        if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
+        if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
+        if (isBusy()) return;
         double headingOffset = isNaN(config.alliance.sign) ? 0 : 90;
         Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
@@ -124,9 +127,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public boolean isControlled() {
-        return gamepad1.getLeftY() != 0 ||
-            gamepad1.getLeftX() != 0 ||
-            gamepad1.getRightX() != 0;
+        return gamepad1.getLeftX() != 0 || gamepad1.getLeftY() != 0 || gamepad1.getRightX() != 0;
     }
 
     public void resetPose() {

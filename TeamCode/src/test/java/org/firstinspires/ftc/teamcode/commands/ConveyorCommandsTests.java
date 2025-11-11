@@ -15,13 +15,19 @@ public class ConveyorCommandsTests extends TestHarness {
         super.setUp();
         conveyor = new ConveyorCommands();
     }
-    
+
+    @Test
+    public void testLaunch() {
+        conveyor.launch().initialize();
+        verify(Subsystems.conveyor, times(1)).launch();
+    }
+
     @Test
     public void testForward() {
         conveyor.forward().initialize();
         verify(Subsystems.conveyor, times(1)).forward();
     }
-    
+
     @Test
     public void testReverse() {
         conveyor.reverse().initialize();

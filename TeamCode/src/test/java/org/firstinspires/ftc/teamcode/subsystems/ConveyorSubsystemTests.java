@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.FWD;
+import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.LAUNCH;
 import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.REV;
 import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.STOP;
 import static org.firstinspires.ftc.teamcode.subsystems.ConveyorSubsystem.VEL;
@@ -27,6 +28,13 @@ public class ConveyorSubsystemTests extends TestHarness {
         VEL = FWD;
         conveyor.periodic();
         verify(conveyor.motor).setVelocityPercentage(VEL);
+    }
+
+    @Test
+    public void testLaunch() {
+        VEL = STOP;
+        conveyor.launch();
+        assert VEL == LAUNCH;
     }
 
     @Test

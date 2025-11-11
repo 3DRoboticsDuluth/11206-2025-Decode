@@ -15,6 +15,7 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
+            Commands.config.setInterrupt(true),
             drive.toLaunchNear(),
             wait.forInterruptA(),
             drive.toSpike3(),

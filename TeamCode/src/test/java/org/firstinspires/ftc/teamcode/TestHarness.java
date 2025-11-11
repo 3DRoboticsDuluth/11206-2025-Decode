@@ -22,6 +22,7 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.CRServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.telemetry.SampledTelemetry;
 import org.firstinspires.ftc.teamcode.commands.AutoCommands;
@@ -55,6 +56,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem;
 import org.junit.Before;
 
+/** @noinspection unused*/
 public class TestHarness {
     @Before
     public void setUp() {
@@ -115,6 +117,10 @@ public class TestHarness {
     /** @noinspection SameParameterValue*/
     protected static <T> T mockDevice(Class<T> deviceType) {
         return mock(deviceType);
+    }
+
+    protected CRServoEx mockCRServo() {
+        return mock(CRServoEx.class);
     }
 
     protected MotorEx mockMotor() {

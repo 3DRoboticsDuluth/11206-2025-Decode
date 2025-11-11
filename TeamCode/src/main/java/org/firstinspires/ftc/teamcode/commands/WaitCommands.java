@@ -28,8 +28,7 @@ public class WaitCommands {
     public Command forInterruptA() {
         return drive.rumble1().andThen(
             wait.until(
-                () -> /*(config.auto && config.started) ||*/ // TODO
-                    (!config.interrupt && config.started) ||
+                () -> (!config.interrupt && config.started) ||
                     (!gamepad1.gamepad.start && gamepad1.gamepad.a)
             )
         );
@@ -38,8 +37,7 @@ public class WaitCommands {
     public Command forInterruptB() {
         return drive.rumble1().andThen(
             wait.until(
-                () -> /*(config.auto && config.started) ||*/ // TODO
-                    (!config.interrupt && config.started) ||
+                () -> (!config.interrupt && config.started) ||
                     (!gamepad1.gamepad.start && gamepad1.gamepad.b)
             )
         );

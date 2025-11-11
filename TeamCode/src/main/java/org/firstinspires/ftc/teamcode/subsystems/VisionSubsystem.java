@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.COLOR;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.game.Pipeline.APRILTAG;
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -14,31 +14,22 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
+import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static boolean CAMERA_UPSIDE_DOWN = true;
-    public static double CAMERA_X_INCHES = 5.905512;
-    public static double CAMERA_Y_INCHES = -5.11811;
-    public static double CAMERA_Z_INCHES = 7.6771654;
-    public static double CAMERA_YAW_DEGREES = 15.7;
-    public static double CAMERA_PITCH_DEGREES = -17.4;
-    public static double POSE_OFFSET_X_INCHES = 0.1;
-    public static double POSE_OFFSET_Y_INCHES = -0.5;
-    public static double POSE_OFFSET_Z_DEGREES = 0;
-    public static double IN_PER_M = 39.3701;
     public static int PIPELINE = 0;
-    public static double ELEVATION_SCALAR = 0.820; //0.845
-    public static double BEARING_X_SCALAR = 0.745;
-    public static double BEARING_Y_SCALAR = 1.170;
-    
+
     public Pose detectionPose = null;
     public int detectionCount = 0;
     public Pose elementPose = null;
@@ -46,6 +37,8 @@ public class VisionSubsystem extends HardwareSubsystem {
     public final Limelight3A limelight;
 
     public final Servo servo;
+
+    Map<Integer, Consumer<LLResult>> processors;
 
     public VisionSubsystem() {
         limelight = getDevice(
@@ -58,8 +51,14 @@ public class VisionSubsystem extends HardwareSubsystem {
         );
 
         servo = getServo("turret");
+
+        processors = new HashMap<Integer, Consumer<LLResult>>() {{
+            put(APRILTAG.index, VisionSubsystem.this::processAprilTag);
+            put(COLOR.index, VisionSubsystem.this::processColor);
+        }};
     }
 
+    /** @noinspection DataFlowIssue*/
     @Override
     @SuppressLint("DefaultLocale")
     public void periodic() {
@@ -87,8 +86,7 @@ public class VisionSubsystem extends HardwareSubsystem {
             return;
         }
 
-        if (result.getPipelineIndex() == APRILTAG.index) processBotPose(result);
-        else processColorResults(result);
+        processors.get(PIPELINE).accept(result);
     }
 
     public void switchPipeline(int pipeline, boolean elementReset) {
@@ -98,13 +96,13 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     @SuppressLint("DefaultLocale")
-    private void processBotPose(LLResult result) {
+    private void processAprilTag(LLResult result) {
         Pose3D botpose = result.getBotpose_MT2();
 
         detectionPose = new Pose(
-             botpose.getPosition().x * IN_PER_M + POSE_OFFSET_X_INCHES,
-             botpose.getPosition().y * IN_PER_M + POSE_OFFSET_Y_INCHES,
-             botpose.getOrientation().getYaw(AngleUnit.RADIANS) + toRadians(POSE_OFFSET_Z_DEGREES)
+             botpose.getPosition().x,
+             botpose.getPosition().y,
+             botpose.getOrientation().getYaw(AngleUnit.RADIANS)
         );
 
         telemetry.addData("Vision (Detection Count)", () -> String.format("%d", ++detectionCount));
@@ -133,7 +131,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     @SuppressLint("DefaultLocale")
-    private void processColorResults(LLResult result) {
+    private void processColor(LLResult result) {
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
         for (LLResultTypes.ColorResult cr : colorResults) {

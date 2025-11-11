@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.game.Side;
 @Configurable
 public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
-    public static double ROBOT_LENGTH = 17.75;
+    public static double ROBOT_LENGTH = 17.5;
     public static double ROBOT_WIDTH = 14;
     public static double IN_PER_TICK = 0.00196752029;
     public static double VEL_SCALAR = 0.7;

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.adaptations.vision;
 
-import static org.firstinspires.ftc.teamcode.game.Config.config;
-
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
@@ -13,58 +11,29 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.GZIPInputStream;
 
 @SuppressLint("SdCardPath")
 public class Quanomous {
-    // H4sIAAAAAAAAA32PwQoCMQxE/yXnHrrX/opICXZci91W2qAu4r9vdkUoi3gZJpk3gRxedJoCOQo13uGlkKEnOWto3vQCDjGP6t/mi8YsfIWv5aHwqm74F3bNgMSzn5pGKm6wtgsrErjBjyygvnMrLcpaKQG6yOCqUytVoMCZU8MvXGKC//yy2f1D+xPHBcupcmIMAQAA
+    private static final String QUANOMOUS_DIR = "/sdcard/FIRST/quanomous/";
 
-    //[
-    //    {
-    //        "cmd": "drive_to",
-    //        "x": 0,
-    //        "y": 0,
-    //        "heading": 0
-    //    },
-    //    {
-    //        "cmd": "intake_row",
-    //        "row": 1
-    //    },
-    //    {
-    //        "cmd": "intake_row",
-    //        "row": 0
-    //    },
-    //    {
-    //        "cmd": "delay_ms",
-    //        "ms": 1000
-    //    },
-    //    {
-    //        "cmd": "release_gate"
-    //    },
-    //    {
-    //        "cmd": "deposit",
-    //        "mode": "near",
-    //        "sorted": false
-    //    },
-    //    {
-    //        "cmd": "deposit",
-    //        "tile_x": 0,
-    //        "tile_y": 0,
-    //        "heading": 0,
-    //        "sorted": false
-    //    }
-    //]
+    private static volatile String lastHash = null;
+    private static volatile String lastName = null;
 
-    private static final String BLOCKLY_DIR = "/sdcard/FIRST/blockly/";
-
-    public static void process(String data) {
+    public static synchronized String process(String data) {
         String jsonText = decode(data);
-        JSONArray jsonArray = parse(jsonText);
-        String name = getMatchNumberFilename();
-        save(name, jsonArray);
-        config.quanomous = name;
+        JSONArray json = parse(jsonText);
+        String canonical = json.toString();
+        String nextHash = hash(canonical);
+        if (nextHash.equals(lastHash)) return lastName;
+        String nextName = getFilename(nextHash);
+        save(nextName, json);
+        lastHash = nextHash;
+        lastName = nextName;
+        return nextName;
     }
 
     public static String decode(String data) {
@@ -93,7 +62,7 @@ public class Quanomous {
     public static void save(String name, JSONArray jsonArray) {
         try {
             String json = jsonArray.toString(2);
-            File file = new File(BLOCKLY_DIR + name);
+            File file = new File(QUANOMOUS_DIR + name);
             ReadWriteFile.writeFile(file, json);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -102,7 +71,7 @@ public class Quanomous {
 
     public static JSONArray load(String name) {
         try {
-            File file = new File(BLOCKLY_DIR + name);
+            File file = new File(QUANOMOUS_DIR + name);
             String jsonText = ReadWriteFile.readFile(file);
             return new JSONArray(jsonText);
         } catch (Exception e) {
@@ -110,19 +79,58 @@ public class Quanomous {
         }
     }
 
+    public static String change(int direction) {
+        return null; // TODO
+    }
+
     public static String prev() {
-        // TODO: Get prev filename.
-        return null;
+        return null; // TODO
     }
 
     public static String next() {
-        // TODO: Get next filename.
-        return null;
+        return null; // TODO
     }
 
     @SuppressLint({"SimpleDateFormat", "DefaultLocale"})
-    public static String getMatchNumberFilename() {
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return String.format("%s-match-%d.json", timestamp, 0 /*config.matchNumber*/);
+    private static String getFilename(String hash8) {
+        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return String.format("%s-%s.json", ts, hash8);
+    }
+
+    private static int indexOf(String name, File[] files) {
+        if (name == null) return -1;
+        for (int i = 0; i < files.length; i++)
+            if (name.equals(files[i].getName())) return i;
+        return -1;
+    }
+
+    private static File[] getSortedFileList() {
+        File dir = new File(QUANOMOUS_DIR);
+        File[] files = dir.listFiles((d, n) -> n.toLowerCase().endsWith(".json"));
+        if (files == null) return new File[0];
+        java.util.Arrays.sort(files, java.util.Comparator.comparing(File::getName));
+        return files;
+    }
+
+    private static String hash(String text) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] bytes = md.digest(text.getBytes(StandardCharsets.UTF_8));
+            String hex = toHex(bytes);
+            return hex.substring(0, Math.max(1, Math.min(8, hex.length()))).toLowerCase();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String toHex(byte[] bytes) {
+        char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
