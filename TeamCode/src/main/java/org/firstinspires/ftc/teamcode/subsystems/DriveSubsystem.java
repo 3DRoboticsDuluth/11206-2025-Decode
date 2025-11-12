@@ -135,7 +135,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         // current pose which produces the wrong result. As a work around the follower is recreated.
         follower = getFollower();
         follower.startTeleopDrive();
-        follower.setMaxPower(config.auto ? POWER_LOW : POWER_MEDIUM); // TODO
+        follower.setMaxPower(1); // TODO
         if (config.auto) config.pose = nav.getStartPose();
         follower.setStartingPose(
             toPedroPose(config.pose)

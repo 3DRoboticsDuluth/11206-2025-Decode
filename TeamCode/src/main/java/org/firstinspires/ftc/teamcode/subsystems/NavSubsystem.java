@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.game.Side;
 @Configurable
 public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
-    public static double ROBOT_LENGTH = 17.5;
-    public static double ROBOT_WIDTH = 14;
+    public static double ROBOT_LENGTH = 14.25;
+    public static double ROBOT_WIDTH = 11.375;
     public static double IN_PER_TICK = 0.00196752029;
     public static double VEL_SCALAR = 0.7;
     public static double MAX_ACCEL_SCALAR = 1;
@@ -41,32 +41,32 @@ public class NavSubsystem {
     protected Pose getStartNorthPose() {
         return createPose(
             3 * TILE_WIDTH,
-            config.alliance.sign * -0.5 * TILE_WIDTH,
+            config.alliance.sign * -1 * TILE_WIDTH,
             toRadians(config.alliance.sign * 0),
-            Axial.FRONT
+            Axial.FRONT, Lateral.LEFT, -3.25, 0
         );
     }
 
     protected Pose getStartSouthPose() {
         return createPose(
             -3 * TILE_WIDTH,
-            config.alliance.sign * -1.5 * TILE_WIDTH,
+            config.alliance.sign * -1 * TILE_WIDTH,
             toRadians(config.alliance.sign * 0),
-            Axial.BACK
+            Axial.BACK, Lateral.LEFT, +1, 0
         );
     }
     public Pose getSpike0() {
         return createPose(
-            2.5 * TILE_WIDTH,
-            config.alliance.sign * -2.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -90)
+            1.8 * TILE_WIDTH,
+            config.alliance.sign * -2.6 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -10)
         );
     }
 
     public Pose getSpike1() {
         return createPose(
             1.5 * TILE_WIDTH,
-            config.alliance.sign * -1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
     }
@@ -74,7 +74,7 @@ public class NavSubsystem {
     public Pose getSpike2() {
         return createPose(
             0.5 * TILE_WIDTH,
-            config.alliance.sign * -1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
     }
@@ -82,7 +82,7 @@ public class NavSubsystem {
     public Pose getSpike3() {
         return createPose(
             -0.5 * TILE_WIDTH,
-            config.alliance.sign * -1.5 * TILE_WIDTH,
+            config.alliance.sign * -1.2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
     }
@@ -111,7 +111,7 @@ public class NavSubsystem {
 
     public Pose getGatePose() {
         return createPose(
-            0 * TILE_WIDTH,
+            0.1 * TILE_WIDTH,
             config.alliance.sign * -2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
@@ -119,8 +119,8 @@ public class NavSubsystem {
 
     public Pose getBasePose() {
         return createPose(
-            2 * TILE_WIDTH,
-            config.alliance.sign * 1.4 * TILE_WIDTH,
+            1.5 * TILE_WIDTH,
+            config.alliance.sign * 1.33 * TILE_WIDTH,
             toRadians(config.alliance.sign * 0)
         );
     }
