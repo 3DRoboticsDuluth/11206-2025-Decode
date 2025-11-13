@@ -21,11 +21,12 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.field.Style;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
-import com.seattlesolvers.solverslib.controller.PIDController;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
@@ -36,6 +37,9 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.80;
     public static double TO_FAR = TILE_WIDTH * 3;
+
+    // Target Lock PIDF Tuning
+    public static PIDFCoefficients TARGET_LOCK_PIDF = new PIDFCoefficients(0.8, 0.0, 0.1, 0.0);
 
     public Follower follower;
 
@@ -49,7 +53,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pForward = new PController(config.responsiveness);
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
-    private final PIDController targetLockPID = new PIDController(0.8, 0, 0.1);
+    private final PIDFController targetLockPID = new PIDFController(TARGET_LOCK_PIDF);
+
     public boolean targetLockEnabled = false;
 
     private double forward = 0;
@@ -76,9 +81,11 @@ public class DriveSubsystem extends HardwareSubsystem {
         pStrafe.setP(config.responsiveness);
         pTurn.setP(config.responsiveness);
 
+        targetLockPID.setPIDFCoefficients(TARGET_LOCK_PIDF);
+
         if (opMode.isStopRequested()) {
             follower.startTeleopDrive();
-            inputs(0,0,0);
+            inputs(0, 0, 0);
         }
 
         follower.update();
@@ -129,9 +136,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     private double calculateTargetLockTurn() {
-        // Use PID to calculate turn power
-        // Target is 0 error, current is headingError
-        return targetLockPID.calculate(nav.getTargetLockError(), 0);
+        double headingError = nav.getTargetLockError();
+        return targetLockPID.calculate(headingError);
     }
 
     public boolean isStill() {

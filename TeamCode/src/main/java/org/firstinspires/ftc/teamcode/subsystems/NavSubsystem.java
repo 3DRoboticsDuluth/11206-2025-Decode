@@ -112,17 +112,9 @@ public class NavSubsystem {
     }
 
     public double getTargetLockError() {
-        double deltaX = getGoalPose().x - config.pose.x;
-        double deltaY = getGoalPose().y - config.pose.y;
-
-        double angleToGoal = Math.atan2(deltaY, deltaX);
-
-        // Flips angle
-        double desiredHeading = angleToGoal + Math.PI;
-
-        // Heading error
-        double headingError = desiredHeading - config.pose.heading;
-        return normalizeHeading(headingError);
+        return normalizeHeading(
+            getGoalPose().atan2(config.pose) - config.pose.heading
+        );
     }
 
     public Pose getLaunchAlignPose() {
