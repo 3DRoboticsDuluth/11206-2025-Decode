@@ -138,20 +138,14 @@ public class DriveSubsystem extends HardwareSubsystem {
         double goalX = -67;
         double goalY = -67 * config.alliance.sign;
 
-        double robotX = config.pose.x;
-        double robotY = config.pose.y;
-        double robotHeading = config.pose.heading;
-
-        double deltaX = goalX - robotX;
-        double deltaY = goalY - robotY;
+        double deltaX = goalX - config.pose.x;
+        double deltaY = goalY - config.pose.y;
 
         double angleToGoal = Math.atan2(deltaY, deltaX);
 
         double desiredHeading = angleToGoal + Math.PI;
 
-        double normalizeHeading = nav.normalizeHeading(desiredHeading);
-
-        double headingError = normalizeHeading - robotHeading;
+        double headingError = desiredHeading - config.pose.heading;
         double headingErrorNormalized = nav.normalizeHeading(headingError);
 
         return targetLockPID.calculate(headingErrorNormalized, 0);
