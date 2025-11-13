@@ -22,6 +22,7 @@ import com.bylazar.field.Style;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.controller.PController;
+import com.seattlesolvers.solverslib.controller.PIDController;
 import com.seattlesolvers.solverslib.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
@@ -48,6 +49,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pForward = new PController(config.responsiveness);
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
+    private final PIDController targetLockPID = new PIDController(0.8, 0, 0.1);
+    public boolean targetLockEnabled = false;
 
     private double forward = 0;
     private double strafe = 0;
@@ -84,6 +87,18 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
+        if (targetLockEnabled) {
+            double targetLockTurn = calculateTargetLockTurn();
+
+            // Override the turn input with target lock
+            follower.setTeleOpDrive(
+                    forward,
+                    strafe,
+                    targetLockTurn,
+                    config.robotCentric
+            );
+        }
+
         drawDebug(follower);
 
         if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
@@ -117,6 +132,29 @@ public class DriveSubsystem extends HardwareSubsystem {
             this.turn += pTurn.calculate(this.turn, turn),
             config.robotCentric
         );
+    }
+
+    public double calculateTargetLockTurn() {
+        double goalX = -67;
+        double goalY = -67 * config.alliance.sign;
+
+        double robotX = config.pose.x;
+        double robotY = config.pose.y;
+        double robotHeading = config.pose.heading;
+
+        double deltaX = goalX - robotX;
+        double deltaY = goalY - robotY;
+
+        double angleToGoal = Math.atan2(deltaY, deltaX);
+
+        double desiredHeading = angleToGoal + Math.PI;
+
+        double normalizeHeading = nav.normalizeHeading(desiredHeading);
+
+        double headingError = normalizeHeading - robotHeading;
+        double headingErrorNormalized = nav.normalizeHeading(headingError);
+
+        return targetLockPID.calculate(headingErrorNormalized, 0);
     }
 
     public boolean isStill() {

@@ -11,6 +11,7 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
+import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 
 import com.seattlesolvers.solverslib.command.button.Trigger;
@@ -52,12 +53,12 @@ public class AutoControls {
 
         new Trigger(() -> gamepad1.getTrigger(LEFT_TRIGGER) > TRIGGER_THRESHOLD)
 //            .toggleWhenActive(auto.intakeStart(), auto.intakeStop());
-            .whenActive(auto.intakeStart())
+            .whenActive(auto.intakeStart().alongWith(drive.disableTargetLock()))
             .whenInactive(auto.intakeStop());
 
         new Trigger(() -> gamepad1.getTrigger(RIGHT_TRIGGER) > TRIGGER_THRESHOLD)
-            .whenActive(auto.depositStart())
-            .whenInactive(auto.depositStop());
+            .whenActive(auto.depositStart().alongWith(drive.enableTargetLock()))
+            .whenInactive(auto.depositStop().alongWith(drive.disableTargetLock()));
 
 //        gamepad1.getGamepadButton(START).negate()
 //            .and(gamepad1.getGamepadButton(Y))

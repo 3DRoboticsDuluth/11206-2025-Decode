@@ -57,7 +57,6 @@ public class AutoCommands {
             wait.doherty(2),
             flywheel.forward().andThen(
                 flywheel.isReady(),
-                flywheel.launch(),
                 drive.rumble()
             )
         );
@@ -96,7 +95,7 @@ public class AutoCommands {
     }
 
     public Command depositStart() {
-        return flywheel.launch().andThen(
+        return flywheel.forward().andThen(
             flywheel.isReady(),
             conveyor.launch()
         );
