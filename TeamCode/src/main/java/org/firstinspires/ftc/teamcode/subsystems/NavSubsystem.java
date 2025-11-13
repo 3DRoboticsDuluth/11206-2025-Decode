@@ -103,31 +103,25 @@ public class NavSubsystem {
         );
     }
 
-    public Pose getGoalPose() {
-        return createPose(
-            -67,
-            -67 * config.alliance.sign,
-            0
-        );
-    }
-
-    public double getTargetLockError() {
-        return normalizeHeading(
-            getGoalPose().atan2(config.pose) - config.pose.heading
-        );
-    }
-
-    public Pose getLaunchAlignPose() {
-        // TODO: Calculate from current pose ... OR ...
-        // TODO: Vision based close-loop on target.
-        return createPose(0, 0, 0);
-    }
-
     public Pose getGatePose() {
         return createPose(
             0.1 * TILE_WIDTH,
             config.alliance.sign * -2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
+        );
+    }
+
+    public Pose getGoalPose() {
+        return new Pose(
+            -3 * TILE_WIDTH,
+            config.alliance.sign * -3 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 45) // TODO: Get from AprilTag?
+        );
+    }
+
+    public double getGoalLockError() {
+        return normalizeHeading(
+            config.pose.heading - getGoalPose().atan2(config.pose)
         );
     }
 

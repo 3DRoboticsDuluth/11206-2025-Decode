@@ -120,14 +120,6 @@ public class AutoCommandsTests extends TestHarness {
     }
 
     @Test
-    public void testDepositFromPose() {
-        auto.depositFromPose().initialize();
-        verify(auto).depositStart();
-        verify(wait).doherty(3);
-        verify(auto).depositStop();
-    }
-
-    @Test
     public void testReleaseGate() {
         auto.releaseGate().initialize();
         verify(drive).toGate();

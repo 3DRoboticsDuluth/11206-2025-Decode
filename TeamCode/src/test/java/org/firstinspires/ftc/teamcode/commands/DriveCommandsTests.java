@@ -69,12 +69,6 @@ public class DriveCommandsTests extends TestHarness {
     }
 
     @Test
-    public void testToLaunchAlign() {
-        drive.toLaunchAlign().initialize();
-        verify(nav).getLaunchAlignPose();
-    }
-
-    @Test
     public void testToGate() {
         drive.toGate().initialize();
         verify(nav).getGatePose();

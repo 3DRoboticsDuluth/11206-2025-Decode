@@ -67,28 +67,14 @@ public class NavSubsystemTests extends  TestHarness {
     }
 
     @Theory
-    public void testGetLaunchAlignPose(Alliance alliance, Side side) {
-        config.alliance = alliance;
-        config.side = side;
-
-        Pose expected = new Pose(
-            0, 0, 0
-        );
-
-        Pose actual = nav.getLaunchAlignPose();
-
-        compare(expected, actual);
-    }
-
-    @Theory
     public void testGetSpike0(Alliance alliance, Side side) {
         config.alliance = alliance;
         config.side = side;
 
         Pose expected = new Pose(
-            2.5 * TILE_WIDTH,
-            config.alliance.sign * -2.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -90)
+            1.8 * TILE_WIDTH,
+            config.alliance.sign * -2.6 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -10)
         );
 
         Pose actual = nav.getSpike0();

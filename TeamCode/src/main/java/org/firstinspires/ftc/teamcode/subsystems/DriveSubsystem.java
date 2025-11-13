@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
+    public static PIDFCoefficients GOAL_LOCK_PIDF = new PIDFCoefficients(1.5, 0.01, 0.15, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
     public static double POWER_LOW = 0.50;
@@ -37,9 +38,6 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.80;
     public static double TO_FAR = TILE_WIDTH * 3;
-
-    // Target Lock PIDF Tuning
-    public static PIDFCoefficients TARGET_LOCK_PIDF = new PIDFCoefficients(0.8, 0.0, 0.1, 0.0);
 
     public Follower follower;
 
@@ -49,13 +47,12 @@ public class DriveSubsystem extends HardwareSubsystem {
     public MotorEx driveBackRight;
 
     public boolean controlsReset = false;
+    public boolean goalLock = false;
 
     private final PController pForward = new PController(config.responsiveness);
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
-    private final PIDFController targetLockPID = new PIDFController(TARGET_LOCK_PIDF);
-
-    public boolean targetLockEnabled = false;
+    private final PIDFController pGoalLock = new PIDFController(GOAL_LOCK_PIDF);
 
     private double forward = 0;
     private double strafe = 0;
@@ -80,8 +77,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
         pTurn.setP(config.responsiveness);
-
-        targetLockPID.setPIDFCoefficients(TARGET_LOCK_PIDF);
+        pGoalLock.setPIDFCoefficients(GOAL_LOCK_PIDF);
 
         if (opMode.isStopRequested()) {
             follower.startTeleopDrive();
@@ -108,12 +104,6 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
 
-        if (targetLockEnabled) {
-            double headingError = nav.getTargetLockError();
-            telemetry.addData("Target Lock", () -> "ENABLED");
-            telemetry.addData("Target Lock Error", () -> String.format("%.1f°", toDegrees(headingError)));
-        }
-
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
         driveBackLeft.addTelemetry(TEL);
@@ -128,16 +118,11 @@ public class DriveSubsystem extends HardwareSubsystem {
         double headingOffset = config.robotCentric || isNaN(config.alliance.sign) ? 0 : 90;
         Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
-                this.forward += pForward.calculate(this.forward, driveVector.getX()),
-                this.strafe += pStrafe.calculate(this.strafe, driveVector.getY()),
-                this.turn += pTurn.calculate(this.turn, targetLockEnabled ? calculateTargetLockTurn() : turn),
-                config.robotCentric
+            this.forward += pForward.calculate(this.forward, driveVector.getX()),
+            this.strafe += pStrafe.calculate(this.strafe, driveVector.getY()),
+            this.turn += pTurn.calculate(this.turn, !goalLock ? turn : pGoalLock.calculate(nav.getGoalLockError())),
+            config.robotCentric
         );
-    }
-
-    private double calculateTargetLockTurn() {
-        double headingError = nav.getTargetLockError();
-        return targetLockPID.calculate(headingError);
     }
 
     public boolean isStill() {

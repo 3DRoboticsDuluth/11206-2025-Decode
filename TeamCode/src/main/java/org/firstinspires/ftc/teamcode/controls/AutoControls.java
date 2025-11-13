@@ -52,13 +52,12 @@ public class AutoControls {
 //            .whenActive(auto.depositFromPose());
 
         new Trigger(() -> gamepad1.getTrigger(LEFT_TRIGGER) > TRIGGER_THRESHOLD)
-//            .toggleWhenActive(auto.intakeStart(), auto.intakeStop());
-            .whenActive(auto.intakeStart().alongWith(drive.disableTargetLock()))
+            .whenActive(auto.intakeStart())
             .whenInactive(auto.intakeStop());
 
         new Trigger(() -> gamepad1.getTrigger(RIGHT_TRIGGER) > TRIGGER_THRESHOLD)
-            .whenActive(auto.depositStart().alongWith(drive.enableTargetLock()))
-            .whenInactive(auto.depositStop().alongWith(drive.disableTargetLock()));
+            .whenActive(auto.depositStart())
+            .whenInactive(auto.depositStop());
 
 //        gamepad1.getGamepadButton(START).negate()
 //            .and(gamepad1.getGamepadButton(Y))

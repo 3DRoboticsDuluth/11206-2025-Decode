@@ -44,14 +44,4 @@ public class AutoControlsTests extends TestHarness {
         input(() -> gamepad1.gamepad.b = true);
         verify(auto.depositFar()).schedule(true);
     }
-
-    @Test
-    public void testBAndDpadLeftOrDpadRightDeposits() {
-        input(() -> gamepad1.gamepad.dpad_right = true);
-        input(() -> gamepad1.gamepad.b = true);
-        verify(auto.depositFromPose()).schedule(true);
-        input(() -> gamepad1.gamepad.dpad_left = true);
-        input(() -> gamepad1.gamepad.b = true);
-        verify(auto.depositFromPose()).schedule(true);
-    }
 }

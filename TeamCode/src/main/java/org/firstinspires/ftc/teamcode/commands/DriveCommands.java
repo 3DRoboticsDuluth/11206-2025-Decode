@@ -94,10 +94,6 @@ public class DriveCommands {
         return to(nav.getLaunchFarPose());
     }
 
-    public Command toLaunchAlign() {
-        return to(nav.getLaunchAlignPose());
-    }
-
     public Command toGate() {
         return to(nav.getGatePose());
     }
@@ -110,12 +106,8 @@ public class DriveCommands {
         return wait.noop(); // TODO: Add Chase
     }
 
-    public Command enableTargetLock() {
-        return complete(() -> drive.targetLockEnabled = true);
-    }
-
-    public Command disableTargetLock() {
-        return complete(() -> drive.targetLockEnabled = false);
+    public Command goalLock(boolean enabled) {
+        return complete(() -> drive.goalLock = enabled);
     }
 
     public Command toDistance(double distance) {
