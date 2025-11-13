@@ -87,18 +87,6 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
-        if (targetLockEnabled) {
-            double targetLockTurn = calculateTargetLockTurn();
-
-            // Override the turn input with target lock
-            follower.setTeleOpDrive(
-                    forward,
-                    strafe,
-                    targetLockTurn,
-                    config.robotCentric
-            );
-        }
-
         drawDebug(follower);
 
         if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
@@ -112,6 +100,12 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
+
+        if (targetLockEnabled) {
+            double headingError = nav.getTargetLockError();
+            telemetry.addData("Target Lock", () -> "ENABLED");
+            telemetry.addData("Target Lock Error", () -> String.format("%.1f°", toDegrees(headingError)));
+        }
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
@@ -127,28 +121,17 @@ public class DriveSubsystem extends HardwareSubsystem {
         double headingOffset = config.robotCentric || isNaN(config.alliance.sign) ? 0 : 90;
         Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
-            this.forward += pForward.calculate(this.forward, driveVector.getX()),
-            this.strafe += pStrafe.calculate(this.strafe, driveVector.getY()),
-            this.turn += pTurn.calculate(this.turn, turn),
-            config.robotCentric
+                this.forward += pForward.calculate(this.forward, driveVector.getX()),
+                this.strafe += pStrafe.calculate(this.strafe, driveVector.getY()),
+                this.turn += pTurn.calculate(this.turn, targetLockEnabled ? calculateTargetLockTurn() : turn),
+                config.robotCentric
         );
     }
 
-    public double calculateTargetLockTurn() {
-        double goalX = -67;
-        double goalY = -67 * config.alliance.sign;
-
-        double deltaX = goalX - config.pose.x;
-        double deltaY = goalY - config.pose.y;
-
-        double angleToGoal = Math.atan2(deltaY, deltaX);
-
-        double desiredHeading = angleToGoal + Math.PI;
-
-        double headingError = desiredHeading - config.pose.heading;
-        double headingErrorNormalized = nav.normalizeHeading(headingError);
-
-        return targetLockPID.calculate(headingErrorNormalized, 0);
+    private double calculateTargetLockTurn() {
+        // Use PID to calculate turn power
+        // Target is 0 error, current is headingError
+        return targetLockPID.calculate(nav.getTargetLockError(), 0);
     }
 
     public boolean isStill() {

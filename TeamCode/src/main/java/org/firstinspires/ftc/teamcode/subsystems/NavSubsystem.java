@@ -103,6 +103,28 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getGoalPose() {
+        return createPose(
+            -67,
+            -67 * config.alliance.sign,
+            0
+        );
+    }
+
+    public double getTargetLockError() {
+        double deltaX = getGoalPose().x - config.pose.x;
+        double deltaY = getGoalPose().y - config.pose.y;
+
+        double angleToGoal = Math.atan2(deltaY, deltaX);
+
+        // Flips angle
+        double desiredHeading = angleToGoal + Math.PI;
+
+        // Heading error
+        double headingError = desiredHeading - config.pose.heading;
+        return normalizeHeading(headingError);
+    }
+
     public Pose getLaunchAlignPose() {
         // TODO: Calculate from current pose ... OR ...
         // TODO: Vision based close-loop on target.
