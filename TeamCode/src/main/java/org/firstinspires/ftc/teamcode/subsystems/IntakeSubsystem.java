@@ -21,6 +21,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
     public IntakeSubsystem() {
         motor = getMotor("intake", RPM_1620, this::configure);
+        VEL = STOP;
     }
 
     @Override

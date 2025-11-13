@@ -33,6 +33,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
+    public static double POWER_AUTO = 0.80;
     public static double TO_FAR = TILE_WIDTH * 3;
 
     public Follower follower;
@@ -108,7 +109,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
         if (isBusy()) return;
-        double headingOffset = isNaN(config.alliance.sign) ? 0 : 90;
+        double headingOffset = config.robotCentric || isNaN(config.alliance.sign) ? 0 : 90;
         Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, driveVector.getX()),
@@ -135,7 +136,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         // current pose which produces the wrong result. As a work around the follower is recreated.
         follower = getFollower();
         follower.startTeleopDrive();
-        follower.setMaxPower(1); // TODO
+        follower.setMaxPower(config.auto ? POWER_AUTO : POWER_MEDIUM);
         if (config.auto) config.pose = nav.getStartPose();
         follower.setStartingPose(
             toPedroPose(config.pose)

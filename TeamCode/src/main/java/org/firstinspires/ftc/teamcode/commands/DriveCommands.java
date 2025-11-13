@@ -10,13 +10,16 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MED
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
+import android.util.Log;
+
 import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -33,6 +36,8 @@ import java.util.function.DoubleSupplier;
 
 /** @noinspection unused*/
 public class DriveCommands {
+    private Pose targetPose = new Pose(0, 0, 0);
+
     public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
         return new RunCommand(
             () -> drive.inputs(
@@ -62,43 +67,43 @@ public class DriveCommands {
     }
 
     public Command toStart() {
-        return to(nav.getStartPose(), true);
+        return to(nav.getStartPose());
     }
 
     public Command toSpike0() {
-        return to(nav.getSpike0(), true);
+        return to(nav.getSpike0());
     }
 
     public Command toSpike1() {
-        return to(nav.getSpike1(), true);
+        return to(nav.getSpike1());
     }
 
     public Command toSpike2() {
-        return to(nav.getSpike2(), true);
+        return to(nav.getSpike2());
     }
 
     public Command toSpike3() {
-        return to(nav.getSpike3(), true);
+        return to(nav.getSpike3());
     }
 
     public Command toLaunchNear() {
-        return to(nav.getLaunchNearPose(), true);
+        return to(nav.getLaunchNearPose());
     }
 
     public Command toLaunchFar() {
-        return to(nav.getLaunchFarPose(), true);
+        return to(nav.getLaunchFarPose());
     }
 
     public Command toLaunchAlign() {
-        return to(nav.getLaunchAlignPose(), true);
+        return to(nav.getLaunchAlignPose());
     }
 
     public Command toGate() {
-        return to(nav.getGatePose(), true);
+        return to(nav.getGatePose());
     }
 
     public Command toBase() {
-        return to(nav.getBasePose(), true);
+        return to(nav.getBasePose());
     }
 
     public Command toClosestArtifact() {
@@ -146,46 +151,30 @@ public class DriveCommands {
 
     public Command forward(double distance) {
         return new SelectCommand(
-            () -> {
-                double heading = config.pose.heading;
-                return follow(
-                    pb -> pb.addPath(new BezierCurve(
-                        new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
-                        new com.pedropathing.geometry.Pose(
-                            config.pose.x + cos(heading) * distance,
-                            config.pose.y + sin(heading) * distance
-                        )
-                    )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
-                    true
-                );
-            }
+            () -> to(
+                targetPose.x + cos(targetPose.heading) * distance,
+                targetPose.y + sin(targetPose.heading) * distance,
+                toDegrees(targetPose.heading)
+            )
         );
     }
 
     public Command strafe(double distance) {
         return new SelectCommand(
-            () -> {
-                double heading = config.pose.heading;
-                double bearing = heading + Math.toRadians(90);
-                return follow(
-                    pb -> pb.addPath(new BezierCurve(
-                        new com.pedropathing.geometry.Pose(config.pose.x, config.pose.y),
-                        new com.pedropathing.geometry.Pose(
-                            config.pose.x + cos(bearing) * distance,
-                            config.pose.y + sin(bearing) * distance
-                        )
-                    )).setLinearHeadingInterpolation(config.pose.heading, config.pose.heading),
-                    true
-                );
-            }
+            () -> to(
+                targetPose.x + cos(targetPose.heading + PI / 2) * distance,
+                targetPose.y + sin(targetPose.heading + PI / 2) * distance,
+                toDegrees(targetPose.heading)
+            )
         );
     }
 
     public Command turn(double heading) {
         return new SelectCommand(
-            () -> follow(
-                pb -> pb.setConstantHeadingInterpolation(config.pose.heading + Math.toRadians(heading)),
-                true
+            () -> to(
+                targetPose.x,
+                targetPose.y,
+                heading
             )
         );
     }
@@ -198,11 +187,15 @@ public class DriveCommands {
         return to(new Pose(x, y, toRadians(heading)), holdEnd);
     }
 
+    public Command to(Pose pose) {
+        return to(pose, true);
+    }
+
     public Command to(Pose pose, boolean holdEnd) {
         return new SelectCommand(
             () -> follow(
                 drive.follower.pathBuilder()
-                    .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(pose)))
+                    .addPath(new BezierCurve(() -> toPedroPose(config.pose), toPedroPose(targetPose = pose)))
                     .setLinearHeadingInterpolation(config.pose.heading, pose.heading)
                     .build()
                 , holdEnd

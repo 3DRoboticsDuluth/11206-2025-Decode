@@ -14,7 +14,7 @@ public class Config {
     public Alliance alliance = Alliance.UNKNOWN;
     public Side side = Side.UNKNOWN;
     public double delay = 0;
-    public double responsiveness = 1;
+    public double responsiveness = 0.25;
     public boolean robotCentric = false;
     public String quanomous;
     public Pose pose = new Pose(0, 0, 0);

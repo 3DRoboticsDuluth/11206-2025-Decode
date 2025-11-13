@@ -20,11 +20,9 @@ public class Constants {
         .lateralZeroPowerAcceleration(-77.5455)
         .useSecondaryTranslationalPIDF(true)
         .useSecondaryHeadingPIDF(true)
-        .useSecondaryDrivePIDF(true)
-        .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.01))
-        .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(4.75,0.0,0.08,0.01));
+        .useSecondaryDrivePIDF(true);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.25, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
         .maxPower(1)

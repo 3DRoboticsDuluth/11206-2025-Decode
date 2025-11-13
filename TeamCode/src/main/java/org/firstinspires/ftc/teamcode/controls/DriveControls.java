@@ -44,6 +44,6 @@ public class DriveControls {
 
         gamepad1.getGamepadButton(BACK)
             .and(gamepad1.getGamepadButton(START))
-            .toggleWhenActive(() -> config.robotCentric = true, () -> config.robotCentric = false);
+            .whenActive(() -> config.robotCentric = !config.robotCentric);
     }
 }

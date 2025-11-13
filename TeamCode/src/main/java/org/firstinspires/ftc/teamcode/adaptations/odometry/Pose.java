@@ -21,4 +21,8 @@ public class Pose {
             pose.y - this.y
         );
     }
+
+    public double atan2(Pose pose) {
+        return Math.atan2(pose.y - y, pose.x - x);
+    }
 }

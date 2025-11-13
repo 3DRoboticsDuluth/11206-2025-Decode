@@ -32,8 +32,6 @@ public class ConfigCommands {
     public Command setInterrupt(boolean interrupt) {
         return complete(
             () -> config.interrupt = interrupt
-        ).alongWith(
-            interrupt ? drive.setPowerLow() : drive.setPowerMedium()
         );
     }
 
