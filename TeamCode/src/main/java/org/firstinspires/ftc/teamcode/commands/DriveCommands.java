@@ -110,12 +110,8 @@ public class DriveCommands {
         return wait.noop(); // TODO: Add Chase
     }
 
-    public Command enableTargetLock() {
-        return complete(() -> drive.targetLockEnabled = true);
-    }
-
-    public Command disableTargetLock() {
-        return complete(() -> drive.targetLockEnabled = false);
+    public Command goalLock(boolean enabled) {
+        return complete(() -> drive.goalLock = enabled);
     }
 
     public Command toDistance(double distance) {
