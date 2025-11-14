@@ -144,7 +144,7 @@ public class DriveCommands {
     }
 
     public Command rumble(GamepadEx gamepad, double intensity, double seconds) {
-        return new InstantCommand(
+        return complete(
             () -> gamepad1.gamepad.rumble(intensity, intensity, (int)(seconds * 1000))
         );
     }
@@ -213,7 +213,7 @@ public class DriveCommands {
     public Command follow(PathChain pathChain, boolean holdEnd) {
         return controlsReset().andThen(
             new FollowPathCommand(drive.follower, pathChain, holdEnd).andThen(
-                new InstantCommand(() -> drive.follower.startTeleopDrive())
+                complete(() -> drive.follower.startTeleopDrive())
             )
         );
     }
@@ -225,7 +225,7 @@ public class DriveCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, drive);
+        return new InstantCommand(runnable);
     }
 
     private static boolean compare(Pose expected, Pose actual, boolean includeHeading) {

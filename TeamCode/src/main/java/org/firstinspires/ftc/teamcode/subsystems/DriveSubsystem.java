@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_PIDF = new PIDFCoefficients(1.5, 0.01, 0.15, 0);
+    public static PIDFCoefficients GOAL_LOCK_PIDF = new PIDFCoefficients(0.75, 0.01, 0.175, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
     public static double POWER_LOW = 0.50;

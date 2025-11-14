@@ -8,20 +8,19 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
 
-import org.firstinspires.ftc.teamcode.adaptations.balistics.ShooterModel;
+import org.firstinspires.ftc.teamcode.adaptations.ballistics.BallisticsModel;
 import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 
 @Configurable
 public class DeflectorSubsystem extends HardwareSubsystem {
-    public static double MIN = 0.49;
+    public static double MIN = 0.50;
     public static double MAX = 0.57;
-    public static double MID = 0.5;
+    public static double MID = 0.535;
     public static double INC = 0.0025;
-    public static double POS = 0.5;
+    public static double POS = MID;
     public static boolean TEL = false;
 
     public Servo servo;
@@ -35,17 +34,13 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        double angle = 0;
-
         POS = angleToPosition(
-            ShooterModel.bestAngleDeg(
-                angle = config.pose.hypot(
-                    nav.getStartPose() // TODO: replace with getGoalPose
+            BallisticsModel.deflectorAngle(
+                config.pose.hypot(
+                    nav.getGoalPose()
                 )
             )
         );
-
-        Log.v(this.getClass().getSimpleName(), String.format("angle: %.2f, POS: %.2f", angle, POS));
 
         if (isNaN(POS)) return;
 
@@ -68,9 +63,9 @@ public class DeflectorSubsystem extends HardwareSubsystem {
         POS = MID;
     }
 
-    public static double angleToPosition(double x) {
-        return -0.3835821
-                + 0.03225259 * x
-                + 0.03225259 * x * x;
+    private double angleToPosition(double angle) {
+        double numerator = -136987.8 - 0.5786442;
+        double denominator = 1 + Math.pow(angle / 8.359162, 8.438698);
+        return 0.5786442 + numerator / denominator;
     }
 }
