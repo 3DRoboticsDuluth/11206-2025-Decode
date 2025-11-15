@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.t
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_AUTO;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIGH;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
@@ -17,9 +18,8 @@ import static java.lang.Math.sin;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
-import android.util.Log;
-
 import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.FuturePose;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -31,12 +31,18 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.game.Alliance;
+import org.firstinspires.ftc.teamcode.game.Side;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
-/** @noinspection unused*/
+/** @noinspection unused, UnusedReturnValue */
 public class DriveCommands {
-    private Pose targetPose = new Pose(0, 0, 0);
+    private boolean reverse = false;
+    private Pose startPose = new Pose(0, 0, 0);
+    private Pose endPose = new Pose(0, 0, 0);
 
     public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
         return new RunCommand(
@@ -63,6 +69,12 @@ public class DriveCommands {
     public Command setPowerHigh() {
         return complete(
             () -> drive.follower.setMaxPower(POWER_HIGH)
+        );
+    }
+
+    public Command setPowerAuto() {
+        return complete(
+            () -> drive.follower.setMaxPower(POWER_AUTO)
         );
     }
 
@@ -107,13 +119,18 @@ public class DriveCommands {
     }
 
     public Command goalLock(boolean enabled) {
-        return complete(() -> drive.goalLock = enabled);
+        return complete(
+            () -> config.goalLock =
+                config.teleop && config.started &&
+                config.alliance != Alliance.UNKNOWN &&
+                config.side != Side.UNKNOWN && enabled
+        );
     }
 
     public Command toDistance(double distance) {
         return distance > 0 ?
-            wait.until(() -> drive.follower.getDistanceTraveledOnPath() >= distance) :
-            wait.until(() -> drive.follower.getDistanceRemaining() < -distance);
+            wait.until(() -> startPose.hypot(config.pose) >= distance) :
+            wait.until(() -> endPose.hypot(config.pose) < -distance);
     }
 
     public boolean toFar(Pose pose) {
@@ -152,9 +169,9 @@ public class DriveCommands {
     public Command forward(double distance) {
         return new SelectCommand(
             () -> to(
-                targetPose.x + cos(targetPose.heading) * distance,
-                targetPose.y + sin(targetPose.heading) * distance,
-                toDegrees(targetPose.heading)
+                endPose.x + cos(endPose.heading) * distance,
+                endPose.y + sin(endPose.heading) * distance,
+                toDegrees(endPose.heading)
             )
         );
     }
@@ -162,9 +179,9 @@ public class DriveCommands {
     public Command strafe(double distance) {
         return new SelectCommand(
             () -> to(
-                targetPose.x + cos(targetPose.heading + PI / 2) * distance,
-                targetPose.y + sin(targetPose.heading + PI / 2) * distance,
-                toDegrees(targetPose.heading)
+                endPose.x + cos(endPose.heading + PI / 2) * distance,
+                endPose.y + sin(endPose.heading + PI / 2) * distance,
+                toDegrees(endPose.heading)
             )
         );
     }
@@ -172,8 +189,8 @@ public class DriveCommands {
     public Command turn(double heading) {
         return new SelectCommand(
             () -> to(
-                targetPose.x,
-                targetPose.y,
+                endPose.x,
+                endPose.y,
                 heading
             )
         );
@@ -193,29 +210,75 @@ public class DriveCommands {
 
     public Command to(Pose pose, boolean holdEnd) {
         return new SelectCommand(
+            () -> follow(builder -> {
+                builder
+                    .addPath(new BezierCurve(() -> toPedroPose(getPose()), toPedroPose(pose)))
+                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading);
+                if (reverse) builder.setReversed();
+            }, holdEnd)
+        );
+    }
+
+    public Command curve(Pose... poses) {
+        return new SelectCommand(
+            () -> follow(builder -> {
+                List<FuturePose> futurePoses = new ArrayList<>();
+                futurePoses.add(toPedroPose(startPose = getPose()));
+                for (Pose pose : poses)
+                    futurePoses.add(toPedroPose(endPose = pose));
+                builder
+                    .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
+                    .setTangentHeadingInterpolation();
+                if (reverse) builder.setReversed();
+            }, true)
+        );
+    }
+
+    public Command curves(Pose... poses) {
+        return new SelectCommand(
+            () -> follow(builder -> {
+                startPose = endPose = getPose();
+                for (Pose pose : poses) {
+                    builder
+                        .addPath(new BezierCurve(toPedroPose(endPose), toPedroPose(pose)))
+                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading);
+                    if (reverse) builder.setReversed();
+                }
+            }, true)
+        );
+    }
+
+    /** @noinspection unchecked*/
+    public Command paths(Consumer<PathBuilder>... consumers) {
+        return new SelectCommand(
             () -> follow(
-                drive.follower.pathBuilder()
-                    .addPath(new BezierCurve(() -> toPedroPose(config.pose), toPedroPose(targetPose = pose)))
-                    .setLinearHeadingInterpolation(config.pose.heading, pose.heading)
-                    .build()
-                , holdEnd
+                builder -> {
+                    for (Consumer<PathBuilder> consumer : consumers)
+                        consumer.accept(builder);
+                }, true
             )
         );
     }
 
-    public Command follow(Consumer<PathBuilder> pathBuilderConsumer, boolean holdEnd) {
+    public Command follow(Consumer<PathBuilder> consumer, boolean holdEnd) {
         PathBuilder pathBuilder = drive.follower.pathBuilder();
-        pathBuilderConsumer.accept(pathBuilder);
+        consumer.accept(pathBuilder);
         PathChain pathChain = pathBuilder.build();
         return follow(pathChain, holdEnd);
     }
 
     public Command follow(PathChain pathChain, boolean holdEnd) {
         return controlsReset().andThen(
-            new FollowPathCommand(drive.follower, pathChain, holdEnd).andThen(
-                complete(() -> drive.follower.startTeleopDrive())
-            )
+            new FollowPathCommand(drive.follower, pathChain, holdEnd)
         );
+    }
+
+    public Command forward() {
+        return complete(() -> reverse = false);
+    }
+
+    public Command reverse() {
+        return complete(() -> reverse = true);
     }
 
     public Command controlsReset() {
@@ -226,6 +289,10 @@ public class DriveCommands {
 
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable);
+    }
+
+    private Pose getPose() {
+        return reverse ? config.pose.reverse() : config.pose;
     }
 
     private static boolean compare(Pose expected, Pose actual, boolean includeHeading) {

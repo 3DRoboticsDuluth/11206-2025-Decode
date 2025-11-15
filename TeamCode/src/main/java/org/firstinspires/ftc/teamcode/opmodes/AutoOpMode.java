@@ -18,6 +18,7 @@ public class AutoOpMode extends OpMode {
 
         config.alliance = Alliance.UNKNOWN;
         config.side = Side.UNKNOWN;
+        config.quanomous = null;
         config.delay = 0;
         config.robotCentric = false;
 

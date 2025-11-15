@@ -90,15 +90,15 @@ public class NavSubsystem {
     public Pose getLaunchNearPose() {
         return createPose(
             -0.5 * TILE_WIDTH,
-            config.alliance.sign * -0.5 * TILE_WIDTH,
+            config.alliance.sign * -0.67 * TILE_WIDTH,
             toRadians(config.alliance.sign * 45)
         );
     }
 
     public Pose getLaunchFarPose() {
         return createPose(
-            2.5 * TILE_WIDTH,
-            config.alliance.sign * -0.5 * TILE_WIDTH,
+            2 * TILE_WIDTH,
+            config.alliance.sign * -0.67 * TILE_WIDTH,
             toRadians(config.alliance.sign * 20)
         );
     }
@@ -113,15 +113,21 @@ public class NavSubsystem {
 
     public Pose getGoalPose() {
         return new Pose(
-            -2.5 * TILE_WIDTH,
-            config.alliance.sign * -2.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 45) // TODO: Get from AprilTag?
+            -3 * TILE_WIDTH,
+            config.alliance.sign * -2.6 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 45)
         );
     }
 
-    public double getGoalLockError() {
+    public double getGoalHeadingError() {
         return normalizeHeading(
             config.pose.heading - getGoalPose().atan2(config.pose)
+        );
+    }
+
+    public double getGoalDistance() {
+        return config.pose.hypot(
+            getGoalPose()
         );
     }
 

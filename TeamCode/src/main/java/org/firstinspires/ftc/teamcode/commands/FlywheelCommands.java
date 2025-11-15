@@ -7,10 +7,6 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
 public class FlywheelCommands {
-    public Command launch() {
-        return complete(flywheel::launch);
-    }
-
     public Command forward() {
         return complete(flywheel::forward);
     }

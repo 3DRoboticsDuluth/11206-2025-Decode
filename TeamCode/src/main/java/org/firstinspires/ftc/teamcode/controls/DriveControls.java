@@ -7,7 +7,9 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_STICK_BUTTON;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_STICK_BUTTON;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -45,5 +47,9 @@ public class DriveControls {
         gamepad1.getGamepadButton(BACK)
             .and(gamepad1.getGamepadButton(START))
             .whenActive(() -> config.robotCentric = !config.robotCentric);
+
+        gamepad1.getGamepadButton(LEFT_STICK_BUTTON)
+            .and(gamepad1.getGamepadButton(RIGHT_STICK_BUTTON))
+            .whenActive(drive.toStart());
     }
 }

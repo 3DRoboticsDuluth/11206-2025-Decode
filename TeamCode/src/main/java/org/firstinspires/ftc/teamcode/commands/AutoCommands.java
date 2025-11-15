@@ -33,7 +33,7 @@ public class AutoCommands {
             drive.toBase()
         );
     }
-    
+
     public Command delayStart() {
         return new SelectCommand(
             () -> wait.seconds(config.delay)
@@ -51,7 +51,7 @@ public class AutoCommands {
 
     public Command intakeStop() {
         return conveyor.reverse().andThen(
-            wait.doherty(3),
+            wait.doherty(2),
             conveyor.stop(),
             intake.hold(),
             gate.open()
@@ -60,7 +60,6 @@ public class AutoCommands {
                 drive.goalLock(true).andThen(
                     flywheel.forward(),
                     flywheel.isReady(),
-                    flywheel.launch(),
                     drive.rumble()
                 )
             )
@@ -104,7 +103,6 @@ public class AutoCommands {
             intake.forward(),
             flywheel.forward(),
             flywheel.isReady(),
-            flywheel.launch(),
             conveyor.launch()
         );
     }
@@ -119,17 +117,18 @@ public class AutoCommands {
 
     public Command depositNear() {
         return drive.toLaunchNear().andThen(
-            // TODO: Reuse
-            auto.depositStart(),
-            wait.doherty(3),
-            auto.depositStop()
+            auto.deposit()
         );
     }
 
     public Command depositFar() {
         return drive.toLaunchFar().andThen(
-            // TODO: Reuse
-            auto.depositStart(),
+            auto.deposit()
+        );
+    }
+
+    public Command deposit() {
+        return auto.depositStart().andThen(
             wait.doherty(3),
             auto.depositStop()
         );
@@ -137,9 +136,9 @@ public class AutoCommands {
 
     public Command releaseGate() {
         return drive.toGate().andThen(
-            drive.forward(3),
+            drive.forward(8).withTimeout(1500),
             wait.seconds(1),
-            drive.forward(-3)
+            drive.toGate()
         );
     }
 }

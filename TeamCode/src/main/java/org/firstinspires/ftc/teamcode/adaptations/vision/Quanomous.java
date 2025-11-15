@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.adaptations.vision;
 
+import static org.firstinspires.ftc.teamcode.game.Config.config;
+
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
@@ -80,15 +82,23 @@ public class Quanomous {
     }
 
     public static String change(int direction) {
-        return null; // TODO
+        return direction > 0 ? next() : prev();
     }
 
     public static String prev() {
-        return null; // TODO
+        File[] files = getSortedFileList();
+        if (files.length == 0) return null;
+        int idx = indexOf(config.quanomous, files);
+        if (idx < 0) idx = files.length;
+        return files[(idx - 1 + files.length) % files.length].getName();
     }
 
     public static String next() {
-        return null; // TODO
+        File[] files = getSortedFileList();
+        if (files.length == 0) return null;
+        int idx = indexOf(config.quanomous, files);
+        if (idx < 0) idx = -1;
+        return files[(idx + 1 + files.length) % files.length].getName();
     }
 
     @SuppressLint({"SimpleDateFormat", "DefaultLocale"})

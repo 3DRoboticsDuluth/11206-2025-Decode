@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.adaptations.ballistics;
 
+import static java.lang.Double.NaN;
+import static java.lang.Double.POSITIVE_INFINITY;
+import static java.lang.Double.isNaN;
 import static java.lang.Math.*;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -20,22 +23,22 @@ public class BallisticsModel {
     public static double G_IN_PER_S2 = 386.09; // gravity
 
     // Efficiency / calibration
-    public static double K_EFF = 0.425; // wheel→ball speed ratio (0<k≤1). Raise RPM if real shots fall short.
+    public static double K_EFF = 0.4; // wheel→ball speed ratio (0<k≤1). Raise RPM if real shots fall short. Slip
     public static double THETA_OFFSET_D = 0.0; // constant angle offset (deg) to map deflector reading → true launch angle
     public static double KV_SCALE = 1.00; // global RPM scale (e.g., 1.10 for +10%)
-    public static double BETA_RPM2 = 0.00000002; // optional tiny quadratic bump; start at 0.0 (e.g., 5e-9 if needed)
+    public static double BETA_RPM2 = 0.00000001; // optional tiny quadratic bump; start at 0.0 (e.g., 5e-9 if needed)
 
     public static double DISTANCE_OVERRIDE = 0;
 
     public static double deflectorAngle(double distance) {
         if (DISTANCE_OVERRIDE != 0) distance = DISTANCE_OVERRIDE;
 
-        double bestAng = Double.NaN;
-        double bestRpm = Double.POSITIVE_INFINITY;
+        double bestAng = NaN;
+        double bestRpm = POSITIVE_INFINITY;
 
         for (double a = ANGLE_MIN_DEG; a <= ANGLE_MAX_DEG + 1e-9; a += ANGLE_STEP_DEG) {
             double rpm = rpmCalibrated(distance, a);
-            if (!Double.isNaN(rpm)) {
+            if (!isNaN(rpm)) {
                 if (rpm < bestRpm - 1e-6 || (abs(rpm - bestRpm) <= 1e-6 && a > bestAng)) {
                     bestRpm = rpm;
                     bestAng = a; // tie-break toward higher angle (gentler entry)
@@ -43,20 +46,20 @@ public class BallisticsModel {
             }
         }
 
-        return bestAng;
+        return isNaN(bestAng) ? ANGLE_MAX_DEG : bestAng;
     }
 
     public static double flywheelRpm(double distance) {
         if (DISTANCE_OVERRIDE != 0) distance = DISTANCE_OVERRIDE;
         double ang = deflectorAngle(distance);
-        if (Double.isNaN(ang)) return Double.NaN;
+        if (isNaN(ang)) return NaN;
         return rpmCalibrated(distance, ang);
     }
 
     // Calibrated RPM = (ideal RPM) * KV_SCALE * (1 + BETA * idealRPM^2)
     private static double rpmCalibrated(double distance, double angle) {
         double rpmIdeal = rpmIdeal(distance, angle);
-        if (Double.isNaN(rpmIdeal)) return Double.NaN;
+        if (isNaN(rpmIdeal)) return NaN;
         double rpm = rpmIdeal * KV_SCALE;
         if (BETA_RPM2 > 0.0) rpm *= (1.0 + BETA_RPM2 * rpmIdeal * rpmIdeal);
         return rpm;
@@ -69,9 +72,9 @@ public class BallisticsModel {
         final double tanA = tan(alpha);
         final double cosA = cos(alpha);
         final double denom = 2.0 * cosA * cosA * (distance * tanA - deltaY);
-        if (denom <= 0.0) return Double.NaN; // infeasible at any speed
+        if (denom <= 0.0) return NaN; // infeasible at any speed
         final double v2 = (G_IN_PER_S2 * distance * distance) / denom; // (in/s)^2
-        if (v2 <= 0.0) return Double.NaN;
+        if (v2 <= 0.0) return NaN;
         final double v = sqrt(v2); // in/s
         // RPM = (30 * v) / (π * k * r)
         return (30.0 * v) / (PI * K_EFF * WHEEL_RADIUS_IN);

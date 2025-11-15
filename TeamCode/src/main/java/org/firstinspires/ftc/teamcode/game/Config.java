@@ -11,11 +11,12 @@ public class Config {
     public transient boolean teleop;
     public transient boolean started;
     public transient boolean interrupt;
+    public Pose pose = new Pose(0, 0, 0);
     public Alliance alliance = Alliance.UNKNOWN;
     public Side side = Side.UNKNOWN;
+    public String quanomous = null;
     public double delay = 0;
     public double responsiveness = 0.25;
     public boolean robotCentric = false;
-    public String quanomous;
-    public Pose pose = new Pose(0, 0, 0);
+    public boolean goalLock = false;
 }

@@ -23,14 +23,16 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
-import com.seattlesolvers.solverslib.geometry.Vector2d;
 
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_PIDF = new PIDFCoefficients(0.75, 0.01, 0.175, 0);
+    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(1, 0.01, 0.175, 0);
+    public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0.015, 0.0015);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
     public static double POWER_LOW = 0.50;
@@ -47,12 +49,12 @@ public class DriveSubsystem extends HardwareSubsystem {
     public MotorEx driveBackRight;
 
     public boolean controlsReset = false;
-    public boolean goalLock = false;
 
     private final PController pForward = new PController(config.responsiveness);
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
-    private final PIDFController pGoalLock = new PIDFController(GOAL_LOCK_PIDF);
+    private final PIDFController pidfGoalLock = new PIDFController(GOAL_LOCK_HEADING_PIDF);
+    private final FFController ffGoalLock = new FFController(GOAL_LOCK_LATERAL_FF);
 
     private double forward = 0;
     private double strafe = 0;
@@ -77,7 +79,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
         pTurn.setP(config.responsiveness);
-        pGoalLock.setPIDFCoefficients(GOAL_LOCK_PIDF);
+        pidfGoalLock.setPIDFCoefficients(GOAL_LOCK_HEADING_PIDF);
 
         if (opMode.isStopRequested()) {
             follower.startTeleopDrive();
@@ -103,6 +105,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
+        telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
@@ -114,14 +117,22 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (unready()) return;
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
+        if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
         if (isBusy()) return;
-        double headingOffset = config.robotCentric || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90;
-        Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
-            this.forward += pForward.calculate(this.forward, driveVector.getX()),
-            this.strafe += pStrafe.calculate(this.strafe, driveVector.getY()),
-            this.turn += pTurn.calculate(this.turn, !goalLock ? turn : pGoalLock.calculate(nav.getGoalLockError())),
-            config.robotCentric
+            this.forward += pForward.calculate(this.forward, forward),
+            this.strafe += pStrafe.calculate(this.strafe, strafe),
+            this.turn += pTurn.calculate(this.turn, !config.goalLock ? turn : calculateGoalLockTurn()),
+            config.robotCentric, config.robotCentric || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90
+        );
+    }
+
+    public double calculateGoalLockTurn() {
+        return pidfGoalLock.calculate(
+            nav.getGoalHeadingError()
+        ) + ffGoalLock.calculate(
+            follower.getVelocity().getYComponent(),
+            follower.getAcceleration().getYComponent()
         );
     }
 
