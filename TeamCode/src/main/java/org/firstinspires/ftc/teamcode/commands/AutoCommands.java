@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
+import static org.firstinspires.ftc.teamcode.commands.Commands.movingShot;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
@@ -60,7 +61,8 @@ public class AutoCommands {
                 flywheel.isReady(),
                 flywheel.launch(),
                 drive.rumble(),
-                drive.goalLock(true)
+                drive.goalLock(true),
+                movingShot.driverControlledShoot()
             )
         );
     }

@@ -13,6 +13,7 @@ public class Subsystems {
     public static VisionSubsystem vision;
     public static KickstandSubsystem kickstand;
     public static TimingSubsystem timing;
+    public static MovingShotSubsystem movingShot;
 
     public static void initialize() {
         config = new ConfigSubsystem();
@@ -27,5 +28,6 @@ public class Subsystems {
         vision = new VisionSubsystem();
         kickstand = new KickstandSubsystem();
         timing = new TimingSubsystem();
+        movingShot = new MovingShotSubsystem();
     }
 }

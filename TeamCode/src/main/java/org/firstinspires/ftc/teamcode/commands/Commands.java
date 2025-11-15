@@ -13,6 +13,7 @@ public class Commands {
     public static VisionCommands vision;
     public static KickstandCommands kickstand;
     public static AutoCommands auto;
+    public static TeleopMovingShotCommands movingShot;
 
     public static void initialize() {
         wait = new WaitCommands();
@@ -27,5 +28,6 @@ public class Commands {
         vision = new VisionCommands();
         kickstand = new KickstandCommands();
         auto = new AutoCommands();
+        movingShot = new TeleopMovingShotCommands();
     }
 }

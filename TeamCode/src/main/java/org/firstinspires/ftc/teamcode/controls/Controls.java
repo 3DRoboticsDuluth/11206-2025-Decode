@@ -16,5 +16,6 @@ public class Controls {
         new FlywheelControls();
         new KickstandControls();
         new AutoControls();
+        new TeleopMovingShotControls();
     }
 }
