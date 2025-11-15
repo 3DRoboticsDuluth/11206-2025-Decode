@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.adaptations.balistics;
 
 import static java.lang.Math.*;
 
+import com.bylazar.configurables.annotations.Configurable;
+
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 
 /**
  * Enhanced shooter model that accounts for robot velocity during launch.
  * This allows accurate scoring while the robot is moving.
  */
+@Configurable
 public class MovingShooterModel {
 
     // ======= INHERIT BASE CONSTANTS FROM ShooterModel =======

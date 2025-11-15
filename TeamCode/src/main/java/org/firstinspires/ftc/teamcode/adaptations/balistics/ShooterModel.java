@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.adaptations.balistics;
 
 import static java.lang.Math.*;
 
+import com.bylazar.configurables.annotations.Configurable;
+
+@Configurable
 public class ShooterModel {
 
     // ======= EDIT THESE CONSTANTS TO MATCH YOUR ROBOT / STRATEGY =======
