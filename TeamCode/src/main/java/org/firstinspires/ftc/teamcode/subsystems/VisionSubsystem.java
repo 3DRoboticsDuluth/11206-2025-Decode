@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static androidx.core.math.MathUtils.clamp;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.COLOR;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
@@ -33,6 +34,10 @@ public class VisionSubsystem extends HardwareSubsystem {
     public Pose detectionPose = null;
     public int detectionCount = 0;
     public Pose elementPose = null;
+
+    public static double MAX = .175;
+    public static double MIN = 0;
+    public static double POS = 0;
 
     public final Limelight3A limelight;
 
@@ -78,6 +83,8 @@ public class VisionSubsystem extends HardwareSubsystem {
         limelight.updateRobotOrientation(yaw);
 
         LLResult result = limelight.getLatestResult();
+
+        POS =  clamp(POS, MIN, MAX);
 
         servo.addTelemetry(TEL);
 
