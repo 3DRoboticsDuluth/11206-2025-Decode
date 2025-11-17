@@ -115,7 +115,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
         if (isBusy()) return;
-        double headingOffset = config.robotCentric || isNaN(config.alliance.sign) ? 0 : 90;
+        double headingOffset = config.robotCentric || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90;
         Vector2d driveVector = new Vector2d(forward, strafe).rotateBy(headingOffset);
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, driveVector.getX()),
