@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.controls;
 
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.A;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.BACK;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
 import static org.firstinspires.ftc.teamcode.commands.Commands.config;
+import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.Change.NEXT;
@@ -33,5 +35,10 @@ public class ConfigControls {
         gamepad1.getGamepadButton(DPAD_RIGHT)
              .or(gamepad2.getGamepadButton(DPAD_RIGHT))
              .whenActive(config.changeValue(NEXT));
+
+        gamepad1.getGamepadButton(A)
+            .or(gamepad2.getGamepadButton(A))
+            .whenActive(vision.startQRScan())
+            .whenInactive(vision.stopQRScan());
     }
 }

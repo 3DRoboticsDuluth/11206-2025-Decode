@@ -13,4 +13,18 @@ public class VisionCommands {
             Subsystems.vision
         );
     }
+
+    public Command startQRScan() {
+        return new InstantCommand(
+                () -> Subsystems.vision.startQrScan(),
+                Subsystems.vision
+        );
+    }
+
+    public Command stopQRScan() {
+        return new InstantCommand(
+                () -> Subsystems.vision.stopQrScan(),
+                Subsystems.vision
+        );
+    }
 }

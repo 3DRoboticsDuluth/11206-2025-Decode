@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static androidx.core.math.MathUtils.clamp;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.COLOR;
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public Pose detectionPose = null;
     public int detectionCount = 0;
     public Pose elementPose = null;
+
+    public String qrCodeData = null;
+    public boolean qrScanRequested = false;
 
     public static double MAX = .175;
     public static double MIN = 0;
@@ -58,9 +63,11 @@ public class VisionSubsystem extends HardwareSubsystem {
         servo = getServo("turret");
 
         processors = new HashMap<Integer, Consumer<LLResult>>() {{
+            put(QRCODE.index, VisionSubsystem.this::processQRCode);
             put(APRILTAG.index, VisionSubsystem.this::processAprilTag);
             put(COLOR.index, VisionSubsystem.this::processColor);
         }};
+
     }
 
     /** @noinspection DataFlowIssue*/
@@ -74,18 +81,20 @@ public class VisionSubsystem extends HardwareSubsystem {
             return;
         }
 
-        switchPipeline(PIPELINE, false);
+        if (qrScanRequested && qrCodeData == null) {
+            switchPipeline(QRCODE.index, false);
+        } else if (!qrScanRequested) {
+            switchPipeline(PIPELINE, false);
+        }
 
         detectionPose = null;
 
         double yaw = toDegrees(config.pose.heading);
-
         limelight.updateRobotOrientation(yaw);
 
         LLResult result = limelight.getLatestResult();
 
-        POS =  clamp(POS, MIN, MAX);
-
+        POS = clamp(POS, MIN, MAX);
         servo.addTelemetry(TEL);
 
         if (result == null || !result.isValid()) {
@@ -184,5 +193,28 @@ public class VisionSubsystem extends HardwareSubsystem {
 
             return;
         }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void processQRCode(LLResult result) {
+        List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
+
+        for(LLResultTypes.BarcodeResult qrResult : barcodeResults) {
+
+            Log.i(
+                this.getClass().getSimpleName(),
+                String.format("QR Code | Family: %s |Data: %s", qrResult.getFamily(), qrResult.getData())
+            );
+
+            config.quanomous = Quanomous.process(qrCodeData);
+        }
+    }
+
+    public void startQrScan() {
+        qrScanRequested = true;
+    }
+
+    public void stopQrScan() {
+        qrScanRequested = false;
     }
 }
