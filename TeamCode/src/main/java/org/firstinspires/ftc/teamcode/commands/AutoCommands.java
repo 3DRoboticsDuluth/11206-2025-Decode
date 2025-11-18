@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
+import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
@@ -15,22 +16,7 @@ import com.seattlesolvers.solverslib.command.SelectCommand;
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            Commands.config.setInterrupt(true),
-            drive.toLaunchNear(),
-            wait.forInterruptA(),
-            drive.toSpike3(),
-            wait.forInterruptA(),
-            drive.toSpike2(),
-            wait.forInterruptA(),
-            drive.toSpike1(),
-            wait.forInterruptA(),
-            drive.toSpike0(),
-            wait.forInterruptA(),
-            drive.toLaunchFar(),
-            wait.forInterruptA(),
-            drive.toGate(),
-            wait.forInterruptA(),
-            drive.toBase()
+            quanomous.execute()
         );
     }
 

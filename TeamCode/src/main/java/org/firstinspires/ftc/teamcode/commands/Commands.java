@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+
 public class Commands {
     public static WaitCommands wait;
     public static ConfigCommands config;
@@ -12,6 +14,7 @@ public class Commands {
     public static FlywheelCommands flywheel;
     public static VisionCommands vision;
     public static KickstandCommands kickstand;
+    public static QuanomousCommands quanomous;
     public static AutoCommands auto;
 
     public static void initialize() {
@@ -26,6 +29,7 @@ public class Commands {
         flywheel = new FlywheelCommands();
         vision = new VisionCommands();
         kickstand = new KickstandCommands();
+        quanomous = new QuanomousCommands();
         auto = new AutoCommands();
     }
 }

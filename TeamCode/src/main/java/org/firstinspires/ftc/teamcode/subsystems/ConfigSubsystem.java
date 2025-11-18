@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 import org.firstinspires.ftc.teamcode.game.Config;
 
 import java.io.File;
@@ -58,7 +59,14 @@ public class ConfigSubsystem extends SubsystemBase {
             "Side",
             () -> String.format("%s", config.side),
             change -> { config.side = config.side == NORTH ? SOUTH : NORTH; reset(); }
+
         ),
+            new Item(
+                    "Quanomous",
+                    () -> String.format("%s", config.quanomous),
+                    change -> Quanomous.change(change.sign)
+
+            ),
         new Item(
             "Delay",
             () -> String.format("%.1fs", config.delay),
