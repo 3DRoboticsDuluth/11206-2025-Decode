@@ -206,7 +206,7 @@ public class VisionSubsystem extends HardwareSubsystem {
                 String.format("QR Code | Family: %s |Data: %s", qrResult.getFamily(), qrResult.getData())
             );
 
-            config.quanomous = Quanomous.process(qrCodeData);
+            config.quanomous = Quanomous.process(qrResult.getData());
         }
     }
 
