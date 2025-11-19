@@ -63,7 +63,7 @@ public class VisionSubsystem extends HardwareSubsystem {
         servo = getServo("turret");
 
         processors = new HashMap<Integer, Consumer<LLResult>>() {{
-            put(QRCODE.index, VisionSubsystem.this::processQRCode);
+            put(QRCODE.index, VisionSubsystem.this::processQrCode);
             put(APRILTAG.index, VisionSubsystem.this::processAprilTag);
             put(COLOR.index, VisionSubsystem.this::processColor);
         }};
@@ -112,13 +112,33 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     @SuppressLint("DefaultLocale")
+    private void processQrCode(LLResult result) {
+        List<LLResultTypes.BarcodeResult> barcodes = result.getBarcodeResults();
+
+        for (LLResultTypes.BarcodeResult barcode : barcodes) {
+            Log.i(
+                this.getClass().getSimpleName(),
+                String.format(
+                    "Vision (QR Code) | %s | %s",
+                    barcode.getFamily(),
+                    barcode.getData()
+                )
+            );
+
+            config.quanomous = Quanomous.process(
+                barcode.getData()
+            );
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
     private void processAprilTag(LLResult result) {
         Pose3D botpose = result.getBotpose_MT2();
 
         detectionPose = new Pose(
-             botpose.getPosition().x,
-             botpose.getPosition().y,
-             botpose.getOrientation().getYaw(AngleUnit.RADIANS)
+            botpose.getPosition().x,
+            botpose.getPosition().y,
+            botpose.getOrientation().getYaw(AngleUnit.RADIANS)
         );
 
         telemetry.addData("Vision (Detection Count)", () -> String.format("%d", ++detectionCount));
@@ -154,12 +174,12 @@ public class VisionSubsystem extends HardwareSubsystem {
             double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
 
             telemetry.addData(
-                 "Vision (Color Result)",
-                 () -> String.format(
-                     "%.2f°tx, %.2f°ty",
-                     direction * cr.getTargetXDegrees(),
-                     direction * cr.getTargetYDegrees()
-                 )
+                "Vision (Color Result)",
+                () -> String.format(
+                    "%.2f°tx, %.2f°ty",
+                    direction * cr.getTargetXDegrees(),
+                    direction * cr.getTargetYDegrees()
+                )
             );
 
             Log.i(
@@ -192,21 +212,6 @@ public class VisionSubsystem extends HardwareSubsystem {
             );
 
             return;
-        }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private void processQRCode(LLResult result) {
-        List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
-
-        for(LLResultTypes.BarcodeResult qrResult : barcodeResults) {
-
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format("QR Code | Family: %s |Data: %s", qrResult.getFamily(), qrResult.getData())
-            );
-
-            config.quanomous = Quanomous.process(qrResult.getData());
         }
     }
 

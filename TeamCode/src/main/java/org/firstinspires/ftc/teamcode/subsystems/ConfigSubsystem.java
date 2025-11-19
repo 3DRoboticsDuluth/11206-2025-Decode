@@ -59,14 +59,12 @@ public class ConfigSubsystem extends SubsystemBase {
             "Side",
             () -> String.format("%s", config.side),
             change -> { config.side = config.side == NORTH ? SOUTH : NORTH; reset(); }
-
         ),
-            new Item(
-                    "Quanomous",
-                    () -> String.format("%s", config.quanomous),
-                    change -> Quanomous.change(change.sign)
-
-            ),
+        new Item(
+            "Quanomous",
+            () -> String.format("%s", config.quanomous),
+            change -> config.quanomous = Quanomous.change(change.sign)
+        ),
         new Item(
             "Delay",
             () -> String.format("%.1fs", config.delay),

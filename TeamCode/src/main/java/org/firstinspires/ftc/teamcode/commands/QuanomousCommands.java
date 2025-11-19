@@ -2,12 +2,11 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
-import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.PurePursuitCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
@@ -20,22 +19,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class QuanomousCommands {
-    // H4sIAAAAAAAAA32PwQoCMQxE/yXnHrrX/opICXZci91W2qAu4r9vdkUoi3gZJpk3gRxedJoCOQo13uGlkKEnOWto3vQCDjGP6t/mi8YsfIWv5aHwqm74F3bNgMSzn5pGKm6wtgsrErjBjyygvnMrLcpaKQG6yOCqUytVoMCZU8MvXGKC//yy2f1D+xPHBcupcmIMAQAA
-
-    // [
-    //   { "cmd": "drive", "tx": 0, "ty": 0, "h": 0 },
-    //   { "cmd": "intake", "spike": 1 },
-    //   { "cmd": "delay", "seconds": 1000 },
-    //   { "cmd": "release" },
-    //   { "cmd": "deposit", "locale": "near", "sorted": false, "txo": 0, "tyo": 0}
-
-    //    {"cmd":"drive","tx":2,"ty":2,"h":180},
-    //    {"cmd":"drive","x":0,"y":0,"h":0},
-    //    {"cmd":"intake","spike":2},
-    //    {"cmd":"delay","seconds":1},
-    //    {"cmd":"release"}
-    //    {"cmd":"deposit","locale":"near","sorted":false,"txo":2,"tyo":2},
-
     private final Map<String, Function<JSONObject, Command>> commands =
         new HashMap<String, Function<JSONObject, Command>>() {{
             put("drive", Lambda.unchecked(QuanomousCommands::drive));
@@ -47,8 +30,8 @@ public class QuanomousCommands {
 
     public static Command drive(JSONObject obj) throws Exception {
         return drive.to(
-            obj.getDouble("x"),
-            obj.getDouble("y"),
+            obj.getDouble("tx") * TILE_WIDTH,
+            obj.getDouble("ty") * TILE_WIDTH,
             obj.getDouble("h")
         );
     }
@@ -78,10 +61,10 @@ public class QuanomousCommands {
     public static Command deposit(JSONObject obj) throws Exception {
         String locale = obj.getString("locale");
         return new SelectCommand(
-                new HashMap<Object, Command>() {{
-                    put("near", auto.depositNear());
-                    put("far", auto.depositFar());
-                }}, () -> locale
+            new HashMap<Object, Command>() {{
+                put("near", auto.depositNear());
+                put("far", auto.depositFar());
+            }}, () -> locale
         );
     }
 

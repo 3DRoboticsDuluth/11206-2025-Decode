@@ -121,7 +121,7 @@ public class DriveCommands {
     public Command goalLock(boolean enabled) {
         return complete(
             () -> config.goalLock =
-                config.teleop && config.started &&
+                config.started &&
                 config.alliance != Alliance.UNKNOWN &&
                 config.side != Side.UNKNOWN && enabled
         );

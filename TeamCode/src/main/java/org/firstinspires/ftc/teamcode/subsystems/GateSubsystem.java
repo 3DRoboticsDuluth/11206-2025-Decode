@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 
 @Configurable
 public class GateSubsystem extends HardwareSubsystem {
-    public static double CLOSE = 1;
+    public static double CLOSE = 0.5;
     public static double OPEN = 1;
     public static double POS = OPEN;
     public static boolean TEL = false;
@@ -38,6 +38,6 @@ public class GateSubsystem extends HardwareSubsystem {
     }
 
     public void close() {
-        POS = OPEN;
+        POS = CLOSE;
     }
 }
