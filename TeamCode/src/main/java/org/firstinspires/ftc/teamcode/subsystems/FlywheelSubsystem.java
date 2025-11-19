@@ -55,23 +55,14 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        if (config.goalLock)
-            VEL = BallisticsModel.flywheelRpm(
-                nav.getGoalDistance()
-            ) + controllerAxial.calculate(
-                drive.follower.getVelocity().getXComponent(),
-                drive.follower.getAcceleration().getXComponent()
-            );
-
-        if (isNaN(VEL) || nav.getGoalDistance() < DIST_MIN)
-            VEL = FWD;
+        VEL = calculateVelocity();
 
         set(motorLeft, controllerLeft);
         set(motorRight, controllerRight);
     }
 
     public void forward() {
-        VEL = FWD;
+        VEL = calculateVelocity();
     }
 
     public void stop() {
@@ -101,5 +92,22 @@ public class FlywheelSubsystem extends HardwareSubsystem {
         controller.setTarget(VEL);
         motor.set(controller.update(motor.getRpm(), voltageSensor.getVoltage()));
         motor.addTelemetry(TEL);
+    }
+
+    private double calculateVelocity() {
+        double velocity = VEL;
+
+        if (config.goalLock)
+            velocity = BallisticsModel.flywheelRpm(
+                nav.getGoalDistance()
+            ) + controllerAxial.calculate(
+                drive.follower.getVelocity().getXComponent(),
+                drive.follower.getAcceleration().getXComponent()
+            );
+
+        if (isNaN(velocity) || nav.getGoalDistance() < DIST_MIN)
+            velocity = FWD;
+
+        return velocity;
     }
 }

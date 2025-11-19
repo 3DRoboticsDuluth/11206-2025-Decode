@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
 public class AutoCommands {
@@ -88,7 +89,6 @@ public class AutoCommands {
         return drive.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
-            wait.doherty(2),
             flywheel.isReady(),
             conveyor.launch()
         );
@@ -116,7 +116,6 @@ public class AutoCommands {
 
     public Command deposit() {
         return auto.depositStart().andThen(
-            wait.doherty(3),
             auto.depositStop()
         );
     }
@@ -127,5 +126,9 @@ public class AutoCommands {
             wait.seconds(1),
             drive.toGate()
         );
+    }
+
+    public Command goalLock(boolean enabled) {
+        return new InstantCommand(() -> config.goalLock = enabled);
     }
 }

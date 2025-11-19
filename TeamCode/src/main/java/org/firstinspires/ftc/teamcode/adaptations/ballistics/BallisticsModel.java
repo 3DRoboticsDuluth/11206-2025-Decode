@@ -23,11 +23,12 @@ public class BallisticsModel {
     public static double G_IN_PER_S2 = 386.09; // gravity
 
     // Efficiency / calibration
-    public static double K_EFF = 0.4; // wheel→ball speed ratio (0<k≤1). Raise RPM if real shots fall short. Slip
+    public static double K_EFF = 0.45; // wheel→ball speed ratio (0<k≤1). Raise RPM if real shots fall short. Slip
     public static double THETA_OFFSET_D = 0.0; // constant angle offset (deg) to map deflector reading → true launch angle
     public static double KV_SCALE = 1.00; // global RPM scale (e.g., 1.10 for +10%)
-    public static double BETA_RPM2 = 0.00000001; // optional tiny quadratic bump; start at 0.0 (e.g., 5e-9 if needed)
+    public static double BETA_RPM2 = 0; // optional tiny quadratic bump; start at 0.0 (e.g., 5e-9 if needed)
 
+    //TODO BETA_RPM2 was @ 0.000000035
     public static double DISTANCE_OVERRIDE = 0;
 
     public static double deflectorAngle(double distance) {
@@ -76,7 +77,8 @@ public class BallisticsModel {
         final double v2 = (G_IN_PER_S2 * distance * distance) / denom; // (in/s)^2
         if (v2 <= 0.0) return NaN;
         final double v = sqrt(v2); // in/s
-        // RPM = (30 * v) / (π * k * r)
+        // RPM = (30 * v) / (π * k * r)3
+        K_EFF = -18442.64 + (0.3896114 - -18442.64)/(1 + pow(distance/5500.357, 3.514147));
         return (30.0 * v) / (PI * K_EFF * WHEEL_RADIUS_IN);
     }
 }

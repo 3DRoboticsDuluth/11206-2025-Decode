@@ -113,8 +113,8 @@ public class NavSubsystem {
 
     public Pose getGoalPose() {
         return new Pose(
-            -3 * TILE_WIDTH,
-            config.alliance.sign * -2.6 * TILE_WIDTH,
+            -2.75 * TILE_WIDTH,
+            config.alliance.sign * -2.75 * TILE_WIDTH,
             toRadians(config.alliance.sign * 45)
         );
     }
