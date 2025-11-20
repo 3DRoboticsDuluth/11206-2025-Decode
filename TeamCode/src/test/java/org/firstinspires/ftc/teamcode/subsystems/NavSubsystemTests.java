@@ -45,7 +45,7 @@ public class NavSubsystemTests extends  TestHarness {
             toRadians(config.alliance.sign * 45)
         );
 
-        Pose actual = nav.getLaunchNearPose();
+        Pose actual = nav.getDepositSouthPose();
 
         compare(expected, actual);
     }
@@ -61,7 +61,7 @@ public class NavSubsystemTests extends  TestHarness {
             toRadians(config.alliance.sign * 20)
         );
 
-        Pose actual = nav.getLaunchFarPose();
+        Pose actual = nav.getDepositNorthPose();
 
         compare(expected, actual);
     }

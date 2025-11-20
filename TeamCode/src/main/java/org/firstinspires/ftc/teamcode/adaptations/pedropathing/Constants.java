@@ -17,7 +17,7 @@ public class Constants {
         .forwardZeroPowerAcceleration(-39.6768)
         .lateralZeroPowerAcceleration(-77.5455);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.33, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.1, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
         .maxPower(1)

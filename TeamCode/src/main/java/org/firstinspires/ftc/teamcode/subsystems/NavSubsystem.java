@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
@@ -18,16 +19,6 @@ public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
     public static double ROBOT_LENGTH = 14.25;
     public static double ROBOT_WIDTH = 11.375;
-    public static double IN_PER_TICK = 0.00196752029;
-    public static double VEL_SCALAR = 0.7;
-    public static double MAX_ACCEL_SCALAR = 1;
-    public static double MIN_ACCEL_SCALAR = 0.7;
-    public static double ANG_SCALAR = 1;
-    public static double MAX_VEL = 90 * VEL_SCALAR;
-    public static double MAX_ACCEL = MAX_VEL * MAX_ACCEL_SCALAR;
-    public static double MIN_ACCEL = -MAX_ACCEL * MIN_ACCEL_SCALAR;
-    public static double MAX_ANG_VEL = PI * ANG_SCALAR;
-    public static double MAX_ANG_ACCEL = MAX_ANG_VEL;
 
     public Pose getStartPose() {
         return config.side == null || config.side == Side.UNKNOWN ||
@@ -43,7 +34,7 @@ public class NavSubsystem {
             3 * TILE_WIDTH,
             config.alliance.sign * -1 * TILE_WIDTH,
             toRadians(config.alliance.sign * 0),
-            Axial.FRONT, config.alliance == Alliance.RED ? Lateral.LEFT : Lateral.RIGHT, -3.25, 0
+            Axial.FRONT, config.alliance == RED ? Lateral.LEFT : Lateral.RIGHT, -3.25, 0
         );
     }
 
@@ -87,25 +78,27 @@ public class NavSubsystem {
         );
     }
 
-    public Pose getLaunchNearPose() {
+    public Pose getDepositSouthPose() {
         return createPose(
             -0.5 * TILE_WIDTH,
-            config.alliance.sign * -0.67 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 45)
+            config.alliance.sign * -0.67 * TILE_WIDTH
+        ).face(
+            getGoalPose(), config.alliance == RED ? 180 : 175
         );
     }
 
-    public Pose getLaunchFarPose() {
+    public Pose getDepositNorthPose() {
         return createPose(
             2.33 * TILE_WIDTH,
-            config.alliance.sign * -0.67 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 20)
+            config.alliance.sign * -0.67 * TILE_WIDTH
+        ).face(
+            getGoalPose(), config.alliance == RED ? 180 : 175
         );
     }
 
     public Pose getGatePose() {
         return createPose(
-            0.1 * TILE_WIDTH,
+            0 * TILE_WIDTH,
             config.alliance.sign * -2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
@@ -157,6 +150,10 @@ public class NavSubsystem {
         Lateral(int signum) {
             this.signum = signum;
         }
+    }
+
+    public Pose createPose(double x, double y) {
+        return createPose(x, y, 0, Axial.CENTER, Lateral.CENTER);
     }
 
     public Pose createPose(Pose pose, Axial axial) {

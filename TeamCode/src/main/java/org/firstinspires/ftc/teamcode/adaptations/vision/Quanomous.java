@@ -31,7 +31,7 @@ public class Quanomous {
         String canonical = json.toString();
         String nextHash = hash(canonical);
         if (nextHash.equals(lastHash)) return lastName;
-        String nextName = getFilename(nextHash);
+        String nextName = getFilename();
         save(nextName, json);
         lastHash = nextHash;
         lastName = nextName;
@@ -102,9 +102,10 @@ public class Quanomous {
     }
 
     @SuppressLint({"SimpleDateFormat", "DefaultLocale"})
-    private static String getFilename(String hash8) {
-        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return String.format("%s-%s.json", ts, hash8);
+    private static String getFilename() {
+        File[] files = getSortedFileList();
+        String ts = new SimpleDateFormat("MM-dd-HHmm").format(new Date());
+        return String.format("%s--%04d.json", ts, files.length + 1);
     }
 
     private static int indexOf(String name, File[] files) {

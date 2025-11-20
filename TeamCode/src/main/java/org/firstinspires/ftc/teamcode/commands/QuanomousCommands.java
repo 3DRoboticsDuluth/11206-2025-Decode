@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
+import static java.lang.Math.abs;
+
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -31,7 +33,7 @@ public class QuanomousCommands {
     public static Command drive(JSONObject obj) throws Exception {
         return drive.to(
             obj.getDouble("tx") * TILE_WIDTH,
-            obj.getDouble("ty") * TILE_WIDTH,
+            abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
             obj.getDouble("h")
         );
     }
@@ -48,7 +50,7 @@ public class QuanomousCommands {
         );
     }
 
-    public static Command release(JSONObject obj) throws Exception {
+    public static Command release(JSONObject obj) {
         return auto.releaseGate();
     }
 
@@ -62,7 +64,6 @@ public class QuanomousCommands {
         );
     }
 
-    // TODO: Change `intake_row` to `intake`.
     /** @noinspection DataFlowIssue*/
     public Command execute() {
         try {

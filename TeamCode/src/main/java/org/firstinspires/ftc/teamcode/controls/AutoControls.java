@@ -25,9 +25,5 @@ public class AutoControls {
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
-
-//        gamepad1.getGamepadButton(START).negate()
-//            .and(gamepad1.getGamepadButton(Y))
-//            .whenActive(auto.humanPlayerZone());
     }
 }

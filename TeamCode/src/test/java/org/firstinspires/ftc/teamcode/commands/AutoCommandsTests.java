@@ -55,38 +55,6 @@ public class AutoCommandsTests extends TestHarness {
     }
 
     @Test
-    public void testIntakeSpike0() {
-        auto.intakeSpike0().initialize();
-        verify(drive).toSpike0();
-        verify(auto).intakeStart();
-        verify(drive).forward(16);
-    }
-
-    @Test
-    public void testIntakeSpike1() {
-        auto.intakeSpike1().initialize();
-        verify(drive).toSpike1();
-        verify(auto).intakeStart();
-        verify(drive).forward(16);
-    }
-
-    @Test
-    public void testIntakeSpike2() {
-        auto.intakeSpike2().initialize();
-        verify(drive).toSpike2();
-        verify(auto).intakeStart();
-        verify(drive).forward(16);
-    }
-
-    @Test
-    public void testIntakeSpike3() {
-        auto.intakeSpike3().initialize();
-        verify(drive).toSpike3();
-        verify(auto).intakeStart();
-        verify(drive).forward(16);
-    }
-
-    @Test
     public void testDepositStart() {
         auto.depositStart().initialize();
         verify(flywheel).forward();
@@ -105,7 +73,7 @@ public class AutoCommandsTests extends TestHarness {
     @Test
     public void testDepositNear() {
         auto.depositNear().initialize();
-        verify(drive).toLaunchNear();
+        verify(drive).toDepositSouth();
         verify(auto).depositStart();
         verify(wait).doherty(3);
         verify(auto).depositStop();

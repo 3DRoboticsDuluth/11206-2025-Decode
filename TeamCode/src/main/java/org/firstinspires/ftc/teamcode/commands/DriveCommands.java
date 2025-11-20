@@ -90,10 +90,7 @@ public class DriveCommands {
     }
 
     public Command toSpike0() {
-        return curves(
-            nav.getSpike0(),
-            nav.getSpike0().axial(16)
-        );
+        return to(nav.getSpike0());
     }
 
     public Command toSpike1() {
@@ -108,16 +105,16 @@ public class DriveCommands {
         return to(nav.getSpike3());
     }
 
-    public Command toLaunchNear() {
-        return to(nav.getLaunchNearPose());
+    public Command toDepositSouth() {
+        return to(nav.getDepositSouthPose());
     }
 
-    public Command toLaunchFar() {
-        return to(nav.getLaunchFarPose());
+    public Command toDepositNorth() {
+        return to(nav.getDepositNorthPose());
     }
 
     public Command toGate() {
-        return to(nav.getGatePose());
+        return to(nav.getGatePose().axial(-24));
     }
 
     public Command toBase() {

@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -58,6 +57,14 @@ public class AutoCommands {
         );
     }
 
+    public Command intake() {
+        return auto.intakeStart().andThen(
+            drive.setPowerIntake(),
+            drive.forward(22).withTimeout(3000),
+            drive.setPowerAuto()
+        );
+    }
+
     public Command intakeSpike(int spike) {
         return new SelectCommand(
             new HashMap<Object, Command>() {{
@@ -71,19 +78,11 @@ public class AutoCommands {
         );
     }
 
-    public Command intake() {
-        return auto.intakeStart().andThen(
-            drive.setPowerIntake(),
-            drive.forward(19).withTimeout(3000),
-            drive.setPowerAuto()
-        );
-    }
-
     public Command depositStart() {
         return drive.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
-            wait.doherty(config.auto ? 2 : 0), //ReImplementing Gate
+            wait.doherty(config.auto ? 2 : 0),
             flywheel.isReady(),
             conveyor.launch()
         );
@@ -98,27 +97,22 @@ public class AutoCommands {
     }
 
     public Command depositNear() {
-        return drive.toLaunchNear().alongWith(
+        return drive.toDepositSouth().alongWith(
             auto.intakeStop(),
-            wait.doherty(3).andThen(
-                auto.depositStart(),
-                auto.deposit()
-            )
+            auto.deposit()
         );
     }
 
     public Command depositFar() {
-        return drive.toLaunchFar().alongWith(
+        return drive.toDepositNorth().alongWith(
             auto.intakeStop(),
-            wait.doherty(3).andThen(
-                auto.depositStart(),
-                auto.deposit()
-            )
+            auto.deposit()
         );
     }
 
     public Command deposit() {
-        return auto.depositStart().andThen(
+        return wait.doherty(4).andThen(
+            auto.depositStart(),
             wait.doherty(2),
             auto.depositStop()
         );
@@ -126,7 +120,7 @@ public class AutoCommands {
 
     public Command releaseGate() {
         return drive.toGate().andThen(
-            drive.forward(8).withTimeout(1500),
+            drive.forward(32).withTimeout(3000),
             wait.seconds(1),
             drive.toGate()
         );
