@@ -15,10 +15,14 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
+import java.util.HashMap;
+
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
             quanomous.execute()
+        ).withTimeout(29500).andThen(
+            auto.stop()
         );
     }
 
@@ -54,49 +58,24 @@ public class AutoCommands {
         );
     }
 
-    public Command intakeSpike0() {
-        // TODO: Reuse
-        return drive.toSpike0().alongWith(
-            auto.intakeStart(),
-            drive.toDistance(-24).andThen(
-                drive.setPowerIntake()
-            )
+    public Command intakeSpike(int spike) {
+        return new SelectCommand(
+            new HashMap<Object, Command>() {{
+                put(0, drive.toSpike0());
+                put(1, drive.toSpike1());
+                put(2, drive.toSpike2());
+                put(3, drive.toSpike3());
+            }}, () -> spike
         ).andThen(
-            drive.setPowerAuto(),
-            auto.intakeStop()
+            auto.intake()
         );
     }
 
-    public Command intakeSpike1() {
-        // TODO: Reuse
-        return drive.toSpike1().andThen(
-            auto.intakeStart(),
+    public Command intake() {
+        return auto.intakeStart().andThen(
             drive.setPowerIntake(),
             drive.forward(19).withTimeout(3000),
-            drive.setPowerAuto(),
-            auto.intakeStop()
-        );
-    }
-
-    public Command intakeSpike2() {
-        // TODO: Reuse
-        return drive.toSpike2().andThen(
-            auto.intakeStart(),
-            drive.setPowerIntake(),
-            drive.forward(19).withTimeout(3000),
-            drive.setPowerAuto(),
-            auto.intakeStop()
-        );
-    }
-
-    public Command intakeSpike3() {
-        // TODO: Reuse
-        return drive.toSpike3().andThen(
-            auto.intakeStart(),
-            drive.setPowerIntake(),
-            drive.forward(19).withTimeout(3000),
-            drive.setPowerAuto(),
-            auto.intakeStop()
+            drive.setPowerAuto()
         );
     }
 
@@ -120,7 +99,8 @@ public class AutoCommands {
 
     public Command depositNear() {
         return drive.toLaunchNear().alongWith(
-            wait.doherty(2).andThen(
+            auto.intakeStop(),
+            wait.doherty(3).andThen(
                 auto.depositStart(),
                 auto.deposit()
             )
@@ -129,7 +109,8 @@ public class AutoCommands {
 
     public Command depositFar() {
         return drive.toLaunchFar().alongWith(
-            wait.doherty(2).andThen(
+            auto.intakeStop(),
+            wait.doherty(3).andThen(
                 auto.depositStart(),
                 auto.deposit()
             )
@@ -138,7 +119,7 @@ public class AutoCommands {
 
     public Command deposit() {
         return auto.depositStart().andThen(
-            wait.doherty(3),
+            wait.doherty(2),
             auto.depositStop()
         );
     }
@@ -153,5 +134,13 @@ public class AutoCommands {
 
     public Command goalLock(boolean enabled) {
         return new InstantCommand(() -> config.goalLock = enabled);
+    }
+
+    public Command stop() {
+        return drive.stop().alongWith(
+            intake.stop(),
+            conveyor.stop(),
+            flywheel.stop()
+        );
     }
 }

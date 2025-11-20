@@ -128,6 +128,15 @@ public class DriveCommands {
         return wait.noop(); // TODO: Add Chase
     }
 
+    public Command stop() {
+        return complete(
+            () -> {
+                drive.follower.startTeleOpDrive();
+                drive.follower.setTeleOpDrive(0,0,0,0);
+            }
+        );
+    }
+
     public Command goalLock(boolean enabled) {
         return complete(
             () -> config.goalLock =

@@ -37,14 +37,8 @@ public class QuanomousCommands {
     }
 
     public static Command intake(JSONObject obj) throws Exception {
-        int spike = obj.getInt("spike");
-        return new SelectCommand(
-            new HashMap<Object, Command>() {{
-                put(0, auto.intakeSpike0());
-                put(1, auto.intakeSpike1());
-                put(2, auto.intakeSpike2());
-                put(3, auto.intakeSpike3());
-            }}, () -> spike
+        return auto.intakeSpike(
+            obj.getInt("spike")
         );
     }
 
