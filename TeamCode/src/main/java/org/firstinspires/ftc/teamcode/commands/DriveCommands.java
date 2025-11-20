@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_AUTO;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIGH;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INTAKE;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
@@ -54,6 +55,12 @@ public class DriveCommands {
         );
     }
 
+    public Command setPowerIntake() {
+        return complete(
+            () -> drive.follower.setMaxPower(POWER_INTAKE)
+        );
+    }
+
     public Command setPowerLow() {
         return complete(
             () -> drive.follower.setMaxPower(POWER_LOW)
@@ -83,7 +90,10 @@ public class DriveCommands {
     }
 
     public Command toSpike0() {
-        return to(nav.getSpike0());
+        return curves(
+            nav.getSpike0(),
+            nav.getSpike0().axial(16)
+        );
     }
 
     public Command toSpike1() {

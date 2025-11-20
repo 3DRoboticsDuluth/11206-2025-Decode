@@ -102,6 +102,7 @@ public class ConfigSubsystem extends SubsystemBase {
         config.teleop = !config.auto;
         config.interrupt = config.teleop;
         config.started = false;
+        config.goalLock = false;
     }
 
     @Override

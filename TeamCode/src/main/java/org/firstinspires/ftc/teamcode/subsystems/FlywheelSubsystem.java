@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -78,6 +79,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     public boolean isReady() {
+        Log.v(this.getClass().getSimpleName(), String.format("Current RPM %.1f, Velocity Threshold %.1f", motorLeft.getRpm(), VEL * THRESH));
         return motorLeft.getRpm() >= VEL * THRESH &&
             motorRight.getRpm() >= VEL * THRESH;
     }

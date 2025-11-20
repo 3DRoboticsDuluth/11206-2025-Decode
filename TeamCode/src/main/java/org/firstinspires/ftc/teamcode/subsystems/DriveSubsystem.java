@@ -31,10 +31,11 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.75, 0.01, 0.175, 0);
-    public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0.015, 0.0015);
+    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(1, 0.01, 0.175, 0);
+    public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
+    public static double POWER_INTAKE = .33;
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
@@ -153,7 +154,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         // current pose which produces the wrong result. As a work around the follower is recreated.
         follower = getFollower();
         follower.startTeleopDrive();
-        follower.setMaxPower(config.auto ? POWER_AUTO : POWER_MEDIUM);
+        follower.setMaxPower(config.auto ? POWER_AUTO : POWER_HIGH);
         if (config.auto) config.pose = nav.getStartPose();
         follower.setStartingPose(
             toPedroPose(config.pose)

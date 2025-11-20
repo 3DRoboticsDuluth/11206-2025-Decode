@@ -78,7 +78,11 @@ public class BallisticsModel {
         if (v2 <= 0.0) return NaN;
         final double v = sqrt(v2); // in/s
         // RPM = (30 * v) / (π * k * r)3
-        K_EFF = -18442.64 + (0.3896114 - -18442.64)/(1 + pow(distance/5500.357, 3.514147));
+        //K_EFF = 0.3249483 + (0.3850001 - 0.3249483)/(1 + pow(distance/123.8257, 46.75158)); // Default
+        //y = -0.0006315622*x + 0.4313983 //TODO Linear
+        //y = 0.3107321 + 0.002072048*x - 0.00001360153*x^2 //TODO Quadratic Regression
+        //K_EFF = 0.4303864 - 0.002098606 * distance + 0.00003149961*pow(distance, 2) - 1.528877e-7*pow(distance, 3); // Cubic Regression
+        K_EFF = 0.3107321 + 0.002072048 * distance - 0.00001360153 * pow(distance, 2); // Quadratic Regression
         return (30.0 * v) / (PI * K_EFF * WHEEL_RADIUS_IN);
     }
 }

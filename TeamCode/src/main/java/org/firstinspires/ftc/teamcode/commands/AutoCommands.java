@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -55,17 +56,25 @@ public class AutoCommands {
 
     public Command intakeSpike0() {
         // TODO: Reuse
-        return drive.toSpike0().andThen(
-            intakeStart(),
-            drive.forward(16)
+        return drive.toSpike0().alongWith(
+            auto.intakeStart(),
+            drive.toDistance(-24).andThen(
+                drive.setPowerIntake()
+            )
+        ).andThen(
+            drive.setPowerAuto(),
+            auto.intakeStop()
         );
     }
 
     public Command intakeSpike1() {
         // TODO: Reuse
         return drive.toSpike1().andThen(
-            intakeStart(),
-            drive.forward(16)
+            auto.intakeStart(),
+            drive.setPowerIntake(),
+            drive.forward(19).withTimeout(3000),
+            drive.setPowerAuto(),
+            auto.intakeStop()
         );
     }
 
@@ -73,7 +82,10 @@ public class AutoCommands {
         // TODO: Reuse
         return drive.toSpike2().andThen(
             auto.intakeStart(),
-            drive.forward(16)
+            drive.setPowerIntake(),
+            drive.forward(19).withTimeout(3000),
+            drive.setPowerAuto(),
+            auto.intakeStop()
         );
     }
 
@@ -81,7 +93,10 @@ public class AutoCommands {
         // TODO: Reuse
         return drive.toSpike3().andThen(
             auto.intakeStart(),
-            drive.forward(16)
+            drive.setPowerIntake(),
+            drive.forward(19).withTimeout(3000),
+            drive.setPowerAuto(),
+            auto.intakeStop()
         );
     }
 
@@ -89,6 +104,7 @@ public class AutoCommands {
         return drive.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
+            wait.doherty(config.auto ? 2 : 0), //ReImplementing Gate
             flywheel.isReady(),
             conveyor.launch()
         );
@@ -103,19 +119,26 @@ public class AutoCommands {
     }
 
     public Command depositNear() {
-        return drive.toLaunchNear().andThen(
-            auto.deposit()
+        return drive.toLaunchNear().alongWith(
+            wait.doherty(2).andThen(
+                auto.depositStart(),
+                auto.deposit()
+            )
         );
     }
 
     public Command depositFar() {
-        return drive.toLaunchFar().andThen(
-            auto.deposit()
+        return drive.toLaunchFar().alongWith(
+            wait.doherty(2).andThen(
+                auto.depositStart(),
+                auto.deposit()
+            )
         );
     }
 
     public Command deposit() {
         return auto.depositStart().andThen(
+            wait.doherty(3),
             auto.depositStop()
         );
     }
