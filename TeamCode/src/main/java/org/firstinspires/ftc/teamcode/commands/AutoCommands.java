@@ -9,10 +9,13 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
+
+import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
 import java.util.HashMap;
 
@@ -64,6 +67,19 @@ public class AutoCommands {
         );
     }
 
+    public Command intake(double distance, long timeout) {
+        return auto.intakeStart().andThen(
+            drive.forward(distance).withTimeout(timeout),
+            drive.setPowerAuto()
+        );
+    }
+
+    public Command intakeNoTimeout() {
+        return auto.intakeStart().andThen(
+                drive.setPowerAuto()
+        );
+    }
+
     public Command intakeSpike(int spike) {
         return new SelectCommand(
             new HashMap<Object, Command>() {{
@@ -73,7 +89,7 @@ public class AutoCommands {
             }}, () -> spike
         ).andThen(
             drive.setPowerIntake(),
-            auto.intake(22)
+            auto.intake(22) // Was 22, trying to go to wall
         );
     }
 
@@ -81,10 +97,11 @@ public class AutoCommands {
         return drive.toSpike0Approach().andThen(
             drive.toSpike0(),
             drive.setPowerMedium(),
-            drive.turn(config.alliance.sign * 25).withTimeout(500),
-            auto.intake(7).withTimeout(750),
+//            drive.turn(config.alliance.sign * 25).withTimeout(500),
+//            auto.intake(7).withTimeout(500),
             drive.turn(config.alliance.sign * 5).withTimeout(500),
-            auto.intake(16.7)
+            drive.setPowerAuto(),
+            auto.intake(TILE_WIDTH * .4, 1750)
         );
     }
 

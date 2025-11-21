@@ -63,6 +63,16 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getSpike0End() {
+        return createPose(
+            3 * TILE_WIDTH,
+            config.alliance.sign * -3 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -45),
+            Axial.FRONT,
+            Lateral.RIGHT
+        );
+    }
+
     public Pose getSpike1() {
         return createPose(
             1.5 * TILE_WIDTH,
