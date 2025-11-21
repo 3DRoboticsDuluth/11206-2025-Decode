@@ -19,6 +19,7 @@ public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
     public static double ROBOT_LENGTH = 14.25;
     public static double ROBOT_WIDTH = 11.375;
+    public static double GOAL_HEADING_OFFSET = 0;
 
     public Pose getStartPose() {
         return config.side == null || config.side == Side.UNKNOWN ||
@@ -121,9 +122,9 @@ public class NavSubsystem {
         );
     }
 
-    public double getGoalHeadingError() {
+    public double getGoalHeadingRemaining() {
         return normalizeHeading(
-            config.pose.heading - getGoalPose().atan2(config.pose)
+            config.pose.heading - (getGoalPose().atan2(config.pose) + GOAL_HEADING_OFFSET)
         );
     }
 

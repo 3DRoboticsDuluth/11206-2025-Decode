@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(1, 0.01, 0.175, 0);
+    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.75, 0.0075, 0.075, 0);
     public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
@@ -130,7 +130,7 @@ public class DriveSubsystem extends HardwareSubsystem {
 
     public double calculateGoalLockTurn() {
         return pidfGoalLock.calculate(
-            nav.getGoalHeadingError()
+            nav.getGoalHeadingRemaining()
         ) + ffGoalLock.calculate(
             follower.getVelocity().getYComponent(),
             follower.getAcceleration().getYComponent()
