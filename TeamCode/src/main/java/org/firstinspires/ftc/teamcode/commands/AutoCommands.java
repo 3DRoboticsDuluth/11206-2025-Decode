@@ -59,7 +59,7 @@ public class AutoCommands {
 
     public Command intake(double distance) {
         return auto.intakeStart().andThen(
-            drive.forward(distance).withTimeout(2000),
+            drive.forward(distance).withTimeout(1500),
             drive.setPowerAuto()
         );
     }
@@ -82,7 +82,7 @@ public class AutoCommands {
             drive.toSpike0(),
             drive.setPowerMedium(),
             drive.turn(config.alliance.sign * 25).withTimeout(500),
-            auto.intake(7).withTimeout(1500),
+            auto.intake(7).withTimeout(750),
             drive.turn(config.alliance.sign * 5).withTimeout(500),
             auto.intake(16.7)
         );
