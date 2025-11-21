@@ -39,9 +39,10 @@ public class QuanomousCommands {
     }
 
     public static Command intake(JSONObject obj) throws Exception {
-        return auto.intakeSpike(
-            obj.getInt("spike")
-        );
+        int spike = obj.getInt("spike");
+        return spike == 0 ?
+            auto.intakeSpike0() :
+            auto.intakeSpike(spike);
     }
 
     public static Command delay(JSONObject obj) throws Exception {

@@ -57,10 +57,9 @@ public class AutoCommands {
         );
     }
 
-    public Command intake() {
+    public Command intake(double distance) {
         return auto.intakeStart().andThen(
-            drive.setPowerIntake(),
-            drive.forward(22).withTimeout(3000),
+            drive.forward(distance).withTimeout(2000),
             drive.setPowerAuto()
         );
     }
@@ -68,13 +67,24 @@ public class AutoCommands {
     public Command intakeSpike(int spike) {
         return new SelectCommand(
             new HashMap<Object, Command>() {{
-                put(0, drive.toSpike0());
                 put(1, drive.toSpike1());
                 put(2, drive.toSpike2());
                 put(3, drive.toSpike3());
             }}, () -> spike
         ).andThen(
-            auto.intake()
+            drive.setPowerIntake(),
+            auto.intake(22)
+        );
+    }
+
+    public Command intakeSpike0() {
+        return drive.toSpike0Approach().andThen(
+            drive.toSpike0(),
+            drive.setPowerMedium(),
+            drive.turn(config.alliance.sign * 25).withTimeout(500),
+            auto.intake(7).withTimeout(1500),
+            drive.turn(config.alliance.sign * 5).withTimeout(500),
+            auto.intake(16.7)
         );
     }
 

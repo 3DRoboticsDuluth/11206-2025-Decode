@@ -89,6 +89,10 @@ public class DriveCommands {
         return to(nav.getStartPose());
     }
 
+    public Command toSpike0Approach() {
+        return to(nav.getSpike0Approach());
+    }
+
     public Command toSpike0() {
         return to(nav.getSpike0());
     }
@@ -205,9 +209,7 @@ public class DriveCommands {
     public Command turn(double heading) {
         return new SelectCommand(
             () -> to(
-                endPose.x,
-                endPose.y,
-                heading
+                endPose.turn(heading)
             )
         );
     }

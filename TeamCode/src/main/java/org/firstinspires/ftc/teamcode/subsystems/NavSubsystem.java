@@ -46,11 +46,20 @@ public class NavSubsystem {
             Axial.BACK, Lateral.LEFT, +1, 0
         );
     }
+
+    public Pose getSpike0Approach() {
+        return createPose(
+            2.25 * TILE_WIDTH,
+            config.alliance.sign * -2.5 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -90)
+        );
+    }
+
     public Pose getSpike0() {
         return createPose(
-            1.8 * TILE_WIDTH,
+            2 * TILE_WIDTH,
             config.alliance.sign * -2.6 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -10)
+            toRadians(config.alliance.sign * -45)
         );
     }
 
@@ -92,7 +101,7 @@ public class NavSubsystem {
             2.33 * TILE_WIDTH,
             config.alliance.sign * -0.67 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? 180 : 175
+            getGoalPose(), config.alliance == RED ? -175 : 175
         );
     }
 
