@@ -92,7 +92,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     private void set(MotorEx motor, FlywheelController controller) {
         controller.setCoefficients(FF, PIDF);
         controller.setTarget(VEL);
-        motor.set(controller.update(motor.getRpm(), voltageSensor.getVoltage()));
+        motor.set(controller.update(motor.getRpm()));
         motor.addTelemetry(TEL);
     }
 
