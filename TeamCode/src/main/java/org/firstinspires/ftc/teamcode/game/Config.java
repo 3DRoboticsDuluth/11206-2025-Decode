@@ -19,4 +19,5 @@ public class Config {
     public double responsiveness = 0.5;
     public boolean robotCentric = false;
     public boolean goalLock = false;
+    public double goalDistanceOffset = 0;
 }

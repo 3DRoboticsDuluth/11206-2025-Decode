@@ -101,7 +101,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
 
         if (config.goalLock)
             velocity = BallisticsModel.flywheelRpm(
-                nav.getGoalDistance()
+                nav.getGoalDistance() + config.goalDistanceOffset
             ) + controllerAxial.calculate(
                 drive.follower.getVelocity().getXComponent(),
                 drive.follower.getAcceleration().getXComponent()
