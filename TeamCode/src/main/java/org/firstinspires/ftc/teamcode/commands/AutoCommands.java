@@ -92,7 +92,7 @@ public class AutoCommands {
         return drive.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
-            wait.doherty(config.auto ? 2 : 0),
+            wait.doherty(config.auto ? 3 : 0),
             flywheel.isReady(),
             conveyor.launch()
         );

@@ -82,7 +82,7 @@ public class NavSubsystem {
 
     public Pose getSpike3() {
         return createPose(
-            -0.5 * TILE_WIDTH,
+            -0.4 * TILE_WIDTH,
             config.alliance.sign * -1.1 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
