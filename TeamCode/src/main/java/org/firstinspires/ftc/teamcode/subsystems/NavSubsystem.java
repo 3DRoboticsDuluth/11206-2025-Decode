@@ -44,7 +44,7 @@ public class NavSubsystem {
             -3 * TILE_WIDTH,
             config.alliance.sign * -1 * TILE_WIDTH,
             toRadians(config.alliance.sign * 0),
-            Axial.BACK, Lateral.LEFT, +1, 0
+            Axial.BACK, config.alliance == RED ? Lateral.LEFT : Lateral.RIGHT, +1, 0
         );
     }
 
