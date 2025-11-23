@@ -84,7 +84,7 @@ public class ConfigSubsystem extends SubsystemBase {
         new Item(
             "Goal Distance Offset",
             () -> String.format("%.1f in", config.goalDistanceOffset),
-            change -> config.goalDistanceOffset = GOAL_DISTANCE_INCREMENT * change.sign
+            change -> config.goalDistanceOffset += GOAL_DISTANCE_INCREMENT * change.sign
         )
     );
 
