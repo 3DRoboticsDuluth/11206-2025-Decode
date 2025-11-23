@@ -58,14 +58,14 @@ public class DriveCommandsTests extends TestHarness {
 
     @Test
     public void testToLaunchNear() {
-        drive.toDepositSouth().initialize();
-        verify(nav).getDepositSouthPose();
+        drive.toDepositSouth(0, 0).initialize();
+        verify(nav).getDepositSouthPose(0, 0);
     }
 
     @Test
     public void testToLaunchFar() {
-        drive.toDepositNorth().initialize();
-        verify(nav).getDepositNorthPose();
+        drive.toDepositNorth(0, 0).initialize();
+        verify(nav).getDepositNorthPose(0, 0);
     }
 
     @Test

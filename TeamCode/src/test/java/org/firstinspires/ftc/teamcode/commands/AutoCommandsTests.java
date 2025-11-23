@@ -72,8 +72,8 @@ public class AutoCommandsTests extends TestHarness {
 
     @Test
     public void testDepositNear() {
-        auto.depositNear().initialize();
-        verify(drive).toDepositSouth();
+        auto.depositSouth(0, 0).initialize();
+        verify(drive).toDepositSouth(0, 0);
         verify(auto).depositStart();
         verify(wait).doherty(3);
         verify(auto).depositStop();
@@ -81,7 +81,7 @@ public class AutoCommandsTests extends TestHarness {
 
     @Test
     public void testDepositFar() {
-        auto.depositFar().initialize();
+        auto.depositNorth(0, 0).initialize();
         verify(auto).depositStart();
         verify(wait).doherty(3);
         verify(auto).depositStop();

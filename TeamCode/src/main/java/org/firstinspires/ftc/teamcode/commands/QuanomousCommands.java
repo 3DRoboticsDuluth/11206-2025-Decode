@@ -67,10 +67,12 @@ public class QuanomousCommands {
 
     public static Command deposit(JSONObject obj) throws Exception {
         String locale = obj.getString("locale");
+        double txo = obj.getDouble("txo") * TILE_WIDTH;
+        double tyo = obj.getDouble("tyo") * TILE_WIDTH;
         return new SelectCommand(
             new HashMap<Object, Command>() {{
-                put("near", auto.depositNear());
-                put("far", auto.depositFar());
+                put("near", auto.depositSouth(txo, tyo));
+                put("far", auto.depositNorth(txo, tyo));
             }}, () -> locale
         );
     }
