@@ -39,14 +39,6 @@ public class DriveControls {
         gamepad1.getGamepadButton(DPAD_UP)
             .whenActive(drive.setPowerHigh());
 
-        gamepad1.getGamepadButton(LEFT_BUMPER)
-            .or(gamepad2.getGamepadButton(LEFT_BUMPER))
-            .whenActive(() -> config.goalDistanceOffset -= GOAL_DISTANCE_INCREMENT );
-
-        gamepad1.getGamepadButton(RIGHT_BUMPER)
-            .or(gamepad2.getGamepadButton(RIGHT_BUMPER))
-            .whenActive(() -> config.goalDistanceOffset += GOAL_DISTANCE_INCREMENT);
-
         gamepad1.getGamepadButton(BACK)
             .and(gamepad1.getGamepadButton(START))
             .whenActive(() -> config.robotCentric = !config.robotCentric);

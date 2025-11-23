@@ -16,8 +16,9 @@ public class Config {
     public Side side = Side.UNKNOWN;
     public String quanomous = null;
     public double delay = 0;
-    public double responsiveness = 0.33;
+    public double responsiveness = 0.5;
     public boolean robotCentric = false;
     public boolean goalLock = false;
-    public double goalDistanceOffset = 0;
+    public double goalDistanceOffsetSouth = 0;
+    public double goalDistanceOffsetNorth = 0;
 }
