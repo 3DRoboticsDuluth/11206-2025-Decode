@@ -99,7 +99,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     private double calculateVelocity() {
         double velocity = VEL;
 
-        if (config.goalLock)
+        if (config.started && (config.goalLock || config.robotCentric))
             velocity = BallisticsModel.flywheelRpm(
                 nav.getGoalDistance() + config.goalDistanceOffset
             ) + controllerAxial.calculate(
