@@ -1,0 +1,10 @@
+[
+	{"cmd":"deposit","locale":"far","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":1},
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":2},
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":3},
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"drive","tx":1,"ty":1,"h":0,"axial":null,"lateral":"center"}
+]

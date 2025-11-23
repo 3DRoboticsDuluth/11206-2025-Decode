@@ -1,0 +1,7 @@
+[
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":3},
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":2},
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":-1.4,"tyo":0}
+]
