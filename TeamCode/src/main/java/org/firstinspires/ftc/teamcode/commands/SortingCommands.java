@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.gate;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.sorting;
 
 import com.seattlesolvers.solverslib.command.Command;
@@ -16,6 +15,6 @@ public class SortingCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, gate);
+        return new InstantCommand(runnable, sorting);
     }
 }

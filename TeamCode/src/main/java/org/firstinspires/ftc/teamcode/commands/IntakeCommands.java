@@ -23,6 +23,6 @@ public class IntakeCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable);
+        return new InstantCommand(runnable, intake);
     }
 }

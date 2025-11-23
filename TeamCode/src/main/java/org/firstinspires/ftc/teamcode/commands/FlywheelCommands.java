@@ -28,6 +28,6 @@ public class FlywheelCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable);
+        return new InstantCommand(runnable, flywheel);
     }
 }

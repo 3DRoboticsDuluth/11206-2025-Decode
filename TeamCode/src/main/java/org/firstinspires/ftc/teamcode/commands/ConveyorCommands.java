@@ -23,6 +23,6 @@ public class ConveyorCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable);
+        return new InstantCommand(runnable, conveyor);
     }
 }

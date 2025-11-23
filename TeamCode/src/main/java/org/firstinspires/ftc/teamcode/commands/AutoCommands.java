@@ -21,7 +21,7 @@ public class AutoCommands {
         return auto.delayStart().andThen(
             quanomous.execute()
         ).withTimeout(29500).andThen(
-            auto.stop()
+            auto.stop().asProxy()
         );
     }
 

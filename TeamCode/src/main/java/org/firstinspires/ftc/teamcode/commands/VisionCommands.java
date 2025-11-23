@@ -1,30 +1,32 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
+
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
-import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
 public class VisionCommands {
     public Command switchPipeline(Pipeline pipeline) {
-        return new InstantCommand(
-            () -> Subsystems.vision.switchPipeline(pipeline.index, pipeline.index != 0),
-            Subsystems.vision
+        return complete(
+            () -> vision.switchPipeline(pipeline.index, pipeline.index != 0)
         );
     }
 
     public Command startQRScan() {
-        return new InstantCommand(
-                () -> Subsystems.vision.startQrScan(),
-                Subsystems.vision
+        return complete(
+            () -> vision.startQrScan()
         );
     }
 
     public Command stopQRScan() {
-        return new InstantCommand(
-                () -> Subsystems.vision.stopQrScan(),
-                Subsystems.vision
+        return complete(
+            () -> vision.stopQrScan()
         );
+    }
+
+    private Command complete(Runnable runnable) {
+        return new InstantCommand(runnable, vision);
     }
 }
