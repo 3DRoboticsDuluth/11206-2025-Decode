@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import static java.lang.Math.abs;
 
@@ -12,11 +13,14 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -31,10 +35,16 @@ public class QuanomousCommands {
         }};
 
     public static Command drive(JSONObject obj) throws Exception {
+        String axial = obj.optString("axial", "center").toLowerCase();
+        String lateral = obj.optString("lateral", "center").toLowerCase();
         return drive.to(
-            obj.getDouble("tx") * TILE_WIDTH,
-            abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
-            obj.getDouble("h")
+             nav.createPose(
+                 obj.getDouble("tx") * TILE_WIDTH,
+                 abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
+                 obj.getDouble("h"),
+                 (axial == "front" ? NavSubsystem.Axial.FRONT : (axial == "back" ? NavSubsystem.Axial.BACK : NavSubsystem.Axial.CENTER)),
+                 (lateral == "left" ? NavSubsystem.Lateral.LEFT : (lateral == "Right" ? NavSubsystem.Lateral.RIGHT : NavSubsystem.Lateral.CENTER))
+             )
         );
     }
 
