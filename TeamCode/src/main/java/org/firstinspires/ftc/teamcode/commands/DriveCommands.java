@@ -141,7 +141,7 @@ public class DriveCommands {
     public Command goalLock(boolean enabled) {
         return complete(
             () -> config.goalLock =
-                config.started &&
+                config.started && !config.robotCentric &&
                 config.alliance != Alliance.UNKNOWN &&
                 config.side != Side.UNKNOWN && enabled
         );

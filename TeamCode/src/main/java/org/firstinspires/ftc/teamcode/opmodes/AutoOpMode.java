@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.controls.Controls;
 import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 
-@Autonomous(name = "Auto")
+@Autonomous(name = "Auto", preselectTeleOp = "Teleop")
 @SuppressWarnings("unused")
 public class AutoOpMode extends OpMode {
     @Override
