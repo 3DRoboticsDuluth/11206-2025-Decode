@@ -306,7 +306,7 @@ public class DriveCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, drive); // TODO: requirement or no requirement???
+        return new InstantCommand(runnable);
     }
 
     private Pose getPose() {
