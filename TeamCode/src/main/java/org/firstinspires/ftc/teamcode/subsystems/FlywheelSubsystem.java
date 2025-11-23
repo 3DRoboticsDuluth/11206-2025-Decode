@@ -4,12 +4,12 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -101,7 +101,10 @@ public class FlywheelSubsystem extends HardwareSubsystem {
 
         if (config.started && (config.goalLock || config.robotCentric))
             velocity = BallisticsModel.flywheelRpm(
-                nav.getGoalDistance() + config.goalDistanceOffset
+                nav.getGoalDistance() +
+                    config.pose.x < TILE_WIDTH ?
+                        config.goalDistanceOffsetSouth :
+                        config.goalDistanceOffsetNorth
             ) + controllerAxial.calculate(
                 drive.follower.getVelocity().getXComponent(),
                 drive.follower.getAcceleration().getXComponent()

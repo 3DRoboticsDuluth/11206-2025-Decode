@@ -82,9 +82,14 @@ public class ConfigSubsystem extends SubsystemBase {
             change -> config.robotCentric = !config.robotCentric
         ),
         new Item(
-            "Goal Distance Offset",
-            () -> String.format("%.1f in", config.goalDistanceOffset),
-            change -> config.goalDistanceOffset += GOAL_DISTANCE_INCREMENT * change.sign
+            "Goal Distance Offset South",
+            () -> String.format("%.1f in", config.goalDistanceOffsetSouth),
+            change -> config.goalDistanceOffsetSouth += GOAL_DISTANCE_INCREMENT * change.sign
+        ),
+        new Item(
+            "Goal Distance Offset North",
+            () -> String.format("%.1f in", config.goalDistanceOffsetNorth),
+            change -> config.goalDistanceOffsetNorth += GOAL_DISTANCE_INCREMENT * change.sign
         )
     );
 
