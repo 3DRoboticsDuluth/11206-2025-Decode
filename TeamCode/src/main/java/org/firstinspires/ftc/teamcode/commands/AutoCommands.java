@@ -73,7 +73,7 @@ public class AutoCommands {
             }}, () -> spike
         ).andThen(
             drive.setPowerIntake(),
-            auto.intake(22)
+            auto.intake(spike == 1 ? 34 : 22)
         );
     }
 
@@ -84,7 +84,8 @@ public class AutoCommands {
             drive.turn(config.alliance.sign * 25).withTimeout(500),
             auto.intake(7).withTimeout(750),
             drive.turn(config.alliance.sign * 5).withTimeout(500),
-            auto.intake(16.7)
+            auto.intake(16.7),
+            drive.toSpike0()
         );
     }
 

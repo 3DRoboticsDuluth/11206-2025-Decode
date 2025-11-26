@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class ConveyorSubsystem extends HardwareSubsystem {
     public static final double STOP = 0;
-    public static double FWD = 0.5;
+    public static double FWD = 1;
     public static double REV = -0.2;
     public static double VEL = STOP;
     public static double LAUNCH = 1;

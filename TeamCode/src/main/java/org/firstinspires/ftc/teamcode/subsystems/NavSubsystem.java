@@ -60,7 +60,7 @@ public class NavSubsystem {
         return createPose(
             2 * TILE_WIDTH,
             config.alliance.sign * -2.6 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -45)
+            toRadians(config.alliance.sign * -30)
         );
     }
 
@@ -102,7 +102,7 @@ public class NavSubsystem {
             2.33 * TILE_WIDTH,
             config.alliance.sign * -0.67 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? -175 : 175
+            getGoalPose(), config.alliance == RED ? -177 : 177 //TODO Was -175/175
         );
     }
 
