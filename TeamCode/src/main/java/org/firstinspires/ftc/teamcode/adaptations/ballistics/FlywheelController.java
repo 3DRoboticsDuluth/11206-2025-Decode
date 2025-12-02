@@ -26,10 +26,9 @@ public class FlywheelController {
         this.target = target;
     }
 
-    public double update(double actual, double voltage) {
+    public double update(double actual) {
         double ffPower = this.ff.calculate(target);
         double pidfPower = this.pidf.calculate(actual, target);
-        double totalPower = ffPower + pidfPower;
-        return totalPower * (12 / max(1, voltage));
+        return ffPower + pidfPower;
     }
 }

@@ -4,12 +4,12 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -63,7 +63,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     public void forward() {
-        VEL = calculateVelocity();
+        VEL = FWD;
     }
 
     public void stop() {
@@ -79,7 +79,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     public boolean isReady() {
-        Log.v(this.getClass().getSimpleName(), String.format("Current RPM %.1f, Velocity Threshold %.1f", motorLeft.getRpm(), VEL * THRESH));
+        VEL = calculateVelocity();
         return motorLeft.getRpm() >= VEL * THRESH &&
             motorRight.getRpm() >= VEL * THRESH;
     }
@@ -92,16 +92,19 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     private void set(MotorEx motor, FlywheelController controller) {
         controller.setCoefficients(FF, PIDF);
         controller.setTarget(VEL);
-        motor.set(controller.update(motor.getRpm(), voltageSensor.getVoltage()));
+        motor.set(controller.update(motor.getRpm()));
         motor.addTelemetry(TEL);
     }
 
     private double calculateVelocity() {
         double velocity = VEL;
 
-        if (config.goalLock)
+        if (config.started && (config.goalLock || config.robotCentric))
             velocity = BallisticsModel.flywheelRpm(
-                nav.getGoalDistance()
+                nav.getGoalDistance() +
+                    config.pose.x < TILE_WIDTH ?
+                        config.goalDistanceOffsetSouth :
+                        config.goalDistanceOffsetNorth
             ) + controllerAxial.calculate(
                 drive.follower.getVelocity().getXComponent(),
                 drive.follower.getAcceleration().getXComponent()

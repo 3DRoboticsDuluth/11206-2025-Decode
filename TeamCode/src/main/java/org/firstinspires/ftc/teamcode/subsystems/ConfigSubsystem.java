@@ -43,6 +43,7 @@ public class ConfigSubsystem extends SubsystemBase {
     public static boolean PERSISTENCE = false;
     public static double DELAY_INCREMENT = 0.5;
     public static double RESPONSIVENESS_INCREMENT = 0.01;
+    public static double GOAL_DISTANCE_INCREMENT = 6;
 
     private static Thread thread;
     private int index = 0;
@@ -79,6 +80,16 @@ public class ConfigSubsystem extends SubsystemBase {
             "Robot Centric",
             () -> String.format("%s", config.robotCentric),
             change -> config.robotCentric = !config.robotCentric
+        ),
+        new Item(
+            "Goal Distance Offset South",
+            () -> String.format("%.1f in", config.goalDistanceOffsetSouth),
+            change -> config.goalDistanceOffsetSouth += GOAL_DISTANCE_INCREMENT * change.sign
+        ),
+        new Item(
+            "Goal Distance Offset North",
+            () -> String.format("%.1f in", config.goalDistanceOffsetNorth),
+            change -> config.goalDistanceOffsetNorth += GOAL_DISTANCE_INCREMENT * change.sign
         )
     );
 

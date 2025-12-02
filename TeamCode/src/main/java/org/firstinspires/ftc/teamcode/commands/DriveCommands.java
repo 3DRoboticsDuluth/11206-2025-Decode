@@ -109,12 +109,12 @@ public class DriveCommands {
         return to(nav.getSpike3());
     }
 
-    public Command toDepositSouth() {
-        return to(nav.getDepositSouthPose());
+    public Command toDepositSouth(double axialOffset, double lateralOffset) {
+        return to(nav.getDepositSouthPose(axialOffset, lateralOffset));
     }
 
-    public Command toDepositNorth() {
-        return to(nav.getDepositNorthPose());
+    public Command toDepositNorth(double axialOffset, double lateralOffset) {
+        return to(nav.getDepositNorthPose(axialOffset, lateralOffset));
     }
 
     public Command toGate() {
@@ -141,7 +141,7 @@ public class DriveCommands {
     public Command goalLock(boolean enabled) {
         return complete(
             () -> config.goalLock =
-                config.started &&
+                config.started && !config.robotCentric &&
                 config.alliance != Alliance.UNKNOWN &&
                 config.side != Side.UNKNOWN && enabled
         );

@@ -21,7 +21,7 @@ public class AutoCommands {
         return auto.delayStart().andThen(
             quanomous.execute()
         ).withTimeout(29500).andThen(
-            auto.stop()
+            auto.stop().asProxy()
         );
     }
 
@@ -106,15 +106,15 @@ public class AutoCommands {
         );
     }
 
-    public Command depositNear() {
-        return drive.toDepositSouth().alongWith(
+    public Command depositSouth(double axialOffset, double lateralOffset) {
+        return drive.toDepositSouth(axialOffset, lateralOffset).alongWith(
             auto.intakeStop(),
             auto.deposit()
         );
     }
 
-    public Command depositFar() {
-        return drive.toDepositNorth().alongWith(
+    public Command depositNorth(double axialOffset, double lateralOffset) {
+        return drive.toDepositNorth(axialOffset, lateralOffset).alongWith(
             auto.intakeStop(),
             auto.deposit()
         );

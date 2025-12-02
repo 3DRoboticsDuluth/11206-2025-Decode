@@ -14,7 +14,8 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
-import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.RESPONSIVENESS_INCREMENT;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
+import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.GOAL_DISTANCE_INCREMENT;
 
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
@@ -37,12 +38,6 @@ public class DriveControls {
 
         gamepad1.getGamepadButton(DPAD_UP)
             .whenActive(drive.setPowerHigh());
-
-        gamepad1.getGamepadButton(LEFT_BUMPER)
-            .whenActive(() -> config.responsiveness = clamp(config.responsiveness - RESPONSIVENESS_INCREMENT, 0, 1));
-
-        gamepad1.getGamepadButton(RIGHT_BUMPER)
-            .whenActive(() -> config.responsiveness = clamp(config.responsiveness + RESPONSIVENESS_INCREMENT, 0, 1));
 
         gamepad1.getGamepadButton(BACK)
             .and(gamepad1.getGamepadButton(START))

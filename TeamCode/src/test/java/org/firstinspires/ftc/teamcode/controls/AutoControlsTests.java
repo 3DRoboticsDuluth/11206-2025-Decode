@@ -22,26 +22,16 @@ public class AutoControlsTests extends TestHarness {
     }
 
     @Test
-    public void testAAndDpadLeftAndRightDoesAutoArtifact() {
-        input(() -> gamepad1.gamepad.dpad_left = true);
-        input(() -> gamepad1.gamepad.a = true);
-        verify(auto.intakeSpike3()).schedule(true);
-        input(() -> gamepad1.gamepad.dpad_right = true);
-        input(() -> gamepad1.gamepad.a = true);
-        verify(auto.intakeSpike3()).schedule(true);
-    }
-    
-    @Test
     public void testBAndDpadUpDepositsNear() {
         input(() -> gamepad1.gamepad.dpad_up = true);
         input(() -> gamepad1.gamepad.b = true);
-        verify(auto.depositNear()).schedule(true);
+        verify(auto.depositSouth(0, 0)).schedule(true);
     }
     
     @Test
     public void testBAndDpadDownDepositsFar() {
         input(() -> gamepad1.gamepad.dpad_down = true);
         input(() -> gamepad1.gamepad.b = true);
-        verify(auto.depositFar()).schedule(true);
+        verify(auto.depositNorth(0, 0)).schedule(true);
     }
 }

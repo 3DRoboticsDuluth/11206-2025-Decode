@@ -44,7 +44,7 @@ public class NavSubsystem {
             -3 * TILE_WIDTH,
             config.alliance.sign * -1 * TILE_WIDTH,
             toRadians(config.alliance.sign * 0),
-            Axial.BACK, Lateral.LEFT, +1, 0
+            Axial.BACK, config.alliance == RED ? Lateral.LEFT : Lateral.RIGHT, +1, 0
         );
     }
 
@@ -88,20 +88,24 @@ public class NavSubsystem {
         );
     }
 
-    public Pose getDepositSouthPose() {
+    public Pose getDepositSouthPose(double axialOffset, double lateralOffset) {
         return createPose(
             -0.5 * TILE_WIDTH,
             config.alliance.sign * -0.67 * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance == RED ? 180 : 175
+        ).axial(axialOffset).lateral(lateralOffset).face(
+            getGoalPose(), config.alliance == RED ? -175 : 175
         );
     }
 
-    public Pose getDepositNorthPose() {
+    public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
             2.33 * TILE_WIDTH,
             config.alliance.sign * -0.67 * TILE_WIDTH
         ).face(
+            getGoalPose(), config.alliance == RED ? -175 : 175
+        ).axial(axialOffset).lateral(lateralOffset).face(
             getGoalPose(), config.alliance == RED ? -175 : 175
         );
     }
@@ -129,7 +133,7 @@ public class NavSubsystem {
     }
 
     public double getGoalDistance() {
-        return config.pose.hypot(
+        return (config.goalLock ? config.pose : new Pose(0,0,0)).hypot(
             getGoalPose()
         );
     }
