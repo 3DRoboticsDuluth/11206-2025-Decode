@@ -231,7 +231,7 @@ public class DriveCommands {
             () -> follow(builder -> {
                 builder
                     .addPath(new BezierCurve(() -> toPedroPose(getPose()), toPedroPose(pose)))
-                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading);
+                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, .8);
                 if (reverse) builder.setReversed();
             }, holdEnd)
         );
