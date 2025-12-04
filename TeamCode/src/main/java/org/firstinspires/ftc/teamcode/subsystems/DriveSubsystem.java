@@ -39,7 +39,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
-    public static double POWER_AUTO = 0.8;
+    public static double POWER_AUTO = 0.9;
     public static double TO_FAR = TILE_WIDTH * 3;
 
     public Follower follower;
