@@ -59,8 +59,8 @@ public class AutoCommands {
 
     public Command intake(double distance) {
         return auto.intakeStart().andThen(
-            drive.forward(distance).withTimeout(1500),
-            drive.setPowerAuto()
+            drive.setPowerAuto(),
+            drive.forward(distance).withTimeout(2000)
         );
     }
 
@@ -72,8 +72,7 @@ public class AutoCommands {
                 put(3, drive.toSpike3());
             }}, () -> spike
         ).andThen(
-            drive.setPowerIntake(),
-            auto.intake(22)
+            spike == 3 ? auto.intake(24) : auto.intake(33)
         );
     }
 
