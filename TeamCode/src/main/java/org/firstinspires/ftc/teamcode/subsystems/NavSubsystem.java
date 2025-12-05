@@ -146,6 +146,7 @@ public class NavSubsystem {
         );
     }
 
+
     public enum Axial {
         FRONT(+1), CENTER(0), BACK(-1);
         
