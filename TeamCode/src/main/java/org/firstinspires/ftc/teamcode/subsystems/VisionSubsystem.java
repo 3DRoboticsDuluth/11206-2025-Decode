@@ -42,7 +42,13 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public static double MAX = .175;
     public static double MIN = 0;
+    public static double SCAN_MAX = .1;
+    public static double SCAN_MIN = .05;
     public static double POS = 0;
+    public static double SCAN_STEP = 0.005;
+
+    public boolean artifactScanActive = false;
+    private int scanDirection = 1;
 
     public final Limelight3A limelight;
 
@@ -96,6 +102,19 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         POS = clamp(POS, MIN, MAX);
         servo.addTelemetry(TEL);
+
+        if (artifactScanActive) {
+            POS += SCAN_STEP * scanDirection;
+            if (POS >= SCAN_MAX) {
+                POS = SCAN_MAX;
+                scanDirection = -1;
+            } else if (POS <= SCAN_MIN) {
+                POS = SCAN_MIN;
+                scanDirection = 1;
+            }
+            servo.setPosition(POS);
+            telemetry.addData("Vision (Scan)", () -> String.format("Scanning: %.3f", POS));
+        }
 
         if (result == null || !result.isValid()) {
             telemetry.addData("Vision", () -> "No data available");
@@ -221,5 +240,20 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void stopQrScan() {
         qrScanRequested = false;
+    }
+
+    public void startArtifactScan() {
+        if (limelight == null) return;
+        elementPose = null;
+        switchPipeline(COLOR.index, true);
+        artifactScanActive = true;
+        POS = SCAN_MIN;
+        scanDirection = 1;
+        servo.setPosition(POS);
+    }
+
+    public void stopArtifactScan() {
+        artifactScanActive = false;
+        switchPipeline(PIPELINE, false);
     }
 }
