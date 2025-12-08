@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MED
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -126,9 +127,16 @@ public class DriveCommands {
     }
 
     public Command toClosestArtifact() {
-        return wait.noop(); // TODO: Add Chase
+        return new SelectCommand(
+            () -> {
+                if (vision.elementPose != null) {
+                    return to(vision.elementPose);
+                } else {
+                    return wait.noop();
+                }
+            }
+        );
     }
-
     public Command stop() {
         return complete(
             () -> {

@@ -7,6 +7,10 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -44,11 +48,18 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double MIN = 0;
     public static double SCAN_MAX = .1;
     public static double SCAN_MIN = .05;
-    public static double POS = 0;
+    public static double POS = MIN;
     public static double SCAN_STEP = 0.005;
+    //TODO - Tune for camera
+    public static double CAMERA_HEIGHT = 11.625; // inches above ground
+    public static double CAMERA_PITCH_BASE = 15.0; // degrees down from horizontal when servo at 0
+    public static double ARTIFACT_HEIGHT = 5;
+    public static double SERVO_ANGLE_MIN = -15.0; // degrees when servo at MIN position
+    public static double SERVO_ANGLE_MAX = 15.0; // degrees when servo at MAX position
 
     public boolean artifactScanActive = false;
     private int scanDirection = 1;
+    public boolean artifactDetected = false;
 
     public final Limelight3A limelight;
 
@@ -100,10 +111,13 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         LLResult result = limelight.getLatestResult();
 
-        POS = clamp(POS, MIN, MAX);
+        servo.setPosition(
+            POS = clamp(POS, MIN, MAX)
+        );
+
         servo.addTelemetry(TEL);
 
-        if (artifactScanActive) {
+        if (artifactScanActive && !artifactDetected) {
             POS += SCAN_STEP * scanDirection;
             if (POS >= SCAN_MAX) {
                 POS = SCAN_MAX;
@@ -112,8 +126,14 @@ public class VisionSubsystem extends HardwareSubsystem {
                 POS = SCAN_MIN;
                 scanDirection = 1;
             }
-            servo.setPosition(POS);
-            telemetry.addData("Vision (Scan)", () -> String.format("Scanning: %.3f", POS));
+
+            // Calculate current camera pitch for telemetry
+            double servoFraction = (POS - MIN) / (MAX - MIN);
+            double servoAngle = SERVO_ANGLE_MIN + servoFraction * (SERVO_ANGLE_MAX - SERVO_ANGLE_MIN);
+            double currentPitch = CAMERA_PITCH_BASE + servoAngle;
+
+            telemetry.addData("Vision (Scan)", () ->
+                String.format("Scanning: %.3f (pitch: %.1f°)", POS, currentPitch));
         }
 
         if (result == null || !result.isValid()) {
@@ -126,7 +146,10 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void switchPipeline(int pipeline, boolean elementReset) {
         if (limelight == null) return;
-        if (elementReset) elementPose = null;
+        if (elementReset) {
+            elementPose = null;
+            artifactDetected = false;
+        }
         limelight.pipelineSwitch(PIPELINE = pipeline);
     }
 
@@ -189,49 +212,113 @@ public class VisionSubsystem extends HardwareSubsystem {
     private void processColor(LLResult result) {
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
+        if (colorResults.isEmpty()) {
+            return;
+        }
+
         for (LLResultTypes.ColorResult cr : colorResults) {
             double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+            double tx = direction * cr.getTargetXDegrees();
+            double ty = direction * cr.getTargetYDegrees();
 
             telemetry.addData(
                 "Vision (Color Result)",
-                () -> String.format(
-                    "%.2f°tx, %.2f°ty",
-                    direction * cr.getTargetXDegrees(),
-                    direction * cr.getTargetYDegrees()
-                )
+                () -> String.format("%.2f°tx, %.2f°ty", tx, ty)
             );
 
             Log.i(
                 this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
-                    direction * cr.getTargetXDegrees(),
-                    direction * cr.getTargetYDegrees()
-                )
+                String.format("Vision (Color Result) | %.2f°tx, %.2f°ty", tx, ty)
             );
 
-            telemetry.addData(
-                "Vision (Element Pose)",
-                () -> String.format(
-                    "%.1fx, %.1fy, %.1f°",
-                    elementPose.x,
-                    elementPose.y,
-                    toDegrees(elementPose.heading)
-                )
-            );
+            calculateArtifactPose(tx, ty);
 
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Element Pose) | %.1fx, %.1fy, %.1f°",
-                    elementPose.x,
-                    elementPose.y,
-                    toDegrees(elementPose.heading)
-                )
-            );
+            // Stop scanning when artifact is detected
+            if (artifactScanActive && elementPose != null) {
+                artifactDetected = true;
+                artifactScanActive = false;
 
+                telemetry.addData("Vision", () -> "Artifact Detected!");
+                Log.i(this.getClass().getSimpleName(), "Artifact detected, stopping scan");
+            }
+
+            if (elementPose != null) {
+                telemetry.addData(
+                    "Vision (Element Pose)",
+                    () -> String.format(
+                        "%.1fx, %.1fy, %.1f°",
+                        elementPose.x,
+                        elementPose.y,
+                        toDegrees(elementPose.heading)
+                    )
+                );
+
+                Log.i(
+                    this.getClass().getSimpleName(),
+                    String.format(
+                        "Vision (Element Pose) | %.1fx, %.1fy, %.1f°",
+                        elementPose.x,
+                        elementPose.y,
+                        toDegrees(elementPose.heading)
+                    )
+                );
+            }
+
+            return; // Only process first detection
+        }
+    }
+
+    private void calculateArtifactPose(double tx, double ty) {
+        double txRad = toRadians(tx);
+        double tyRad = toRadians(ty);
+
+        // Calculate current camera pitch based on servo position
+        // Linear interpolation between min and max servo angles
+        double servoFraction = (POS - MIN) / (MAX - MIN);
+        double servoAngle = SERVO_ANGLE_MIN + servoFraction * (SERVO_ANGLE_MAX - SERVO_ANGLE_MIN);
+        double currentCameraPitch = CAMERA_PITCH_BASE + servoAngle;
+        double cameraPitchRad = toRadians(currentCameraPitch);
+
+        // Calculate distance to artifact using simple trigonometry
+        // Distance = (camera_height - artifact_height) / tan(camera_pitch + ty)
+        double heightDiff = CAMERA_HEIGHT - ARTIFACT_HEIGHT;
+        double angleToArtifact = cameraPitchRad + tyRad;
+
+        // Prevent division by zero or negative tangent
+        if (angleToArtifact <= 0 || angleToArtifact >= toRadians(85)) {
+            Log.w(this.getClass().getSimpleName(),
+                "Invalid angle to artifact: " + toDegrees(angleToArtifact));
             return;
         }
+
+        double distance = heightDiff / Math.tan(angleToArtifact);
+
+        // Clamp distance to reasonable values
+        distance = clamp(distance, 6.0, 60.0);
+
+        // Calculate horizontal angle in robot frame
+        // The servo angle already accounts for vertical scanning,
+        // tx is the horizontal offset
+        double horizontalAngle = txRad;
+
+        // Total horizontal angle = robot heading + horizontal camera angle
+        double totalAngle = config.pose.heading + horizontalAngle;
+
+        // Calculate artifact position in field coordinates
+        double artifactX = config.pose.x + distance * cos(totalAngle);
+        double artifactY = config.pose.y + distance * sin(totalAngle);
+
+        // Calculate heading to face the artifact
+        double headingToArtifact = atan2(
+            artifactY - config.pose.y,
+            artifactX - config.pose.x
+        );
+
+        elementPose = new Pose(artifactX, artifactY, headingToArtifact);
+
+        Log.i(this.getClass().getSimpleName(),
+            String.format("Calculated artifact: dist=%.1f, servo=%.3f (%.1f°), pitch=%.1f°",
+                distance, POS, toDegrees(servoAngle), currentCameraPitch));
     }
 
     public void startQrScan() {
@@ -245,6 +332,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void startArtifactScan() {
         if (limelight == null) return;
         elementPose = null;
+        artifactDetected = false;
         switchPipeline(COLOR.index, true);
         artifactScanActive = true;
         POS = SCAN_MIN;
@@ -254,6 +342,11 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void stopArtifactScan() {
         artifactScanActive = false;
+        artifactDetected = false;
         switchPipeline(PIPELINE, false);
+    }
+
+    public boolean hasArtifactDetected() {
+        return artifactDetected && elementPose != null;
     }
 }
