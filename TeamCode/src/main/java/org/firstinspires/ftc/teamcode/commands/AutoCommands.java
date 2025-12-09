@@ -9,21 +9,41 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
+
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.opmodes.AutoOpMode;
 
 import java.util.HashMap;
 
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            quanomous.execute()
+             quanomous.execute()
         ).withTimeout(29500).andThen(
-            auto.stop().asProxy()
+             auto.stop().asProxy()
         );
     }
+
+//    public Command driveCurve() {
+//        return drive.curve(
+//             new Pose (1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 180),
+//             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, 180),
+//             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 180)
+//        );
+//    }
+//
+//    public Command driveCurves() {
+//        return drive.curves(
+//             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 180),
+//             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, 180),
+//             new Pose (1.5 *TILE_WIDTH, 0.5 * TILE_WIDTH, 180)
+//        );
+//    }
 
     public Command delayStart() {
         return new SelectCommand(
