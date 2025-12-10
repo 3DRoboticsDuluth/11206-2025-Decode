@@ -46,16 +46,21 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public static double MAX = .175;
     public static double MIN = 0;
-    public static double SCAN_MAX = .1;
-    public static double SCAN_MIN = .05;
-    public static double POS = MIN;
-    public static double SCAN_STEP = 0.005;
-    //TODO - Tune for camera
+    public static double SCAN_MAX = .144;  // Start at horizontal (0°)
+    public static double SCAN_MIN = .094;  // End at straight down (90°) - FULL RANGE
+    public static double POS = 0;
+    public static double SCAN_STEP = 0.002;  // Slower scan for better detection
+
     public static double CAMERA_HEIGHT = 11.625; // inches above ground
-    public static double CAMERA_PITCH_BASE = 15.0; // degrees down from horizontal when servo at 0
-    public static double ARTIFACT_HEIGHT = 5;
-    public static double SERVO_ANGLE_MIN = -15.0; // degrees when servo at MIN position
-    public static double SERVO_ANGLE_MAX = 15.0; // degrees when servo at MAX position
+    public static double SERVO_HORIZONTAL_POSITION = 0.144; // servo position where camera is horizontal (0° pitch)
+    public static double ARTIFACT_HEIGHT = 5.0; // estimated artifact height in inches
+
+    // Servo calibration points:
+    // At 0.175: -38° (Looking up over intake)
+    // At 0.144: 0° (horizontal, front of robot)
+    // At 0.094: +90° (straight down)
+    // At 0.000: +254° (almost straight up to ceiling/back)
+    public static double SERVO_DEGREES_PER_UNIT = 1580.25; // 128° / 0.081 units
 
     public boolean artifactScanActive = false;
     private int scanDirection = 1;
@@ -111,26 +116,23 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         LLResult result = limelight.getLatestResult();
 
-        servo.setPosition(
-            POS = clamp(POS, MIN, MAX)
-        );
-
+        POS = clamp(POS, MIN, MAX);
         servo.addTelemetry(TEL);
 
         if (artifactScanActive && !artifactDetected) {
-            POS += SCAN_STEP * scanDirection;
-            if (POS >= SCAN_MAX) {
-                POS = SCAN_MAX;
-                scanDirection = -1;
-            } else if (POS <= SCAN_MIN) {
+            POS -= SCAN_STEP * scanDirection;  // Subtract to move from 0.144 down to 0.094
+            if (POS <= SCAN_MIN) {
                 POS = SCAN_MIN;
-                scanDirection = 1;
+                scanDirection = -1;  // Reverse direction
+            } else if (POS >= SCAN_MAX) {
+                POS = SCAN_MAX;
+                scanDirection = 1;  // Scan downward
             }
+            servo.setPosition(POS);
 
             // Calculate current camera pitch for telemetry
-            double servoFraction = (POS - MIN) / (MAX - MIN);
-            double servoAngle = SERVO_ANGLE_MIN + servoFraction * (SERVO_ANGLE_MAX - SERVO_ANGLE_MIN);
-            double currentPitch = CAMERA_PITCH_BASE + servoAngle;
+            double servoOffset = POS - 0.175;
+            double currentPitch = -38.0 + (servoOffset * SERVO_DEGREES_PER_UNIT);
 
             telemetry.addData("Vision (Scan)", () ->
                 String.format("Scanning: %.3f (pitch: %.1f°)", POS, currentPitch));
@@ -273,32 +275,31 @@ public class VisionSubsystem extends HardwareSubsystem {
         double tyRad = toRadians(ty);
 
         // Calculate current camera pitch based on servo position
-        // Linear interpolation between min and max servo angles
-        double servoFraction = (POS - MIN) / (MAX - MIN);
-        double servoAngle = SERVO_ANGLE_MIN + servoFraction * (SERVO_ANGLE_MAX - SERVO_ANGLE_MIN);
-        double currentCameraPitch = CAMERA_PITCH_BASE + servoAngle;
-        double cameraPitchRad = toRadians(currentCameraPitch);
+        // Servo mapping: 0.175=(-38° looking up), 0.144=(0° horizontal), 0.094=(+90° straight down)
+        // Camera pitch = -38° + (POS - 0.175) × 1580.25
+        double servoOffset = POS - 0.175; // negative when below 0.175
+        double cameraPitchDegrees = -38.0 + (servoOffset * SERVO_DEGREES_PER_UNIT);
+        double cameraPitchRad = toRadians(cameraPitchDegrees);
 
         // Calculate distance to artifact using simple trigonometry
         // Distance = (camera_height - artifact_height) / tan(camera_pitch + ty)
         double heightDiff = CAMERA_HEIGHT - ARTIFACT_HEIGHT;
         double angleToArtifact = cameraPitchRad + tyRad;
 
-        // Prevent division by zero or negative tangent
-        if (angleToArtifact <= 0 || angleToArtifact >= toRadians(85)) {
+        if (angleToArtifact <= toRadians(1) || angleToArtifact >= toRadians(85)) {
             Log.w(this.getClass().getSimpleName(),
-                "Invalid angle to artifact: " + toDegrees(angleToArtifact));
+                String.format("Invalid angle to artifact: %.1f° (pitch: %.1f°, ty: %.1f°)",
+                    toDegrees(angleToArtifact), cameraPitchDegrees, ty));
             return;
         }
 
         double distance = heightDiff / Math.tan(angleToArtifact);
 
         // Clamp distance to reasonable values
-        distance = clamp(distance, 6.0, 60.0);
+        distance = clamp(distance, 6.0, 72.0);
 
         // Calculate horizontal angle in robot frame
-        // The servo angle already accounts for vertical scanning,
-        // tx is the horizontal offset
+        // tx is the horizontal offset from camera center
         double horizontalAngle = txRad;
 
         // Total horizontal angle = robot heading + horizontal camera angle
@@ -317,8 +318,8 @@ public class VisionSubsystem extends HardwareSubsystem {
         elementPose = new Pose(artifactX, artifactY, headingToArtifact);
 
         Log.i(this.getClass().getSimpleName(),
-            String.format("Calculated artifact: dist=%.1f, servo=%.3f (%.1f°), pitch=%.1f°",
-                distance, POS, toDegrees(servoAngle), currentCameraPitch));
+            String.format("Artifact detected: servo=%.3f, pitch=%.1f°, dist=%.1f\", pos=(%.1f, %.1f)",
+                POS, cameraPitchDegrees, distance, artifactX, artifactY));
     }
 
     public void startQrScan() {
@@ -335,7 +336,7 @@ public class VisionSubsystem extends HardwareSubsystem {
         artifactDetected = false;
         switchPipeline(COLOR.index, true);
         artifactScanActive = true;
-        POS = SCAN_MIN;
+        POS = SCAN_MAX;
         scanDirection = 1;
         servo.setPosition(POS);
     }
