@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INT
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.PI;
@@ -98,15 +99,24 @@ public class DriveCommands {
     }
 
     public Command toSpike1() {
-        return to(nav.getSpike1());
+        return curves(
+             nav.getSpike1().axial(TILE_WIDTH * -1.5),
+             nav.getSpike1().axial(TILE_WIDTH)
+        );
     }
 
     public Command toSpike2() {
-        return to(nav.getSpike2());
+        return curves(
+            nav.getSpike2().axial(TILE_WIDTH * -1.5),
+            nav.getSpike2().axial(TILE_WIDTH)
+        );
     }
 
     public Command toSpike3() {
-        return to(nav.getSpike3());
+        return curves(
+             nav.getSpike3().axial(TILE_WIDTH * -1.5),
+             nav.getSpike3().axial(TILE_WIDTH)
+        );
     }
 
     public Command toDepositSouth(double axialOffset, double lateralOffset) {

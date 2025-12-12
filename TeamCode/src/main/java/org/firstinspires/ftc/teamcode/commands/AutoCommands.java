@@ -10,6 +10,9 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+
+import static java.lang.Math.toRadians;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -29,21 +32,21 @@ public class AutoCommands {
         );
     }
 
-//    public Command driveCurve() {
-//        return drive.curve(
-//             new Pose (1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 180),
-//             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, 180),
-//             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 180)
-//        );
-//    }
-//
-//    public Command driveCurves() {
-//        return drive.curves(
-//             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 180),
-//             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, 180),
-//             new Pose (1.5 *TILE_WIDTH, 0.5 * TILE_WIDTH, 180)
-//        );
-//    }
+    public Command driveCurve() {
+        return drive.curve(
+             new Pose (1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 0),
+             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, 0),
+             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 0)
+        );
+    }
+
+    public Command driveCurves() {
+        return drive.curves(
+             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, toRadians(135)),
+             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, toRadians(135)),
+             new Pose (1.5 *TILE_WIDTH, 0.5 * TILE_WIDTH, toRadians(135))
+        );
+    }
 
     public Command delayStart() {
         return new SelectCommand(
@@ -92,8 +95,8 @@ public class AutoCommands {
                 put(3, drive.toSpike3());
             }}, () -> spike
         ).andThen(
-            drive.setPowerIntake(),
-            auto.intake(22)
+            drive.setPowerIntake()
+//            auto.intake(22)
         );
     }
 
