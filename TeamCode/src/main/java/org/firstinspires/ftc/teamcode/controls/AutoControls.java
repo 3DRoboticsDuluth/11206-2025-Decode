@@ -31,6 +31,9 @@ public class AutoControls {
             .and(gamepad2.getGamepadButton(A))
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
 
+        gamepad2.getGamepadButton()
+                .and(gamepad2.getGamepadButton(A))
+                .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
         //Config Controls
 
         gamepad2.getGamepadButton(LEFT_BUMPER)

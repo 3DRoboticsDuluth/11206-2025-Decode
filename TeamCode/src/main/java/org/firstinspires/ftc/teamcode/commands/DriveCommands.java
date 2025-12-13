@@ -85,6 +85,14 @@ public class DriveCommands {
         );
     }
 
+    public Command startChasing() {
+        return new InstantCommand(drive::startChasing, drive);
+    }
+
+    public Command stopChasing() {
+        return new InstantCommand(drive::stopChasing, drive);
+    }
+
     public Command toStart() {
         return to(nav.getStartPose());
     }
