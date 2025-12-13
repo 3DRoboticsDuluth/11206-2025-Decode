@@ -94,9 +94,12 @@ public class AutoCommands {
                 put(2, drive.toSpike2());
                 put(3, drive.toSpike3());
             }}, () -> spike
+        ).alongWith(
+             drive.toDistance(TILE_WIDTH * -2).andThen(
+                  auto.intakeStart()
+             )
         ).andThen(
-            drive.setPowerIntake()
-//            auto.intake(22)
+             wait.doherty()
         );
     }
 

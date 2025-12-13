@@ -42,6 +42,7 @@ import java.util.function.DoubleSupplier;
 
 /** @noinspection unused, UnusedReturnValue */
 public class DriveCommands {
+    public static double HEADING_END_TIME = 0.5;
     private boolean reverse = false;
     private Pose startPose = new Pose(0, 0, 0);
     private Pose endPose = new Pose(0, 0, 0);
@@ -247,7 +248,7 @@ public class DriveCommands {
             () -> follow(builder -> {
                 builder
                     .addPath(new BezierCurve(() -> toPedroPose(getPose()), toPedroPose(pose)))
-                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, 0.8);
+                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
             }, holdEnd)
         );
@@ -262,7 +263,7 @@ public class DriveCommands {
                     futurePoses.add(toPedroPose(endPose = pose));
                 builder
                     .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
-                    .setLinearHeadingInterpolation(startPose.heading, endPose.heading, 0.8);
+                    .setLinearHeadingInterpolation(startPose.heading, endPose.heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
             }, true)
         );
@@ -275,7 +276,7 @@ public class DriveCommands {
                 for (Pose pose : poses) {
                     builder
                         .addPath(new BezierCurve(toPedroPose(endPose), toPedroPose(pose)))
-                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, 0.8);
+                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                     if (reverse) builder.setReversed();
                 }
             }, true)
