@@ -6,12 +6,17 @@ import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.tan;
 import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -27,10 +32,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static boolean CAMERA_UPSIDE_DOWN = true;
+    public static double CAMERA_X_INCHES = -8.472874016; // -215.211
+    public static double CAMERA_Y_INCHES = -0.014212598; // -0.361
+    public static double CAMERA_Z_INCHES = 10.00492126; // 254.125
+    public static double CAMERA_YAW_DEGREES = 15.7;
+    public static double CAMERA_PITCH_DEGREES = -17.4;
+    public static double ELEMENT_HEIGHT = 5;
+    public static double ELEVATION_SCALAR = 0.820; //0.845
+    public static double BEARING_X_SCALAR = 0.745;
+    public static double BEARING_Y_SCALAR = 1.170;
     public static int PIPELINE = 0;
 
     public Pose detectionPose = null;
@@ -213,6 +226,38 @@ public class VisionSubsystem extends HardwareSubsystem {
 
             return;
         }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private Pose getElementPose(double targetYawAngle, double targetPitchAngle) {
+        double heightDiff = CAMERA_Z_INCHES - ELEMENT_HEIGHT;
+        double elevationAngle = toRadians(-CAMERA_PITCH_DEGREES - targetPitchAngle);
+        double bearingAngle = toRadians(CAMERA_YAW_DEGREES - targetYawAngle);
+
+        telemetry.addData("Vision (Height Diff)", () -> String.format("%.1f", heightDiff));
+        telemetry.addData("Vision (Elevation Angle)", () -> String.format("%.1f°", toDegrees(elevationAngle)));
+        telemetry.addData("Vision (Bearing Angle)", () -> String.format("%.1f°", toDegrees(bearingAngle)));
+
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Height Diff) | %.1f", heightDiff));
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Elevation Angle) | %.1f°", elevationAngle));
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Bearing Angle) | %.1f°", bearingAngle));
+
+        double distance = abs(heightDiff / tan(elevationAngle * ELEVATION_SCALAR));
+        double xOffset = CAMERA_X_INCHES + distance * cos(bearingAngle * BEARING_X_SCALAR);
+        double yOffset = CAMERA_Y_INCHES + distance * sin(bearingAngle * BEARING_Y_SCALAR);
+        double heading = atan2(yOffset, xOffset);
+
+        telemetry.addData("Vision (Element Distance)", () -> String.format("%.1f", distance));
+        telemetry.addData("Vision (Element X Offset)", () -> String.format("%.1f", xOffset));
+        telemetry.addData("Vision (Element Y Offset)", () -> String.format("%.1f", yOffset));
+        telemetry.addData("Vision (Element Heading)", () -> String.format("%.1f", toDegrees(heading)));
+
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Distance) | %.1f", distance));
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element X Offset) | %.1f", xOffset));
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Y Offset) | %.1f", yOffset));
+        Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Heading) | %.1f", toDegrees(heading)));
+
+        return new Pose(xOffset, yOffset, heading);
     }
 
     public void startQrScan() {

@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.field.Style;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
@@ -28,6 +29,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
+
+import java.util.function.Supplier;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
@@ -56,6 +59,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pTurn = new PController(config.responsiveness);
     private final PIDFController pidfGoalLock = new PIDFController(GOAL_LOCK_HEADING_PIDF);
     private final FFController ffGoalLock = new FFController(GOAL_LOCK_LATERAL_FF);
+    private Supplier<Pose> chasePose = null;
 
     private double forward = 0;
     private double strafe = 0;
@@ -92,6 +96,14 @@ public class DriveSubsystem extends HardwareSubsystem {
         config.pose = fromPedroPose(
             follower.getPose()
         );
+
+        if (chasePose != null)
+            follower.followPath(
+                    follower.pathBuilder()
+                            .addPath(new BezierLine(() -> toPedroPose(config.pose), chasePose.get()))
+                            .build()
+                    , true
+            );
 
         drawDebug(follower);
 
@@ -159,5 +171,14 @@ public class DriveSubsystem extends HardwareSubsystem {
         follower.setStartingPose(
             toPedroPose(config.pose)
         );
+    }
+
+    public void startChasing() {
+        chasePose = () -> toPedroPose(vision.elementPose);
+    }
+
+    public void stopChasing(){
+        follower.breakFollowing();
+        chasePose = null;
     }
 }
