@@ -99,40 +99,46 @@ public class DriveCommands {
     }
 
     public Command toSpike1() {
-        return curves(
-             nav.getSpike1().axial(TILE_WIDTH * -1.5),
-             nav.getSpike1().axial(TILE_WIDTH)
+        return curve(
+             nav.getSpike1().axial(TILE_WIDTH * -0.5),
+             nav.getSpike1().axial(TILE_WIDTH * 1.15)
         );
     }
 
     public Command toSpike2() {
-        return curves(
-            nav.getSpike2().axial(TILE_WIDTH * -1.5),
-            nav.getSpike2().axial(TILE_WIDTH)
+        return curve(
+            nav.getSpike2().axial(TILE_WIDTH * -0.5),
+            nav.getSpike2().axial(TILE_WIDTH * 1.15)
         );
     }
 
     public Command toSpike3() {
-        return curves(
-             nav.getSpike3().axial(TILE_WIDTH * -1.5),
-             nav.getSpike3().axial(TILE_WIDTH)
+        return curve(
+             nav.getSpike3().axial(TILE_WIDTH * -0.5),
+             nav.getSpike3().axial(TILE_WIDTH * 0.85)
         );
     }
 
     public Command toDepositSouth(double axialOffset, double lateralOffset) {
-        return to(nav.getDepositSouthPose(axialOffset, lateralOffset));
+        return curve(
+             nav.getDepositSouthPose(TILE_WIDTH * 2, TILE_WIDTH * 1.33),
+             nav.getDepositSouthPose(0, 0)
+        );
     }
 
     public Command toDepositNorth(double axialOffset, double lateralOffset) {
-        return to(nav.getDepositNorthPose(axialOffset, lateralOffset));
+        return curve(nav.getDepositNorthPose(axialOffset, lateralOffset));
     }
 
     public Command toGate() {
-        return to(nav.getGatePose().axial(-24));
+        return curve(
+             nav.getGatePose().axial(-24),
+             nav.getGatePose()
+        );
     }
 
     public Command toBase() {
-        return to(nav.getBasePose());
+        return curve(nav.getBasePose());
     }
 
     public Command toClosestArtifact() {
@@ -241,7 +247,7 @@ public class DriveCommands {
             () -> follow(builder -> {
                 builder
                     .addPath(new BezierCurve(() -> toPedroPose(getPose()), toPedroPose(pose)))
-                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, .8);
+                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, 0.8);
                 if (reverse) builder.setReversed();
             }, holdEnd)
         );
@@ -256,7 +262,7 @@ public class DriveCommands {
                     futurePoses.add(toPedroPose(endPose = pose));
                 builder
                     .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
-                    .setTangentHeadingInterpolation();
+                    .setLinearHeadingInterpolation(startPose.heading, endPose.heading, 0.8);
                 if (reverse) builder.setReversed();
             }, true)
         );
@@ -269,7 +275,7 @@ public class DriveCommands {
                 for (Pose pose : poses) {
                     builder
                         .addPath(new BezierCurve(toPedroPose(endPose), toPedroPose(pose)))
-                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading);
+                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, 0.8);
                     if (reverse) builder.setReversed();
                 }
             }, true)
