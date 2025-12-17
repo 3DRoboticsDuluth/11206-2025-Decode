@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static androidx.core.math.MathUtils.clamp;
-import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.COLOR;
+//import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.COLOR;
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
@@ -17,6 +19,7 @@ import static java.lang.Math.toRadians;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -32,19 +35,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static boolean CAMERA_UPSIDE_DOWN = true;
     public static double CAMERA_X_INCHES = -8.472874016; // -215.211
     public static double CAMERA_Y_INCHES = -0.014212598; // -0.361
     public static double CAMERA_Z_INCHES = 10.00492126; // 254.125
-    public static double CAMERA_YAW_DEGREES = 15.7;
+    public static double CAMERA_YAW_DEGREES = 0;
     public static double CAMERA_PITCH_DEGREES = -17.4;
     public static double ELEMENT_HEIGHT = 5;
     public static double ELEVATION_SCALAR = 0.820; //0.845
     public static double BEARING_X_SCALAR = 0.745;
     public static double BEARING_Y_SCALAR = 1.170;
-    public static int PIPELINE = 0;
+    public static int PIPELINE = 3;
 
     public Pose detectionPose = null;
     public int detectionCount = 0;
@@ -53,9 +57,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public String qrCodeData = null;
     public boolean qrScanRequested = false;
 
-    public static double MAX = .175;
+    public static double MAX = 1;
     public static double MIN = 0;
-    public static double POS = 0;
+    public static double POS = 0.5;
 
     public final Limelight3A limelight;
 
@@ -78,7 +82,8 @@ public class VisionSubsystem extends HardwareSubsystem {
         processors = new HashMap<Integer, Consumer<LLResult>>() {{
             put(QRCODE.index, VisionSubsystem.this::processQrCode);
             put(APRILTAG.index, VisionSubsystem.this::processAprilTag);
-            put(COLOR.index, VisionSubsystem.this::processColor);
+            put(GREEN.index, VisionSubsystem.this::processColor);
+            put(PURPLE.index, VisionSubsystem.this::processColor);
         }};
 
     }
@@ -107,7 +112,10 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         LLResult result = limelight.getLatestResult();
 
-        POS = clamp(POS, MIN, MAX);
+        servo.setPosition(
+                POS = clamp(POS, MIN, MAX)
+        );
+
         servo.addTelemetry(TEL);
 
         if (result == null || !result.isValid()) {
@@ -185,6 +193,11 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         for (LLResultTypes.ColorResult cr : colorResults) {
             double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+
+            elementPose = getElementPose(
+                    direction * cr.getTargetXDegrees(),
+                    direction * cr.getTargetYDegrees()
+            );
 
             telemetry.addData(
                 "Vision (Color Result)",

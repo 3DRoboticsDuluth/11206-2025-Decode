@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.adaptations.vision;
 public enum Pipeline {
     QRCODE(0),
     APRILTAG(1),
-    COLOR(2);
+    GREEN(2),
+    PURPLE(3);
 
     public final int index;
 
