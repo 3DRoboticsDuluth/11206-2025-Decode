@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.adaptations.ballistics;
 
-import static java.lang.Math.max;
-
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 

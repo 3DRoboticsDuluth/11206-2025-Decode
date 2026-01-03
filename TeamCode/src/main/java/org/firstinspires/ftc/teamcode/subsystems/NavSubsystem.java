@@ -9,8 +9,8 @@ import static java.lang.Math.toRadians;
 
 import com.bylazar.configurables.annotations.Configurable;
 
-import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 
 /** @noinspection UnaryPlus, unused */

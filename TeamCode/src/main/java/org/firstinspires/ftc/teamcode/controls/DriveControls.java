@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode.controls;
 
-import static androidx.core.math.MathUtils.clamp;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.BACK;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_STICK_BUTTON;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_STICK_BUTTON;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
-import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
-import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.GOAL_DISTANCE_INCREMENT;
 
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 

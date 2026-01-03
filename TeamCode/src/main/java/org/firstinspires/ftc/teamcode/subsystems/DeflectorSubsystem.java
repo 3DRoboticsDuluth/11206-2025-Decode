@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static androidx.core.math.MathUtils.clamp;
-
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
-
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;

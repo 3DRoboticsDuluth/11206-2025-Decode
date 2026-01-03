@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.adaptations.pedropathing;
 
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_LENGTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_WIDTH;
-
 import static java.lang.Math.max;
 
 import com.bylazar.field.FieldManager;

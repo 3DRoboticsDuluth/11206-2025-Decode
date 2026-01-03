@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.adaptations.odometry;
 
-import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
