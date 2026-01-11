@@ -44,7 +44,7 @@ public class AutoControls {
             .whenPressed(() -> Config.config.goalAngleOffsetNorth -= GOAL_ANGLE_INCREMENT);
 
         gamepad2.getGamepadButton(B)
-            .whenPressed(() -> Config.config.goalAngleOffsetSouth -= GOAL_ANGLE_INCREMENT);
+            .whenPressed(() -> Config.config.goalAngleOffsetSouth += GOAL_ANGLE_INCREMENT);
 
         gamepad2.getGamepadButton(X)
             .whenPressed(() -> Config.config.goalAngleOffsetSouth -= GOAL_ANGLE_INCREMENT);
