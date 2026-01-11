@@ -21,4 +21,6 @@ public class Config {
     public boolean goalLock = false;
     public double goalDistanceOffsetSouth = 0;
     public double goalDistanceOffsetNorth = 0;
+    public double goalAngleOffsetSouth = 0;
+    public double goalAngleOffsetNorth = 0;
 }

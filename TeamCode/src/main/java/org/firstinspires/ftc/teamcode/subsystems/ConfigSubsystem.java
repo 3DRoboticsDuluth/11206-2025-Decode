@@ -44,6 +44,7 @@ public class ConfigSubsystem extends SubsystemBase {
     public static double DELAY_INCREMENT = 0.5;
     public static double RESPONSIVENESS_INCREMENT = 0.01;
     public static double GOAL_DISTANCE_INCREMENT = 6;
+    public static double GOAL_ANGLE_INCREMENT = 1;
 
     private static Thread thread;
     private int index = 0;
@@ -90,6 +91,16 @@ public class ConfigSubsystem extends SubsystemBase {
             "Goal Distance Offset North",
             () -> String.format("%.1f in", config.goalDistanceOffsetNorth),
             change -> config.goalDistanceOffsetNorth += GOAL_DISTANCE_INCREMENT * change.sign
+        ),
+        new Item(
+            "Goal Angle Offset South",
+            () -> String.format("%.1f deg", config.goalAngleOffsetSouth),
+            change -> config.goalAngleOffsetSouth += GOAL_ANGLE_INCREMENT * change.sign
+        ),
+        new Item(
+            "Goal Angle Offset North",
+            () -> String.format("%.1f deg", config.goalAngleOffsetNorth),
+            change -> config.goalAngleOffsetNorth += GOAL_ANGLE_INCREMENT * change.sign
         )
     );
 

@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.A;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.B;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.X;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
+import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.GOAL_ANGLE_INCREMENT;
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.GOAL_DISTANCE_INCREMENT;
 
 import com.seattlesolvers.solverslib.command.button.Trigger;
@@ -31,6 +36,18 @@ public class AutoControls {
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
 
         //Config Controls
+
+        gamepad2.getGamepadButton(DPAD_LEFT)
+            .whenPressed(() -> Config.config.goalAngleOffsetNorth += GOAL_ANGLE_INCREMENT);
+
+        gamepad2.getGamepadButton(DPAD_RIGHT)
+            .whenPressed(() -> Config.config.goalAngleOffsetNorth -= GOAL_ANGLE_INCREMENT);
+
+        gamepad2.getGamepadButton(B)
+            .whenPressed(() -> Config.config.goalAngleOffsetSouth -= GOAL_ANGLE_INCREMENT);
+
+        gamepad2.getGamepadButton(X)
+            .whenPressed(() -> Config.config.goalAngleOffsetSouth -= GOAL_ANGLE_INCREMENT);
 
         gamepad2.getGamepadButton(LEFT_BUMPER)
             .whenPressed(() -> Config.config.goalDistanceOffsetSouth -= GOAL_DISTANCE_INCREMENT );

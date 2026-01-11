@@ -126,9 +126,16 @@ public class NavSubsystem {
         );
     }
 
+    public double getGoalHeadingOffset() {
+        double angleOffset = config.pose.x > 0.1 ?
+            config.goalAngleOffsetNorth :
+            config.goalAngleOffsetSouth;
+        return GOAL_HEADING_OFFSET + angleOffset;
+    }
+
     public double getGoalHeadingRemaining() {
         return normalizeHeading(
-            config.pose.heading - (getGoalPose().atan2(config.pose) + toRadians(GOAL_HEADING_OFFSET))
+            config.pose.heading - (getGoalPose().atan2(config.pose) + toRadians(getGoalHeadingOffset()))
         );
     }
 
