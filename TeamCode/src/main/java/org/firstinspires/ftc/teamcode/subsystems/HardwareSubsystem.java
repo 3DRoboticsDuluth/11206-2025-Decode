@@ -35,7 +35,15 @@ public class HardwareSubsystem extends SubsystemBase {
     }
 
     protected Servo getServo(String id) {
-        return new Servo(id, getDevice(com.qualcomm.robotcore.hardware.Servo.class, id));
+        return getServo(id, s -> {});
+    }
+
+    protected Servo getServo(String id, Consumer<Servo> consumer) {
+        return getHardware(() -> {
+            Servo servo = new Servo(id, getDevice(com.qualcomm.robotcore.hardware.Servo.class, id));
+            consumer.accept(servo);
+            return servo;
+        });
     }
 
     protected CRServoEx getCRServo(String id) {

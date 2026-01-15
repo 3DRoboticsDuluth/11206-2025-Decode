@@ -8,21 +8,15 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 
 public class VisionCommands {
+    public Command goalLock(boolean enabled) {
+        return complete(
+            () -> vision.goalLock(enabled)
+        );
+    }
+
     public Command switchPipeline(Pipeline pipeline) {
         return complete(
-            () -> vision.switchPipeline(pipeline.index, pipeline.index != 0)
-        );
-    }
-
-    public Command startQRScan() {
-        return complete(
-            () -> vision.startQrScan()
-        );
-    }
-
-    public Command stopQRScan() {
-        return complete(
-            () -> vision.stopQrScan()
+            () -> vision.switchPipeline(pipeline, pipeline.index != 0)
         );
     }
 

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawDebug;
-import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawRobot;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.fromPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -18,13 +17,11 @@ import static java.lang.Math.toDegrees;
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.field.Style;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
 
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
@@ -44,6 +41,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.8;
     public static double TO_FAR = TILE_WIDTH * 3;
+    public static boolean CHASING = false;
 
     public Follower follower;
 
@@ -97,22 +95,46 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
-        if (chasePose != null)
-            follower.followPath(
-                    follower.pathBuilder()
-                            .addPath(new BezierLine(() -> toPedroPose(config.pose), chasePose.get()))
-                            .build()
-                    , true
+        /*if (CHASING) startChasing();
+        else stopChasing();
+
+        if (chasePose != null && !follower.isBusy()) {
+            Pose pose = chasePose.get();
+
+            if (pose == null) return;
+
+            *//*if (pose == null) {
+                CHASING = false;
+                stopChasing();
+                return;
+            };*//*
+
+            Pose targetPose = new Pose(
+                config.pose.x + pose.x,
+                config.pose.y + pose.y,
+                config.pose.heading + pose.heading
             );
+
+            *//*follower.followPath(
+                follower.pathBuilder()
+                    .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(targetPose)))
+                    .build()
+                , true
+            );*//*
+
+            follower.turnTo(targetPose.heading);
+
+            *//*vision.elementPose = null;*//*
+        }*/
 
         drawDebug(follower);
 
-        if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
-            Pose pose = toPedroPose(config.pose = vision.detectionPose);
-            follower.setStartingPose(pose);
+        /*if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
+            config.pose = vision.detectionPose;
+            follower.setStartingPose(toPedroPose(config.pose));
             final Style style = new Style("", "#b53fad", 0.0);
-            drawRobot(pose, style);
-        }
+            drawRobot(toPedroPose(config.pose), style);
+        }*/
 
         telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
@@ -174,7 +196,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public void startChasing() {
-        chasePose = () -> toPedroPose(vision.elementPose);
+        chasePose = () -> vision.elementPose;
     }
 
     public void stopChasing(){

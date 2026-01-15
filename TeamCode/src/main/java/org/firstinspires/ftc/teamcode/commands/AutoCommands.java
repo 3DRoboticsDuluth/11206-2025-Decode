@@ -7,11 +7,11 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
+import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
 import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class AutoCommands {
     }
 
     public Command intakeStart() {
-        return drive.goalLock(false).alongWith(
+        return auto.goalLock(false).alongWith(
             intake.forward(),
             conveyor.forward(),
             gate.close(),
@@ -48,7 +48,7 @@ public class AutoCommands {
             gate.open()
         ).alongWith(
             wait.doherty(2).andThen(
-                drive.goalLock(true).andThen(
+                auto.goalLock(true).andThen(
                     flywheel.forward(),
                     flywheel.isReady(),
                     drive.rumble()
@@ -89,7 +89,7 @@ public class AutoCommands {
     }
 
     public Command depositStart() {
-        return drive.goalLock(true).andThen(
+        return auto.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
             wait.doherty(config.auto ? 2 : 0),
@@ -99,7 +99,7 @@ public class AutoCommands {
     }
 
     public Command depositStop() {
-        return drive.goalLock(false).alongWith(
+        return auto.goalLock(false).alongWith(
             conveyor.stop(),
             flywheel.stop(),
             intake.stop()
@@ -137,7 +137,9 @@ public class AutoCommands {
     }
 
     public Command goalLock(boolean enabled) {
-        return new InstantCommand(() -> config.goalLock = enabled);
+        return drive.goalLock(enabled).alongWith(
+            vision.goalLock(enabled)
+        );
     }
 
     public Command stop() {
