@@ -57,6 +57,13 @@ public class AutoCommands {
         );
     }
 
+    public Command actionCancel() {
+        return drive.goalLock(false).alongWith(
+            auto.stop(),
+            drive.setPowerLow()
+        );
+    }
+
     public Command intake(double distance) {
         return auto.intakeStart().andThen(
             drive.forward(distance).withTimeout(1500),
@@ -146,6 +153,7 @@ public class AutoCommands {
         return drive.stop().alongWith(
             intake.stop(),
             conveyor.stop(),
+            gate.close(),
             flywheel.stop()
         );
     }

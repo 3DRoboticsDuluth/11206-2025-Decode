@@ -8,6 +8,7 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_BUMP
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.X;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
@@ -31,6 +32,10 @@ public class AutoControls {
         new Trigger(() -> gamepad1.getTrigger(RIGHT_TRIGGER) > TRIGGER_THRESHOLD)
             .whenActive(auto.depositStart())
             .whenInactive(auto.depositStop());
+
+        gamepad1.getGamepadButton(START).negate()
+            .and(gamepad1.getGamepadButton(Y))
+            .whenActive(auto.actionCancel());
 
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
