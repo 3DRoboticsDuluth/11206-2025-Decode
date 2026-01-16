@@ -31,22 +31,6 @@ public class AutoCommands {
         );
     }
 
-    public Command driveCurve() {
-        return drive.curve(
-             new Pose (1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 0),
-             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, 0),
-             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, 0)
-        );
-    }
-
-    public Command driveCurves() {
-        return drive.curves(
-             new Pose (-1.5 * TILE_WIDTH, 0.5 * TILE_WIDTH, toRadians(135)),
-             new Pose (0 * TILE_WIDTH, 1.5 * TILE_WIDTH, toRadians(135)),
-             new Pose (1.5 *TILE_WIDTH, 0.5 * TILE_WIDTH, toRadians(135))
-        );
-    }
-
     public Command delayStart() {
         return new SelectCommand(
             () -> wait.seconds(config.delay)
@@ -63,19 +47,13 @@ public class AutoCommands {
     }
 
     public Command intakeStop() {
-        return conveyor.reverse().andThen(
+        return auto.goalLock(true).andThen(
+            flywheel.forward(),
+            conveyor.reverse(),
             wait.doherty(2),
             conveyor.stop(),
             intake.hold(),
             gate.open()
-        ).alongWith(
-            wait.doherty(2).andThen(
-                auto.goalLock(true).andThen(
-                    flywheel.forward(),
-                    flywheel.isReady(),
-                    drive.rumble()
-                )
-            )
         );
     }
 
@@ -116,8 +94,6 @@ public class AutoCommands {
         return auto.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
-//            wait.doherty(config.auto ? 2 : 0),
-            flywheel.isReady(),
             conveyor.launch()
         );
     }
@@ -131,32 +107,34 @@ public class AutoCommands {
     }
 
     public Command depositSouth(double axialOffset, double lateralOffset) {
-        return drive.toDepositSouth(axialOffset, lateralOffset).alongWith(
-            auto.intakeStop(),
-            drive.toDistance(-6).andThen(
+        return auto.intakeStop().alongWith(
+            drive.toDepositSouth(axialOffset, lateralOffset).andThen(
+                drive.toDistance(-3),
+                drive.toHeading(2),
                 auto.deposit()
             )
         );
     }
 
     public Command depositNorth(double axialOffset, double lateralOffset) {
-        return drive.toDepositNorth(axialOffset, lateralOffset).alongWith(
-            auto.intakeStop(),
-            drive.toDistance(-6).andThen(
+        return auto.intakeStop().alongWith(
+            drive.toDepositNorth(axialOffset, lateralOffset).andThen(
+                drive.toDistance(-3),
+                drive.toHeading(2),
                 auto.deposit()
             )
         );
     }
 
     public Command deposit() {
-        return auto.fork(
+        return /*auto.fork(*/
             auto.depositStart().andThen(
                 wait.doherty(2),
                 auto.depositStop()
-            )
+            )/*
         ).andThen(
             wait.doherty(1)
-        );
+        )*/;
     }
 
     public Command releaseGate() {

@@ -176,8 +176,18 @@ public class DriveCommands {
 
     public Command toDistance(double distance) {
         return distance > 0 ?
-            wait.until(() -> startPose.hypot(config.pose) >= distance) :
-            wait.until(() -> endPose.hypot(config.pose) < -distance);
+            wait.until(() -> drive.follower.getDistanceTraveledOnPath() >= distance) :
+            wait.until(() -> drive.follower.getDistanceRemaining() < -distance);
+    }
+
+    public Command toTValue(double t) {
+        return t > 0 ?
+            wait.until(() -> drive.follower.getCurrentTValue() >= t) :
+            wait.until(() -> drive.follower.getCurrentTValue() < 1 + t);
+    }
+
+    public Command toHeading(double heading) {
+        return wait.until(() -> abs(nav.getGoalHeadingRemaining()) < heading);
     }
 
     public boolean toFar(Pose pose) {
