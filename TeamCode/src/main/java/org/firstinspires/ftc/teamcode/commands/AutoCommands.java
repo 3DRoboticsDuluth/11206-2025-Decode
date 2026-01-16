@@ -59,10 +59,7 @@ public class AutoCommands {
 
     public Command actionCancel() {
         return drive.goalLock(false).alongWith(
-            intake.stop(),
-            conveyor.stop(),
-            gate.close(),
-            flywheel.stop(),
+            auto.stop(),
             drive.setPowerLow()
         );
     }
@@ -154,6 +151,7 @@ public class AutoCommands {
         return drive.stop().alongWith(
             intake.stop(),
             conveyor.stop(),
+            gate.close(),
             flywheel.stop()
         );
     }
