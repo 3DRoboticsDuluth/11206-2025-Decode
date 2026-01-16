@@ -92,9 +92,9 @@ public class NavSubsystem {
             -0.5 * TILE_WIDTH,
             config.alliance.sign * -0.67 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? 180 : 175
+            getGoalPose(), config.alliance == RED ? -180 : 180
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? -175 : 175
+            getGoalPose(), config.alliance == RED ? -180 : 180
         );
     }
 
@@ -103,9 +103,9 @@ public class NavSubsystem {
             2.33 * TILE_WIDTH,
             config.alliance.sign * -0.67 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? -175 : 175
+            getGoalPose(), config.alliance == RED ? -180 : 180
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? -175 : 175
+            getGoalPose(), config.alliance == RED ? -180 : 180
         );
     }
 
@@ -150,6 +150,7 @@ public class NavSubsystem {
             toRadians(config.alliance.sign * 0)
         );
     }
+
 
     public enum Axial {
         FRONT(+1), CENTER(0), BACK(-1);

@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INT
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.PI;
@@ -41,6 +42,7 @@ import java.util.function.DoubleSupplier;
 
 /** @noinspection unused, UnusedReturnValue */
 public class DriveCommands {
+    public static double HEADING_END_TIME = 0.5;
     private boolean reverse = false;
     private Pose startPose = new Pose(0, 0, 0);
     private Pose endPose = new Pose(0, 0, 0);
@@ -106,31 +108,48 @@ public class DriveCommands {
     }
 
     public Command toSpike1() {
-        return to(nav.getSpike1());
+        return curve(
+             nav.getSpike1().axial(TILE_WIDTH * -0.5),
+             nav.getSpike1().axial(TILE_WIDTH * 1.15)
+        );
     }
 
     public Command toSpike2() {
-        return to(nav.getSpike2());
+        return curve(
+            nav.getSpike2().axial(TILE_WIDTH * -0.5).lateral(TILE_WIDTH * -.25),
+            nav.getSpike2().axial(TILE_WIDTH * 1.15)
+        );
     }
 
     public Command toSpike3() {
-        return to(nav.getSpike3());
+        return curve(
+             nav.getSpike3().axial(TILE_WIDTH * -0.5),
+             nav.getSpike3().axial(TILE_WIDTH * 0.85)
+        );
     }
 
     public Command toDepositSouth(double axialOffset, double lateralOffset) {
-        return to(nav.getDepositSouthPose(axialOffset, lateralOffset));
+        return new SelectCommand(
+            () -> curve(
+                nav.getDepositSouthPose(config.pose.x, TILE_WIDTH * -0.5 * config.alliance.sign),
+                nav.getDepositSouthPose(0, 0)
+            )
+        );
     }
 
     public Command toDepositNorth(double axialOffset, double lateralOffset) {
-        return to(nav.getDepositNorthPose(axialOffset, lateralOffset));
+        return curve(nav.getDepositNorthPose(axialOffset, lateralOffset));
     }
 
     public Command toGate() {
-        return to(nav.getGatePose().axial(-24));
+        return curve(
+             nav.getGatePose().axial(-24),
+             nav.getGatePose()
+        );
     }
 
     public Command toBase() {
-        return to(nav.getBasePose());
+        return curve(nav.getBasePose());
     }
 
     public Command toClosestArtifact() {
@@ -239,7 +258,7 @@ public class DriveCommands {
             () -> follow(builder -> {
                 builder
                     .addPath(new BezierCurve(() -> toPedroPose(getPose()), toPedroPose(pose)))
-                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading);
+                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
             }, holdEnd)
         );
@@ -254,7 +273,7 @@ public class DriveCommands {
                     futurePoses.add(toPedroPose(endPose = pose));
                 builder
                     .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
-                    .setTangentHeadingInterpolation();
+                    .setLinearHeadingInterpolation(startPose.heading, endPose.heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
             }, true)
         );
@@ -267,7 +286,7 @@ public class DriveCommands {
                 for (Pose pose : poses) {
                     builder
                         .addPath(new BezierCurve(toPedroPose(endPose), toPedroPose(pose)))
-                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading);
+                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                     if (reverse) builder.setReversed();
                 }
             }, true)

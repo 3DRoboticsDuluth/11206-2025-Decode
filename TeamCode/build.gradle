@@ -36,8 +36,8 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     // SolversLib
-    implementation "org.solverslib:core:0.3.3" // core
-    implementation "org.solverslib:pedroPathing:0.3.3" // pedroPathing
+    implementation 'org.solverslib:core:0.3.3'
+    implementation 'org.solverslib:pedroPathing:0.3.3'
 
     // Pedro Pathing
     implementation 'com.pedropathing:ftc:2.0.3'
