@@ -11,6 +11,7 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.X;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
+import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.GOAL_ANGLE_INCREMENT;
@@ -35,6 +36,9 @@ public class AutoControls {
             .and(gamepad2.getGamepadButton(A))
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
 
+        gamepad2.getGamepadButton(START).negate()
+                .and(gamepad2.getGamepadButton(B))
+                .toggleWhenActive(drive.startChasing(), drive.stopChasing());
         //Config Controls
 
         gamepad2.getGamepadButton(DPAD_LEFT)

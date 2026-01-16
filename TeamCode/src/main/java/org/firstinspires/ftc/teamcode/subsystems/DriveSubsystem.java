@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawDebug;
-import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawRobot;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.fromPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -13,25 +12,27 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Double.isNaN;
+import static java.lang.Math.signum;
 import static java.lang.Math.toDegrees;
 
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.field.Style;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
 
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
+import java.util.function.Supplier;
+
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.75, 0.0075, 0.075, 0);
+    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.75, 0.0075, 0.075, 0.075);
     public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
@@ -41,6 +42,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.8;
     public static double TO_FAR = TILE_WIDTH * 3;
+    public static boolean CHASING = false;
 
     public Follower follower;
 
@@ -56,6 +58,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pTurn = new PController(config.responsiveness);
     private final PIDFController pidfGoalLock = new PIDFController(GOAL_LOCK_HEADING_PIDF);
     private final FFController ffGoalLock = new FFController(GOAL_LOCK_LATERAL_FF);
+    private Supplier<Pose> chasePose = null;
 
     private double forward = 0;
     private double strafe = 0;
@@ -93,20 +96,53 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
+        /*if (CHASING) startChasing();
+        else stopChasing();
+
+        if (chasePose != null && !follower.isBusy()) {
+            Pose pose = chasePose.get();
+
+            if (pose == null) return;
+
+            *//*if (pose == null) {
+                CHASING = false;
+                stopChasing();
+                return;
+            };*//*
+
+            Pose targetPose = new Pose(
+                config.pose.x + pose.x,
+                config.pose.y + pose.y,
+                config.pose.heading + pose.heading
+            );
+
+            *//*follower.followPath(
+                follower.pathBuilder()
+                    .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(targetPose)))
+                    .build()
+                , true
+            );*//*
+
+            follower.turnTo(targetPose.heading);
+
+            *//*vision.elementPose = null;*//*
+        }*/
+
         drawDebug(follower);
 
-        if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
-            Pose pose = toPedroPose(config.pose = vision.detectionPose);
-            follower.setStartingPose(pose);
+        /*if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
+            config.pose = vision.detectionPose;
+            follower.setStartingPose(toPedroPose(config.pose));
             final Style style = new Style("", "#b53fad", 0.0);
-            drawRobot(pose, style);
-        }
+            drawRobot(toPedroPose(config.pose), style);
+        }*/
 
         telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
+        telemetry.addData("Drive (Goal)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
@@ -129,8 +165,9 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public double calculateGoalLockTurn() {
-        return pidfGoalLock.calculate(
-            nav.getGoalHeadingRemaining()
+        double remaining = nav.getGoalHeadingRemaining();
+        return (
+            pidfGoalLock.calculate(remaining) - signum(remaining) * pidfGoalLock.getF()
         ) + ffGoalLock.calculate(
             follower.getVelocity().getYComponent(),
             follower.getAcceleration().getYComponent()
@@ -159,5 +196,14 @@ public class DriveSubsystem extends HardwareSubsystem {
         follower.setStartingPose(
             toPedroPose(config.pose)
         );
+    }
+
+    public void startChasing() {
+        chasePose = () -> vision.elementPose;
+    }
+
+    public void stopChasing(){
+        follower.breakFollowing();
+        chasePose = null;
     }
 }

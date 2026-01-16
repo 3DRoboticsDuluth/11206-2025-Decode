@@ -19,7 +19,6 @@ public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
     public static double ROBOT_LENGTH = 14.25;
     public static double ROBOT_WIDTH = 11.375;
-    public static double GOAL_HEADING_OFFSET = -3;
 
     public Pose getStartPose() {
         return config.side == null || config.side == Side.UNKNOWN ||
@@ -127,10 +126,9 @@ public class NavSubsystem {
     }
 
     public double getGoalHeadingOffset() {
-        double angleOffset = config.pose.x > 0.1 ?
+        return config.pose.x > TILE_WIDTH ?
             config.goalAngleOffsetNorth :
             config.goalAngleOffsetSouth;
-        return GOAL_HEADING_OFFSET + angleOffset;
     }
 
     public double getGoalHeadingRemaining() {

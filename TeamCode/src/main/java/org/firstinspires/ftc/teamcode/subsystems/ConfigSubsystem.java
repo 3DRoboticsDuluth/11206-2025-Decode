@@ -55,52 +55,62 @@ public class ConfigSubsystem extends SubsystemBase {
         new Item(
             "Alliance",
             () -> String.format("%s", config.alliance),
-            change -> { config.alliance = config.alliance == RED ? BLUE : RED; reset(); }
+            change -> { config.alliance = config.alliance == RED ? BLUE : RED; reset(); },
+            false
         ),
         new Item(
             "Side",
             () -> String.format("%s", config.side),
-            change -> { config.side = config.side == NORTH ? SOUTH : NORTH; reset(); }
+            change -> { config.side = config.side == NORTH ? SOUTH : NORTH; reset(); },
+            false
         ),
         new Item(
             "Quanomous",
             () -> String.format("%s", config.quanomous),
-            change -> config.quanomous = Quanomous.change(change.sign)
+            change -> config.quanomous = Quanomous.change(change.sign),
+            false
         ),
         new Item(
             "Delay",
             () -> String.format("%.1fs", config.delay),
-            change -> config.delay = clamp(config.delay + DELAY_INCREMENT * change.sign, 0, 30)
+            change -> config.delay = clamp(config.delay + DELAY_INCREMENT * change.sign, 0, 30),
+            false
         ),
         new Item(
             "Responsiveness",
             () -> String.format("%.2f", config.responsiveness),
-            change -> config.responsiveness = clamp(config.responsiveness + RESPONSIVENESS_INCREMENT * change.sign, 0, 1)
+            change -> config.responsiveness = clamp(config.responsiveness + RESPONSIVENESS_INCREMENT * change.sign, 0, 1),
+            true
         ),
         new Item(
             "Robot Centric",
             () -> String.format("%s", config.robotCentric),
-            change -> config.robotCentric = !config.robotCentric
+            change -> config.robotCentric = !config.robotCentric,
+            true
         ),
         new Item(
             "Goal Distance Offset South",
             () -> String.format("%.1f in", config.goalDistanceOffsetSouth),
-            change -> config.goalDistanceOffsetSouth += GOAL_DISTANCE_INCREMENT * change.sign
+            change -> config.goalDistanceOffsetSouth += GOAL_DISTANCE_INCREMENT * change.sign,
+            true
         ),
         new Item(
             "Goal Distance Offset North",
             () -> String.format("%.1f in", config.goalDistanceOffsetNorth),
-            change -> config.goalDistanceOffsetNorth += GOAL_DISTANCE_INCREMENT * change.sign
+            change -> config.goalDistanceOffsetNorth += GOAL_DISTANCE_INCREMENT * change.sign,
+            true
         ),
         new Item(
             "Goal Angle Offset South",
             () -> String.format("%.1f deg", config.goalAngleOffsetSouth),
-            change -> config.goalAngleOffsetSouth += GOAL_ANGLE_INCREMENT * change.sign
+            change -> config.goalAngleOffsetSouth += GOAL_ANGLE_INCREMENT * change.sign,
+            true
         ),
         new Item(
             "Goal Angle Offset North",
             () -> String.format("%.1f deg", config.goalAngleOffsetNorth),
-            change -> config.goalAngleOffsetNorth += GOAL_ANGLE_INCREMENT * change.sign
+            change -> config.goalAngleOffsetNorth += GOAL_ANGLE_INCREMENT * change.sign,
+            true
         )
     );
 
@@ -166,7 +176,7 @@ public class ConfigSubsystem extends SubsystemBase {
 
     public void setEditable(boolean editable)
     {
-        this.editable = !config.started && editable;
+        this.editable = editable;
     }
 
     public void changeItem(Change change)
@@ -176,18 +186,22 @@ public class ConfigSubsystem extends SubsystemBase {
 
     public void changeValue(Change change)
     {
-        if (editable) items.get(index).changeConsumer.accept(change);
+        Item item = items.get(index);
+        if (editable && (!config.started || item.allowStarted))
+            item.changeConsumer.accept(change);
     }
 
     public static class Item {
         public String key;
         public Supplier<String> telemetrySupplier;
         public Consumer<Change> changeConsumer;
+        public boolean allowStarted;
 
-        public Item(String key, Supplier<String> telemetrySupplier, Consumer<Change> changeConsumer) {
+        public Item(String key, Supplier<String> telemetrySupplier, Consumer<Change> changeConsumer, boolean allowStarted) {
             this.key = key;
             this.telemetrySupplier = telemetrySupplier;
             this.changeConsumer = changeConsumer;
+            this.allowStarted = allowStarted;
         }
     }
 
@@ -202,6 +216,10 @@ public class ConfigSubsystem extends SubsystemBase {
     }
     
     private String getCaption(String key) {
-        return String.format("%sConfig (%s)", editable && items.get(index).key.equals(key) ? ">" : "", key);
+        Item item = items.get(index);
+        String indicator = "";
+        if (editable && item.key.equals(key))
+            indicator = !config.started || item.allowStarted ? ">" : "x";
+        return String.format("%sConfig (%s)", indicator, key);
     }
 }

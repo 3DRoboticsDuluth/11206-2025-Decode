@@ -6,7 +6,6 @@ public class Controls {
     }
 
     public static void initializeTeleop() {
-        new ConfigControls();
         new DriveControls();
         new IntakeControls();
         new ConveyorControls();
