@@ -101,7 +101,6 @@ public class AutoCommands {
         return auto.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
-            flywheel.isReady(),
             conveyor.launch()
         );
     }
@@ -135,14 +134,10 @@ public class AutoCommands {
     }
 
     public Command deposit() {
-        return /*auto.fork(*/
-            auto.depositStart().andThen(
-                wait.doherty(2),
-                auto.depositStop()
-            )/*
-        ).andThen(
-            wait.doherty(1)
-        )*/;
+        return auto.depositStart().andThen(
+            wait.doherty(2),
+            auto.depositStop()
+        );
     }
 
     public Command releaseGate() {
@@ -163,7 +158,7 @@ public class AutoCommands {
         return drive.stop().alongWith(
             intake.stop(),
             conveyor.stop(),
-            gate.close(),
+            gate.open(),
             flywheel.stop()
         );
     }

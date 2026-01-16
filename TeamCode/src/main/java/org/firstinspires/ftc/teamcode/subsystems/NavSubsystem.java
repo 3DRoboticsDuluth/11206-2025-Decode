@@ -100,7 +100,7 @@ public class NavSubsystem {
 
     public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
-            2.5 * TILE_WIDTH,
+            2.25 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance == RED ? -180 : 180

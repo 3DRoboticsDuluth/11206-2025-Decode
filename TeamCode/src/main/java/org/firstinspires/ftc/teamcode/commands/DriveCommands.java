@@ -110,21 +110,21 @@ public class DriveCommands {
     public Command toSpike1() {
         return curve(
              nav.getSpike1().axial(TILE_WIDTH * -0.5),
-             nav.getSpike1().axial(TILE_WIDTH * 1.15)
+             nav.getSpike1().axial(TILE_WIDTH * 1.25)
         );
     }
 
     public Command toSpike2() {
         return curve(
             nav.getSpike2().axial(TILE_WIDTH * -0.5).lateral(TILE_WIDTH * -.25),
-            nav.getSpike2().axial(TILE_WIDTH * 1.15)
+            nav.getSpike2().axial(TILE_WIDTH * 1.25)
         );
     }
 
     public Command toSpike3() {
         return curve(
              nav.getSpike3().axial(TILE_WIDTH * -0.5),
-             nav.getSpike3().axial(TILE_WIDTH * 0.85)
+             nav.getSpike3().axial(TILE_WIDTH * 0.95)
         );
     }
 
