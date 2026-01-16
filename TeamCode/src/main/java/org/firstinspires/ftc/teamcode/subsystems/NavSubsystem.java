@@ -89,8 +89,8 @@ public class NavSubsystem {
 
     public Pose getDepositSouthPose(double axialOffset, double lateralOffset) {
         return createPose(
-            -0.5 * TILE_WIDTH,
-            config.alliance.sign * -0.67 * TILE_WIDTH
+            -0.75 * TILE_WIDTH,
+            config.alliance.sign * -0.75 * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance == RED ? -180 : 180
         ).axial(axialOffset).lateral(lateralOffset).face(
@@ -100,8 +100,8 @@ public class NavSubsystem {
 
     public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
-            2.33 * TILE_WIDTH,
-            config.alliance.sign * -0.67 * TILE_WIDTH
+            2.5 * TILE_WIDTH,
+            config.alliance.sign * -0.5 * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance == RED ? -180 : 180
         ).axial(axialOffset).lateral(lateralOffset).face(

@@ -94,6 +94,7 @@ public class AutoCommands {
         return auto.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
+            flywheel.isReady(),
             conveyor.launch()
         );
     }
