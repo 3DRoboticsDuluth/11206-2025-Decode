@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class IntakeSubsystem extends HardwareSubsystem {
     public static final double STOP = 0;
-    public static double HOLD = 0.5;
-    public static double FWD = 0.75;
+    public static double HOLD = 0.8;
+    public static double FWD = 0.8;
     public static double REV = -0.25;
     public static double VEL = STOP;
     public static boolean TEL = false;
@@ -39,7 +39,9 @@ public class IntakeSubsystem extends HardwareSubsystem {
         VEL = REV;
     }
 
-    public void hold(){VEL = HOLD;}
+    public void hold() {
+        VEL = HOLD;
+    }
 
     public void stop() {
         VEL = STOP;

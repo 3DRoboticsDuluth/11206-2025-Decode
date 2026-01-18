@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 public class GateSubsystem extends HardwareSubsystem {
     public static double CLOSE = 0.5;
     public static double OPEN = 1;
-    public static double POS = OPEN;
+    public static double POS = CLOSE;
     public static boolean TEL = false;
 
     public Servo servo;

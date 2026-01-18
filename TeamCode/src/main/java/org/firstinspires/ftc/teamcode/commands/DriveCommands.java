@@ -104,47 +104,90 @@ public class DriveCommands {
     }
 
     public Command toSpike0() {
-        return to(nav.getSpike0());
+        return new SelectCommand(
+            () -> curve(
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * 3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
+                nav.getSpike0().axial(TILE_WIDTH * 0.75).lateral(TILE_WIDTH * 0.1 * config.alliance.sign)
+            ).alongWith(
+                wait.doherty().andThen(
+                    toDistance(-TILE_WIDTH),
+                    setPowerLow()
+                )
+            ).andThen(
+                setPowerAuto()
+            )
+        );
     }
+
+    /*public Command toSpike0() {
+        return new SelectCommand(
+            () -> curve(
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * 3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * -0.5).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
+                nav.getSpike0()
+            ).andThen(
+                setPowerLow(),
+                forward(TILE_WIDTH * 0.5),
+                setPowerAuto()
+            )
+        );
+    }*/
 
     public Command toSpike1() {
         return curve(
-             nav.getSpike1().axial(TILE_WIDTH * -0.5),
-             nav.getSpike1().axial(TILE_WIDTH * 1.25)
+            config.pose.x > 1 ?
+                nav.getSpike1().axial(TILE_WIDTH * -1.1) :
+                nav.getSpike1().axial(TILE_WIDTH * -1.85).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
+            nav.getSpike1().axial(TILE_WIDTH * 1.25)
         );
     }
 
     public Command toSpike2() {
         return curve(
-            nav.getSpike2().axial(TILE_WIDTH * -0.5).lateral(TILE_WIDTH * -.25),
+            config.pose.x > 1 ?
+                nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.35 * config.alliance.sign) :
+                nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
             nav.getSpike2().axial(TILE_WIDTH * 1.25)
         );
     }
 
     public Command toSpike3() {
         return curve(
-             nav.getSpike3().axial(TILE_WIDTH * -0.5),
-             nav.getSpike3().axial(TILE_WIDTH * 0.95)
+            config.pose.x > 1 ?
+                nav.getSpike3().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
+                nav.getSpike3(),
+            nav.getSpike3().axial(TILE_WIDTH * 0.95)
         );
     }
 
     public Command toDepositSouth(double axialOffset, double lateralOffset) {
         return new SelectCommand(
             () -> curve(
-                nav.getDepositSouthPose(config.pose.x, TILE_WIDTH * -0.5 * config.alliance.sign),
-                nav.getDepositSouthPose(0, 0)
+                new Pose(config.pose.x, 0, 0),
+                nav.getDepositSouthPose(axialOffset, lateralOffset)
             )
         );
     }
 
     public Command toDepositNorth(double axialOffset, double lateralOffset) {
-        return curve(nav.getDepositNorthPose(axialOffset, lateralOffset));
+        return curve(
+            nav.getDepositNorthPose(axialOffset, lateralOffset)
+        );
     }
 
     public Command toGate() {
         return curve(
-             nav.getGatePose().axial(-24),
-             nav.getGatePose()
+             nav.getGatePose().axial(TILE_WIDTH * -1.75),
+             nav.getGatePose().axial(TILE_WIDTH * 0.1)
         );
     }
 
