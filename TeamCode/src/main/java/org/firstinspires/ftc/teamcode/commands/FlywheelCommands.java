@@ -24,7 +24,7 @@ public class FlywheelCommands {
     }
 
     public Command isReady() {
-        return wait.until(flywheel::isReady);
+        return wait.until(flywheel::isReady).withTimeout(1000);
     }
 
     private Command complete(Runnable runnable) {

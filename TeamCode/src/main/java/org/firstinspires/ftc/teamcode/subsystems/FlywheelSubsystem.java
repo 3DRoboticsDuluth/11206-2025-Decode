@@ -31,7 +31,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public static double REV = -0.5 * RPM_MAX;
     public static double HOLD = -0.2 * RPM_MAX;
     public static double STOP = 0;
-    public static double THRESH = 0.99;
+    public static double THRESH = 0.98;
     public static double VEL = STOP;
     public static boolean TEL = false;
 

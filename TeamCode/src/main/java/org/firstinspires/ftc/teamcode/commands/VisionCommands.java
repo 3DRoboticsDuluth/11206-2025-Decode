@@ -21,6 +21,6 @@ public class VisionCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, vision);
+        return new InstantCommand(runnable);
     }
 }

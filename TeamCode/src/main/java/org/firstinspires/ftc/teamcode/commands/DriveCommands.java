@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INT
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.PI;
@@ -41,6 +42,7 @@ import java.util.function.DoubleSupplier;
 
 /** @noinspection unused, UnusedReturnValue */
 public class DriveCommands {
+    public static double HEADING_END_TIME = 0.5;
     private boolean reverse = false;
     private Pose startPose = new Pose(0, 0, 0);
     private Pose endPose = new Pose(0, 0, 0);
@@ -102,35 +104,95 @@ public class DriveCommands {
     }
 
     public Command toSpike0() {
-        return to(nav.getSpike0());
+        return new SelectCommand(
+            () -> curve(
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * 3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
+                nav.getSpike0().axial(TILE_WIDTH * 0.75).lateral(TILE_WIDTH * 0.1 * config.alliance.sign)
+            ).alongWith(
+                wait.doherty().andThen(
+                    toDistance(-TILE_WIDTH),
+                    setPowerLow()
+                )
+            ).andThen(
+                setPowerAuto()
+            )
+        );
     }
 
+    /*public Command toSpike0() {
+        return new SelectCommand(
+            () -> curve(
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * 3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
+                config.pose.x > 1 ?
+                    nav.getSpike0().axial(TILE_WIDTH * -0.5).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
+                    nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
+                nav.getSpike0()
+            ).andThen(
+                setPowerLow(),
+                forward(TILE_WIDTH * 0.5),
+                setPowerAuto()
+            )
+        );
+    }*/
+
     public Command toSpike1() {
-        return to(nav.getSpike1());
+        return curve(
+            config.pose.x > 1 ?
+                nav.getSpike1().axial(TILE_WIDTH * -1.1) :
+                nav.getSpike1().axial(TILE_WIDTH * -1.85).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
+            nav.getSpike1().axial(TILE_WIDTH * 1.25)
+        );
     }
 
     public Command toSpike2() {
-        return to(nav.getSpike2());
+        return curve(
+            config.pose.x > 1 ?
+                nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.35 * config.alliance.sign) :
+                nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
+            nav.getSpike2().axial(TILE_WIDTH * 1.25)
+        );
     }
 
     public Command toSpike3() {
-        return to(nav.getSpike3());
+        return curve(
+            config.pose.x > 1 ?
+                nav.getSpike3().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
+                nav.getSpike3(),
+            nav.getSpike3().axial(TILE_WIDTH * 0.95)
+        );
     }
 
     public Command toDepositSouth(double axialOffset, double lateralOffset) {
-        return to(nav.getDepositSouthPose(axialOffset, lateralOffset));
+        return new SelectCommand(
+            () -> curve(
+                new Pose(config.pose.x, 0, 0),
+                nav.getDepositSouthPose(axialOffset, lateralOffset)
+            )
+        );
     }
 
     public Command toDepositNorth(double axialOffset, double lateralOffset) {
-        return to(nav.getDepositNorthPose(axialOffset, lateralOffset));
+        return curve(
+            nav.getDepositNorthPose(axialOffset, lateralOffset)
+        );
     }
 
     public Command toGate() {
-        return to(nav.getGatePose().axial(-24));
+        return curve(
+             nav.getGatePose().axial(TILE_WIDTH * -1.75),
+             nav.getGatePose().axial(TILE_WIDTH * 0.1)
+        );
     }
 
     public Command toBase() {
-        return to(nav.getBasePose());
+        return curve(nav.getBasePose());
     }
 
     public Command toClosestArtifact() {
@@ -157,8 +219,18 @@ public class DriveCommands {
 
     public Command toDistance(double distance) {
         return distance > 0 ?
-            wait.until(() -> startPose.hypot(config.pose) >= distance) :
-            wait.until(() -> endPose.hypot(config.pose) < -distance);
+            wait.until(() -> drive.follower.getDistanceTraveledOnPath() >= distance) :
+            wait.until(() -> drive.follower.getDistanceRemaining() < -distance);
+    }
+
+    public Command toTValue(double t) {
+        return t > 0 ?
+            wait.until(() -> drive.follower.getCurrentTValue() >= t) :
+            wait.until(() -> drive.follower.getCurrentTValue() < 1 + t);
+    }
+
+    public Command toHeading(double heading) {
+        return wait.until(() -> abs(nav.getGoalHeadingRemaining()) < heading);
     }
 
     public boolean toFar(Pose pose) {
@@ -239,7 +311,7 @@ public class DriveCommands {
             () -> follow(builder -> {
                 builder
                     .addPath(new BezierCurve(() -> toPedroPose(getPose()), toPedroPose(pose)))
-                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading);
+                    .setLinearHeadingInterpolation((startPose = getPose()).heading, (endPose = pose).heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
             }, holdEnd)
         );
@@ -254,7 +326,7 @@ public class DriveCommands {
                     futurePoses.add(toPedroPose(endPose = pose));
                 builder
                     .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
-                    .setTangentHeadingInterpolation();
+                    .setLinearHeadingInterpolation(startPose.heading, endPose.heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
             }, true)
         );
@@ -267,7 +339,7 @@ public class DriveCommands {
                 for (Pose pose : poses) {
                     builder
                         .addPath(new BezierCurve(toPedroPose(endPose), toPedroPose(pose)))
-                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading);
+                        .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                     if (reverse) builder.setReversed();
                 }
             }, true)
