@@ -40,16 +40,16 @@ dependencies {
     implementation 'org.solverslib:pedroPathing:0.3.3'
 
     // Pedro Pathing
-    implementation 'com.pedropathing:ftc:2.0.3'
+    implementation 'com.pedropathing:ftc:2.0.5'
     implementation 'com.pedropathing:telemetry:1.0.0'
 
     // Panels Dashboard
-    implementation 'com.bylazar:fullpanels:1.0.8'
+    implementation 'com.bylazar:fullpanels:1.0.12'
 
     // Unit Testing
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.20.0'
-    testRuntimeOnly 'org.mockito:mockito-core:5.20.0'
+    testImplementation 'org.mockito:mockito-core:5.21.0'
+    testRuntimeOnly 'org.mockito:mockito-core:5.21.0'
 }
 
 tasks.withType(Test).configureEach {

@@ -34,7 +34,7 @@ public class QuanomousCommands {
     public static Command drive(JSONObject obj) throws Exception {
         String axial = obj.optString("axial", "center").toLowerCase();
         String lateral = obj.optString("lateral", "center").toLowerCase();
-        return drive.to(
+        return drive.curve(
              nav.createPose(
                  obj.getDouble("tx") * TILE_WIDTH,
                  abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,

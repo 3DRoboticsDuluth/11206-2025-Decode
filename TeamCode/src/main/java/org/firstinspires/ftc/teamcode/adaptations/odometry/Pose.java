@@ -38,6 +38,14 @@ public class Pose {
         );
     }
 
+    public Pose midpoint(Pose pose) {
+        return new Pose(
+            (x + pose.x) / 2,
+            (y + pose.y) / 2,
+            normalize((heading + pose.heading) / 2)
+        );
+    }
+
     public Pose turn(double degrees) {
         return new Pose(
             x, y, normalize(heading + toRadians(degrees))
