@@ -15,6 +15,6 @@ public class KickstandCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, kickstand);
+        return new InstantCommand(runnable);
     }
 }

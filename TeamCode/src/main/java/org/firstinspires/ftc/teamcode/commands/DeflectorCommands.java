@@ -19,6 +19,6 @@ public class DeflectorCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, deflector);
+        return new InstantCommand(runnable);
     }
 }

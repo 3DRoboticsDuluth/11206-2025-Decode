@@ -4,15 +4,21 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Axial.BACK;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Axial.FRONT;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Lateral.LEFT;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Lateral.RIGHT;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
 
 import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,31 +30,12 @@ import java.util.function.Function;
 public class QuanomousCommands {
     private final Map<String, Function<JSONObject, Command>> commands =
         new HashMap<String, Function<JSONObject, Command>>() {{
-            put("drive", Lambda.unchecked(QuanomousCommands::drive));
-            put("intake", Lambda.unchecked(QuanomousCommands::intake));
             put("delay", Lambda.unchecked(QuanomousCommands::delay));
-            put("release", Lambda.unchecked(QuanomousCommands::release));
+            put("intake", Lambda.unchecked(QuanomousCommands::intake));
             put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
+            put("release", Lambda.unchecked(QuanomousCommands::release));
+            put("drive", Lambda.unchecked(QuanomousCommands::drive));
         }};
-
-    public static Command drive(JSONObject obj) throws Exception {
-        String axial = obj.optString("axial", "center").toLowerCase();
-        String lateral = obj.optString("lateral", "center").toLowerCase();
-        return drive.curve(
-             nav.createPose(
-                 obj.getDouble("tx") * TILE_WIDTH,
-                 abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
-                 obj.getDouble("h"),
-                 (axial == "front" ? NavSubsystem.Axial.FRONT : (axial == "back" ? NavSubsystem.Axial.BACK : NavSubsystem.Axial.CENTER)),
-                 (lateral == "left" ? NavSubsystem.Lateral.LEFT : (lateral == "Right" ? NavSubsystem.Lateral.RIGHT : NavSubsystem.Lateral.CENTER))
-             )
-        );
-    }
-
-    public static Command intake(JSONObject obj) throws Exception {
-        int spike = obj.getInt("spike");
-        return auto.intakeSpike(spike);
-    }
 
     public static Command delay(JSONObject obj) throws Exception {
         return wait.seconds(
@@ -56,19 +43,34 @@ public class QuanomousCommands {
         );
     }
 
-    public static Command release(JSONObject obj) {
-        return auto.releaseGate();
+    public static Command intake(JSONObject obj) throws Exception {
+        int spike = obj.getInt("spike");
+        return auto.intake(spike);
     }
 
     public static Command deposit(JSONObject obj) throws Exception {
         String locale = obj.getString("locale");
+        Side side = locale.equals("near") ? SOUTH : NORTH;
         double txo = obj.getDouble("txo") * TILE_WIDTH;
         double tyo = obj.getDouble("tyo") * TILE_WIDTH;
-        return new SelectCommand(
-            new HashMap<Object, Command>() {{
-                put("near", auto.depositSouth(txo, tyo));
-                put("far", auto.depositNorth(txo, tyo));
-            }}, () -> locale
+        return auto.deposit(side, txo, tyo);
+    }
+
+    public static Command release(JSONObject obj) {
+        return auto.releaseGate();
+    }
+
+    public static Command drive(JSONObject obj) throws Exception {
+        String axial = obj.optString("axial", "center").toLowerCase();
+        String lateral = obj.optString("lateral", "center").toLowerCase();
+        return drive.curve(
+            nav.createPose(
+                obj.getDouble("tx") * TILE_WIDTH,
+                abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
+                obj.getDouble("h"),
+                (axial.equals("front") ? FRONT : (axial.equals("back") ? BACK : NavSubsystem.Axial.CENTER)),
+                (lateral.equals("left") ? LEFT : (lateral.equals("right") ? RIGHT : NavSubsystem.Lateral.CENTER))
+            )
         );
     }
 

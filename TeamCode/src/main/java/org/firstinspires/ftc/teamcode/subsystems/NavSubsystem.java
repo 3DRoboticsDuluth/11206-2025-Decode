@@ -47,18 +47,10 @@ public class NavSubsystem {
         );
     }
 
-    public Pose getSpike0Approach() {
-        return createPose(
-            2.25 * TILE_WIDTH,
-            config.alliance.sign * -2.5 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -90)
-        );
-    }
-
     public Pose getSpike0() {
         return createPose(
             2 * TILE_WIDTH,
-            config.alliance.sign * -2.75 * TILE_WIDTH,
+            config.alliance.sign * -2.65 * TILE_WIDTH,
             toRadians(config.alliance.sign * -15)
         );
     }

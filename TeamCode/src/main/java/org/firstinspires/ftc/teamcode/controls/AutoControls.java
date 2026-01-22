@@ -35,7 +35,7 @@ public class AutoControls {
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(Y))
-            .whenActive(auto.actionCancel());
+            .whenActive(auto.stop());
 
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
@@ -44,6 +44,7 @@ public class AutoControls {
         gamepad2.getGamepadButton(START).negate()
                 .and(gamepad2.getGamepadButton(B))
                 .toggleWhenActive(drive.startChasing(), drive.stopChasing());
+
         //Config Controls
 
         gamepad2.getGamepadButton(DPAD_LEFT)

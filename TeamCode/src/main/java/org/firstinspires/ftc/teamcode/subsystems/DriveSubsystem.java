@@ -96,38 +96,6 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
-        /*if (CHASING) startChasing();
-        else stopChasing();
-
-        if (chasePose != null && !follower.isBusy()) {
-            Pose pose = chasePose.get();
-
-            if (pose == null) return;
-
-            *//*if (pose == null) {
-                CHASING = false;
-                stopChasing();
-                return;
-            };*//*
-
-            Pose targetPose = new Pose(
-                config.pose.x + pose.x,
-                config.pose.y + pose.y,
-                config.pose.heading + pose.heading
-            );
-
-            *//*follower.followPath(
-                follower.pathBuilder()
-                    .addPath(new BezierLine(() -> toPedroPose(config.pose), toPedroPose(targetPose)))
-                    .build()
-                , true
-            );*//*
-
-            follower.turnTo(targetPose.heading);
-
-            *//*vision.elementPose = null;*//*
-        }*/
-
         drawDebug(follower);
 
         /*if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {

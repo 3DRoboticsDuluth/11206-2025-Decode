@@ -28,6 +28,7 @@ public class ConfigCommands {
         );
     }
 
+    /** @noinspection unused*/
     public Command setInterrupt(boolean interrupt) {
         return complete(
             () -> config.interrupt = interrupt

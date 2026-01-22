@@ -37,6 +37,7 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     public void launch() {
         VEL = LAUNCH;
     }
+
     public void forward() {
         VEL = FWD;
     }

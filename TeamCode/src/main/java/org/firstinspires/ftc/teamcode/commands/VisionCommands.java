@@ -14,6 +14,7 @@ public class VisionCommands {
         );
     }
 
+    /** @noinspection unused*/
     public Command switchPipeline(Pipeline pipeline) {
         return complete(
             () -> vision.switchPipeline(pipeline, pipeline.index != 0)
