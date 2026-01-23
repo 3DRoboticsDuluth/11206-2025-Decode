@@ -97,9 +97,11 @@ public class AutoCommands {
             ).alongWith(
                 drive.untilDistance(-6).andThen(
                     drive.untilHeading(2),
-                    auto.depositStart().andThen(
-                        wait.doherty(2),
-                        auto.depositStop()
+                    auto.fork(
+                        auto.depositStart().andThen(
+                            wait.doherty(4),
+                            auto.depositStop()
+                        )
                     )
                 )
             )
