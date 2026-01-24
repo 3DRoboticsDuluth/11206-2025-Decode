@@ -19,6 +19,7 @@ public class Config {
     public double responsiveness = 0.5;
     public boolean robotCentric = false;
     public boolean goalLock = false;
+    public boolean artifactLock = false;
     public double goalDistanceOffsetSouth = 18;
     public double goalDistanceOffsetNorth = 21;
     public double goalAngleOffsetSouth = 0;
