@@ -23,11 +23,15 @@ import com.pedropathing.util.PoseHistory;
  */
 public class Drawing {
     public static final double ROBOT_RADIUS = max(ROBOT_WIDTH, ROBOT_LENGTH) / 2;
+    public static final double ARTIFACT_RADIUS = 2.5;
 
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
 
     private static final Style robotLook = new Style(
         "#666", "#3F51B5", 2.0
+    );
+    private static final Style artifactLook = new Style(
+            "#6C3BAA", "#000000", 0.5
     );
     private static final Style historyLook = new Style(
         "#666", "#4CAF50", 2.0
@@ -84,6 +88,16 @@ public class Drawing {
         panelsField.line(x2, y2);
     }
 
+    public static void drawArtifact(Pose pose, Style style) {
+        if (pose == null || Double.isNaN(pose.getX()) || Double.isNaN(pose.getY()) || Double.isNaN(pose.getHeading())) {
+            return;
+        }
+
+        panelsField.setStyle(style);
+        panelsField.moveCursor(pose.getX(), pose.getY());
+        panelsField.circle(ARTIFACT_RADIUS);
+    }
+
     /**
      * This draws a robot at a specified Pose. The heading is represented as a line.
      *
@@ -91,6 +105,10 @@ public class Drawing {
      */
     public static void drawRobot(Pose pose) {
         drawRobot(pose, robotLook);
+    }
+
+    public static void drawArtifact(Pose pose) {
+        drawArtifact(pose, artifactLook);
     }
 
     /**
