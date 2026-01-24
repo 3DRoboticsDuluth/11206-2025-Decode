@@ -127,13 +127,18 @@ public class DriveSubsystem extends HardwareSubsystem {
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, forward),
             this.strafe += pStrafe.calculate(this.strafe, strafe),
-            this.turn += pTurn.calculate(this.turn, !config.goalLock ? turn : calculateGoalLockTurn()),
+            this.turn += pTurn.calculate(this.turn, calculateTurn(turn)),
             config.robotCentric, config.robotCentric || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90
         );
     }
 
-    public double calculateGoalLockTurn() {
-        double remaining = nav.getGoalHeadingRemaining();
+    public double calculateTurn(double turn) {
+        double remaining;
+
+        if (config.goalLock) remaining = nav.getGoalHeadingRemaining();
+        else if (config.artifactLock) remaining = nav.getArtifactHeadingRemaining();
+        else return turn;
+
         return (
             pidfGoalLock.calculate(remaining) - signum(remaining) * pidfGoalLock.getF()
         ) + ffGoalLock.calculate(

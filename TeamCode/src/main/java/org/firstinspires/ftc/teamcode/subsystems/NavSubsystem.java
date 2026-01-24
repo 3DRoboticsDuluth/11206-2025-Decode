@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -126,6 +127,12 @@ public class NavSubsystem {
     public double getGoalHeadingRemaining() {
         return normalizeHeading(
             config.pose.heading - (getGoalPose().atan2(config.pose) + toRadians(getGoalHeadingOffset()))
+        );
+    }
+
+    public double getArtifactHeadingRemaining() {
+        return normalizeHeading(
+            config.pose.heading - vision.elementPose.heading
         );
     }
 

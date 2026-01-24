@@ -134,14 +134,14 @@ public class VisionSubsystem extends HardwareSubsystem {
             2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
             toRadians(PHANTOM_ANGLE);
 
-        Pose pose = new Pose(
+        elementPose = new Pose(
             PHANTOM_RADIUS * cos(angle),
             PHANTOM_RADIUS * sin(angle),
             0
         );
 
         drawArtifact(
-            toPedroPose(pose)
+            toPedroPose(elementPose)
         );
     }
 
