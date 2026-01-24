@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawArtifact;
+import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -52,6 +57,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double DEG_MIN = -232.5;
     public static double DEG_MAX = 67.5;
     public static double DEG = 0;
+    public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
+    public static double PHANTOM_ANGLE = 0;
+    public static double PHANTOM_PERIOD = 15;
     public static boolean TEL = false;
 
     public final Limelight3A limelight;
@@ -90,6 +98,8 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
+        drawPhantomArtifact();
+
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
             return;
@@ -115,6 +125,22 @@ public class VisionSubsystem extends HardwareSubsystem {
         }
 
         processors.get(PIPELINE).accept(result);
+    }
+
+    public void drawPhantomArtifact(){
+        double angle = PHANTOM_ANGLE == 0 ?
+            2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
+            toRadians(PHANTOM_ANGLE);
+
+        Pose pose = new Pose(
+            PHANTOM_RADIUS * cos(angle),
+            PHANTOM_RADIUS * sin(angle),
+            0
+        );
+
+        drawArtifact(
+            toPedroPose(pose)
+        );
     }
 
     public void goalLock(boolean enabled) {
