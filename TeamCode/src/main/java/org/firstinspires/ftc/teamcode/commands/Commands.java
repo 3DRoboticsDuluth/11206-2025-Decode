@@ -11,6 +11,7 @@ public class Commands {
     public static FlywheelCommands flywheel;
     public static VisionCommands vision;
     public static KickstandCommands kickstand;
+    public static LightsCommands lights;
     public static QuanomousCommands quanomous;
     public static AutoCommands auto;
 
@@ -24,6 +25,7 @@ public class Commands {
         deflector = new DeflectorCommands();
         flywheel = new FlywheelCommands();
         vision = new VisionCommands();
+        lights = new LightsCommands();
         kickstand = new KickstandCommands();
         quanomous = new QuanomousCommands();
         auto = new AutoCommands();

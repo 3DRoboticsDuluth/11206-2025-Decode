@@ -11,6 +11,7 @@ public class Subsystems {
     public static FlywheelSubsystem flywheel;
     public static VisionSubsystem vision;
     public static KickstandSubsystem kickstand;
+    public static LightsSubsystem lights;
     public static TimingSubsystem timing;
 
     public static void initialize() {
@@ -24,6 +25,7 @@ public class Subsystems {
         flywheel = new FlywheelSubsystem();
         vision = new VisionSubsystem();
         kickstand = new KickstandSubsystem();
+        lights = new LightsSubsystem();
         timing = new TimingSubsystem();
     }
 }
