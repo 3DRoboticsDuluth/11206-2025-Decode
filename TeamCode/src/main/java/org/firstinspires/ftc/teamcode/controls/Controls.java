@@ -9,7 +9,6 @@ public class Controls {
         new DriveControls();
         new IntakeControls();
         new ConveyorControls();
-        new SortingControls();
         new GateControls();
         new DeflectorControls();
         new FlywheelControls();
