@@ -8,9 +8,10 @@ import static java.lang.Double.isNaN;
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.adaptations.ballistics.BallisticsModel;
-import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 @Configurable
 public class DeflectorSubsystem extends HardwareSubsystem {
@@ -21,10 +22,10 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     public static double POS = MID;
     public static boolean TEL = false;
 
-    public Servo servo;
+    public ServoEx servo;
 
     public DeflectorSubsystem() {
-        servo = getServo("deflector");
+        servo = getServo("deflector", MIN, MAX);
     }
 
     @Override
@@ -41,11 +42,7 @@ public class DeflectorSubsystem extends HardwareSubsystem {
         );
 
         if (isNaN(POS)) return;
-
-        servo.setPosition(
-            POS = clamp(POS, MIN, MAX)
-        );
-
+        servo.set(POS);
         servo.addTelemetry(TEL);
     }
 

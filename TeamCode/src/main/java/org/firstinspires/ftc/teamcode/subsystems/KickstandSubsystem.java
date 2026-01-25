@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static androidx.core.math.MathUtils.clamp;
 
-import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 public class KickstandSubsystem extends HardwareSubsystem {
     public static double ENGAGE = 0.6;
@@ -10,7 +10,7 @@ public class KickstandSubsystem extends HardwareSubsystem {
     public static double POS = 0.5;
     public static boolean TEL = false;
 
-    public Servo servo;
+    public ServoEx servo;
 
     public KickstandSubsystem() {
         servo = getServo("kickstand");
@@ -19,11 +19,7 @@ public class KickstandSubsystem extends HardwareSubsystem {
     @Override
     public void periodic() {
         if (unready()) return;
-
-        servo.setPosition(
-            POS = clamp(POS, DISENGAGE, ENGAGE)
-        );
-
+        servo.set(POS);
         servo.addTelemetry(TEL);
     }
 

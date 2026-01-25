@@ -25,8 +25,8 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
@@ -62,7 +62,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public final Limelight3A limelight;
 
-    public final Servo servo;
+    public final ServoEx servo;
 
     Map<Pipeline, Consumer<LLResult>> processors;
 
@@ -76,7 +76,7 @@ public class VisionSubsystem extends HardwareSubsystem {
             }
         );
 
-        servo = getServo("turret", s -> s.scaleRange(POS_MIN, POS_MAX));
+        servo = getServo("turret", POS_MIN, POS_MAX);
 
         processors = new HashMap<Pipeline, Consumer<LLResult>>() {{
             put(QRCODE, VisionSubsystem.this::processQrCode);
@@ -104,7 +104,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         LLResult result = limelight.getLatestResult();
 
-        servo.setPosition(POS);
+        servo.set(POS);
 
         telemetry.addData("Vision (Pipeline)", () -> String.format("%s", PIPELINE));
         telemetry.addData("Vision (Deg)", () -> String.format("%.1f", DEG = (DEG_MAX - DEG_MIN) * POS + DEG_MIN));

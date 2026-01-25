@@ -7,7 +7,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.gate;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
-import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class GateSubsystemTests extends TestHarness {
         super.setUp();
         gate = new GateSubsystem() {{
             errors = new ArrayList<>();
-            servo = mockDevice(Servo.class);
+            servo = mockDevice(ServoEx.class);
         }};
     }
 
@@ -26,7 +26,7 @@ public class GateSubsystemTests extends TestHarness {
     public void testPeriodic() {
         POS = OPEN;
         gate.periodic();
-        verify(gate.servo).setPosition(POS);
+        verify(gate.servo).set(POS);
     }
 
     @Test

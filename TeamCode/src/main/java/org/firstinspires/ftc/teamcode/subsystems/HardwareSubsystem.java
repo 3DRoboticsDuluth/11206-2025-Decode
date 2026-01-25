@@ -10,10 +10,10 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
-import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.CRServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -34,13 +34,21 @@ public class HardwareSubsystem extends SubsystemBase {
         );
     }
 
-    protected Servo getServo(String id) {
-        return getServo(id, s -> {});
+    protected ServoEx getServo(String id) {
+        return getServo(id, 0, 1, s -> {});
     }
 
-    protected Servo getServo(String id, Consumer<Servo> consumer) {
+    protected ServoEx getServo(String id, Consumer<ServoEx> consumer) {
+        return getServo(id, 0, 1, consumer);
+    }
+
+    protected ServoEx getServo(String id, double min, double max) {
+        return getServo(id, min, max, s -> {});
+    }
+
+    protected ServoEx getServo(String id, double min, double max, Consumer<ServoEx> consumer) {
         return getHardware(() -> {
-            Servo servo = new Servo(id, getDevice(com.qualcomm.robotcore.hardware.Servo.class, id));
+            ServoEx servo = new ServoEx(hardwareMap, id);
             consumer.accept(servo);
             return servo;
         });

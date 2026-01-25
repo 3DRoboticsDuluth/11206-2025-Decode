@@ -7,7 +7,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.kickstand;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
-import org.firstinspires.ftc.teamcode.adaptations.hardware.Servo;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class KickstandSubsystemTest extends TestHarness {
         super.setUp();
         kickstand = new KickstandSubsystem() {{
             errors = new ArrayList<>();
-            servo = mockDevice(Servo.class);
+            servo = mockDevice(ServoEx.class);
         }};
     }
 
@@ -26,7 +26,7 @@ public class KickstandSubsystemTest extends TestHarness {
     public void testPeriodic() {
         POS = ENGAGE;
         kickstand.periodic();
-        verify(kickstand.servo).setPosition(POS);
+        verify(kickstand.servo).set(POS);
     }
 
     @Test
