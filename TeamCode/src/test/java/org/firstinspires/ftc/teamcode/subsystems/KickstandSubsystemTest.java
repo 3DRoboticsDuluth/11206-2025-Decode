@@ -18,7 +18,8 @@ public class KickstandSubsystemTest extends TestHarness {
         super.setUp();
         kickstand = new KickstandSubsystem() {{
             errors = new ArrayList<>();
-            servo = mockDevice(ServoEx.class);
+            servoLeft = mockDevice(ServoEx.class);
+            servoRight = mockDevice(ServoEx.class);
         }};
     }
 
@@ -26,7 +27,8 @@ public class KickstandSubsystemTest extends TestHarness {
     public void testPeriodic() {
         POS = ENGAGE;
         kickstand.periodic();
-        verify(kickstand.servo).set(POS);
+        verify(kickstand.servoLeft).set(POS);
+        verify(kickstand.servoRight).set(POS);
     }
 
     @Test
