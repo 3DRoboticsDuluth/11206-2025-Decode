@@ -14,16 +14,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Configurable
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-        .mass(11.884)
-        .forwardZeroPowerAcceleration(-39.6768)
-        .lateralZeroPowerAcceleration(-77.5455)
-        .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0, 0.015));
+        .mass(12.5628)
+        .forwardZeroPowerAcceleration(-24.591773413810188)
+        .lateralZeroPowerAcceleration(-76.0984478775747);
+//        .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0, 0.015));
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.5, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
     public static MecanumConstants driveConstants = new MecanumConstants()
         .maxPower(1)
-        .xVelocity(57.1558)
-        .yVelocity(59.1667)
+        .xVelocity(73.62513937161664)
+        .yVelocity(56.98721866157111)
         .leftFrontMotorName("driveFrontLeft")
         .rightFrontMotorName("driveFrontRight")
         .leftRearMotorName("driveBackLeft")
