@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1620;
+import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class IntakeSubsystem extends HardwareSubsystem {
     public static final double STOP = 0;
-    public static double HOLD = 0.8;
-    public static double FWD = 0.8;
+    public static double HOLD = 0.5;
+    public static double FWD = 1.0;
     public static double REV = -0.25;
     public static double VEL = STOP;
     public static boolean TEL = false;
@@ -20,7 +20,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public MotorEx motor;
 
     public IntakeSubsystem() {
-        motor = getMotor("intake", RPM_1620, this::configure);
+        motor = getMotor("intake", RPM_1150, this::configure);
         VEL = STOP;
     }
 

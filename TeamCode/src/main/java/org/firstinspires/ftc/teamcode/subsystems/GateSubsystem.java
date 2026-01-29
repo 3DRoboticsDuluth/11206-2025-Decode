@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static androidx.core.math.MathUtils.clamp;
-
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -10,15 +8,17 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 @Configurable
 public class GateSubsystem extends HardwareSubsystem {
-    public static double CLOSE = 0.5;
-    public static double OPEN = 1;
+    public static double MIN = 0.5;
+    public static double MAX = 1.0;
+    public static double OPEN = 0;
+    public static double CLOSE = 1;
     public static double POS = CLOSE;
     public static boolean TEL = false;
 
     public ServoEx servo;
 
     public GateSubsystem() {
-        servo = getServo("gate");
+        servo = getServo("gate", MIN, MAX);
     }
 
     @Override

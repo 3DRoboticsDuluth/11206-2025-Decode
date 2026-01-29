@@ -1,25 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static androidx.core.math.MathUtils.clamp;
-import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.adaptations.ballistics.BallisticsModel;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 @Configurable
 public class DeflectorSubsystem extends HardwareSubsystem {
-    public static double MIN = 0.50;
-    public static double MAX = 0.57;
-    public static double MID = 0.535;
-    public static double INC = 0.0025;
-    public static double POS = MID;
+    public static double MIN = 0;
+    public static double MAX = 1;
+    public static double INC = 0.01;
+    public static double POS = 0.5;
     public static boolean TEL = false;
 
     public ServoEx servo;
@@ -33,13 +27,13 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        POS = angleToPosition(
+        /*POS = angleToPosition(
             BallisticsModel.deflectorAngle(
                 config.pose.hypot(
                     nav.getGoalPose()
                 )
             )
-        );
+        );*/
 
         if (isNaN(POS)) return;
         servo.set(POS);
@@ -52,10 +46,6 @@ public class DeflectorSubsystem extends HardwareSubsystem {
 
     public void down() {
         POS -= INC;
-    }
-
-    public void compensate() {
-        POS = MID;
     }
 
     private double angleToPosition(double angle) {

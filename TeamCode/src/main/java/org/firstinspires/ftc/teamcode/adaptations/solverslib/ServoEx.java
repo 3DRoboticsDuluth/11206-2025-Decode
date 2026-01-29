@@ -9,17 +9,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ServoEx extends com.seattlesolvers.solverslib.hardware.servos.ServoEx {
     public String id;
 
-    /*public ServoEx(HardwareMap hwMap, String id, double min, double max) {
-        super(hwMap, id, min, max);
-    }*/
-
-    /*public ServoEx(HardwareMap hwMap, String id, double range, AngleUnit angleUnit) {
-        super(hwMap, id, range, angleUnit);
-    }*/
-
     public ServoEx(HardwareMap hwMap, String id) {
-        super(hwMap, id);
+        super(hwMap, id, 0, 1);
         this.id = id;
+    }
+
+    public ServoEx(HardwareMap hwMap, String id, double min, double max) {
+        super(hwMap, id, min, max);
+    }
+
+    public void scaleRange(double min, double max) {
+        this.getServo().scaleRange(min, max);
     }
 
     @SuppressLint("DefaultLocale")

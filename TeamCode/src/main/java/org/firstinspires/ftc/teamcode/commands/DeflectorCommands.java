@@ -14,10 +14,6 @@ public class DeflectorCommands {
         return complete(deflector::down);
     }
 
-    public Command compensate() {
-        return complete(deflector::compensate);
-    }
-
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable);
     }

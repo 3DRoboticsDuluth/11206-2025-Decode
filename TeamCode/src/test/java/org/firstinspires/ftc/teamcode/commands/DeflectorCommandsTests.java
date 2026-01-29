@@ -26,10 +26,4 @@ public class DeflectorCommandsTests extends TestHarness {
         deflector.down().initialize();
         verify(Subsystems.deflector, times(1)).down();
     }
-
-    @Test
-    public void testCompensate() {
-        deflector.compensate().initialize();
-        verify(Subsystems.deflector, times(1)).compensate();
-    }
 }

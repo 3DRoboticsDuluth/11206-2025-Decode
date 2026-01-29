@@ -36,7 +36,6 @@ import java.util.Map;
 
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
-    public static boolean TEL = false;
     public static boolean CAMERA_UPSIDE_DOWN = true;
     public static double CAMERA_X_INCHES = -8.472874016;
     public static double CAMERA_Y_INCHES = -0.014212598;
@@ -46,23 +45,22 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
-    public static Pipeline PIPELINE;
-
-    public Pose detectionPose = null;
-    public int detectionCount = 0;
-    public Pose elementPose = null;
-
     public static double POS_GOAL_LOCK = 0.1;
-    public static double POS_MIN = 0.44;
-    public static double POS_MAX = 0.64;
-    public static double POS = POS_GOAL_LOCK;
+    public static double POS_MIN = 0;
+    public static double POS_MAX = 1;
+    public static double POS = 0.5; //POS_GOAL_LOCK;
     public static double DEG_MIN = -232.5;
     public static double DEG_MAX = 67.5;
     public static double DEG = 0;
+    public static boolean TEL = false;
 
     public final Limelight3A limelight;
-
     public final ServoEx servo;
+
+    public Pipeline PIPELINE;
+    public Pose detectionPose = null;
+    public int detectionCount = 0;
+    public Pose elementPose = null;
 
     Map<Pipeline, Consumer<LLResult>> processors;
 
