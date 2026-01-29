@@ -10,7 +10,7 @@ public class KickstandSubsystem extends HardwareSubsystem {
     public static double MAX = 0.95;
     public static double ENGAGE = 1;
     public static double DISENGAGE = 0;
-    public static double POS = 0.5;
+    public static double POS = 0;
     public static boolean TEL = false;
 
     // Left:  Engage: 0.96, Disengage: 0.19 -> Difference: 0.77
