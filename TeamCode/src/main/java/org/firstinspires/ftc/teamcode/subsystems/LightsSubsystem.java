@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.Color.BLUE;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.Color.ORANGE;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.Color.RED;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.GoBildaPrismDriver.Artboard.ARTBOARD_0;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.GoBildaPrismDriver.LayerHeight.LAYER_0;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.GoBildaPrismDriver.LayerHeight.LAYER_1;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
@@ -37,5 +40,14 @@ public class LightsSubsystem extends HardwareSubsystem {
         prism.insertAndUpdateAnimation(
             LAYER_0, new PrismAnimations.Solid(color)
         );
+    }
+
+    private void configure(GoBildaPrismDriver prism) {
+        prism.setStripLength(48);
+        prism.enableDefaultBootArtboard(true);
+        prism.insertAnimation(LAYER_0, new PrismAnimations.Solid(RED));
+        prism.saveCurrentAnimationsToArtboard(ARTBOARD_0);
+        prism.setDefaultBootArtboard(ARTBOARD_0);
+
     }
 }
