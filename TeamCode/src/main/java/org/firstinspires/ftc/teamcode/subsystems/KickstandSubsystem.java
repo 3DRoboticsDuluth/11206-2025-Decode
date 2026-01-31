@@ -25,9 +25,9 @@ public class KickstandSubsystem extends HardwareSubsystem {
 
     @Override
     public void periodic() {
-        if (unready()) return;
-        set(servoLeft);
-        set(servoRight);
+//        if (unready()) return;
+//        set(servoLeft);
+//        set(servoRight);
     }
 
     public void engage() {
