@@ -10,6 +10,10 @@ public class GateCommands {
         return complete(gate::open);
     }
 
+    public Command hold() {
+        return complete(gate::hold);
+    }
+
     public Command close() {
         return complete(gate::close);
     }
