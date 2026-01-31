@@ -58,7 +58,9 @@ public class MotorEx extends com.seattlesolvers.solverslib.hardware.motors.Motor
         if (!enabled) return;
         telemetry.addData(id + " (amp)", () -> String.format("%.2f", this.motorEx.getCurrent(AMPS)));
         telemetry.addData(id + " (pow)", () -> String.format("%.2f", this.motorEx.getPower()));
-        telemetry.addData(id + " (rpm)", () -> String.format("%.0f", this.getRpm()));
+        telemetry.addData(id + " (vel)", () -> String.format("%.2f", this.motorEx.getVelocity()));
         telemetry.addData(id + " (pos)", () -> String.format("%d", this.motorEx.getCurrentPosition()));
+        telemetry.addData(id + " (vlp)", () -> String.format("%.2f", this.getVelocityPercentage()));
+        telemetry.addData(id + " (rpm)", () -> String.format("%.0f", this.getRpm()));
     }
 }
