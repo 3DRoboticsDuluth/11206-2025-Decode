@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 @Configurable
 public class GateSubsystem extends HardwareSubsystem {
-    public static double MIN = 0.5;
-    public static double MAX = 1.0;
+    public static double MIN = 0;
+    public static double MAX = 0.5;
     public static double OPEN = 0;
     public static double CLOSE = 1;
     public static double POS = CLOSE;
@@ -18,7 +18,7 @@ public class GateSubsystem extends HardwareSubsystem {
     public ServoEx servo;
 
     public GateSubsystem() {
-        servo = getServo("gate", MIN, MAX);
+        servo = getServo("gate", s -> s.getServo().scaleRange(MIN, MAX));
     }
 
     @Override

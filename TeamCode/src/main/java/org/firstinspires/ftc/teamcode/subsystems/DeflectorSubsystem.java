@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 import static java.lang.Double.isNaN;
 
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 @Configurable
 public class DeflectorSubsystem extends HardwareSubsystem {
     public static double MIN = 0;
-    public static double MAX = 1;
+    public static double MAX = 0.8;
     public static double INC = 0.01;
     public static double POS = 0.5;
     public static boolean TEL = false;
@@ -19,7 +21,10 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     public ServoEx servo;
 
     public DeflectorSubsystem() {
-        servo = getServo("deflector", MIN, MAX);
+        servo = getServo("deflector", s -> {
+            //s.getServo().setDirection(REVERSE);
+            s.getServo().scaleRange(MIN, MAX);
+        });
     }
 
     @Override
@@ -36,7 +41,7 @@ public class DeflectorSubsystem extends HardwareSubsystem {
         );*/
 
         if (isNaN(POS)) return;
-        servo.set(POS);
+        servo.getServo().setPosition(POS);
         servo.addTelemetry(TEL);
     }
 
