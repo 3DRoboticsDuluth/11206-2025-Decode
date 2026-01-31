@@ -15,7 +15,7 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     public static double MIN = 0;
     public static double MAX = 0.8;
     public static double INC = 0.01;
-    public static double POS = 0.5;
+    public static double POS = 0.44;
     public static boolean TEL = false;
 
     public ServoEx servo;

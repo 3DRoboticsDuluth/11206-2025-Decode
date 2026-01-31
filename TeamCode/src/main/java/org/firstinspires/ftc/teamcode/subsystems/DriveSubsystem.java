@@ -110,7 +110,8 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
         telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
-        telemetry.addData("Drive (Goal)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
+        telemetry.addData("Drive (Goal Heading Remaining)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
+        telemetry.addData("Drive (Goal Distance)", () -> String.format("%.1f", nav.getGoalDistance()));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
