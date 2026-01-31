@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.adaptations.gobilda;
+package org.firstinspires.ftc.teamcode.adaptations.gobilda.prism;
 
 public enum Direction {
     Forward,

@@ -20,15 +20,20 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.adaptations.gobilda;
 
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver.LayerHeight;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.adaptations.gobilda.Color;
-import org.firstinspires.ftc.teamcode.adaptations.gobilda.GoBildaPrismDriver;
-import org.firstinspires.ftc.teamcode.adaptations.gobilda.PrismAnimations;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.PrismAnimations;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.PrismAnimations.AnimationType;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.PrismAnimations.PoliceLights;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver.Artboard;
 
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +52,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Prism Configurator", group="Linear OpMode")
-//@Disabled
+@Disabled
 
 public class GoBildaPrismConfigurator extends LinearOpMode {
 
@@ -62,10 +67,10 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
     AnimationColor animationColor = AnimationColor.PRIMARY_COLOR;
 
     // Set a default style for the Police Lights Animation.
-    PrismAnimations.PoliceLights.PoliceLightsStyle policeLightsStyle = PrismAnimations.PoliceLights.PoliceLightsStyle.Style1;
+    PoliceLights.PoliceLightsStyle policeLightsStyle = PoliceLights.PoliceLightsStyle.Style1;
 
     int startPoint = 0; // the start LED for any configured animation
-    int endPoint = 48; // the end LED for a configured animation
+    int endPoint = 12; // the end LED for a configured animation
     int brightness = 50; // the brightness of configured animation
     int period = 1000; // the period of a configured animation
     float speed = 0.5F; // the speed of a configured animation
@@ -84,7 +89,7 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
         Color.RED, Color.WHITE, Color.BLUE
     };
 
-    PrismAnimations.AnimationType selectedAnimation = PrismAnimations.AnimationType.SOLID; // store the animation that is being selected.
+    AnimationType selectedAnimation = AnimationType.SOLID; // store the animation that is being selected.
 
     /*
      * the enum powering the main state machine that this code moves through, each state represents
@@ -112,22 +117,22 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
      * after they've created their first animation.
      */
     public enum Layers{
-        LAYER_0 (PrismAnimations.AnimationType.NONE,0, GoBildaPrismDriver.LayerHeight.LAYER_0),
-        LAYER_1 (PrismAnimations.AnimationType.NONE,1, GoBildaPrismDriver.LayerHeight.LAYER_1),
-        LAYER_2 (PrismAnimations.AnimationType.NONE,2, GoBildaPrismDriver.LayerHeight.LAYER_2),
-        LAYER_3 (PrismAnimations.AnimationType.NONE,3, GoBildaPrismDriver.LayerHeight.LAYER_3),
-        LAYER_4 (PrismAnimations.AnimationType.NONE,4, GoBildaPrismDriver.LayerHeight.LAYER_4),
-        LAYER_5 (PrismAnimations.AnimationType.NONE,5, GoBildaPrismDriver.LayerHeight.LAYER_5),
-        LAYER_6 (PrismAnimations.AnimationType.NONE,6, GoBildaPrismDriver.LayerHeight.LAYER_6),
-        LAYER_7 (PrismAnimations.AnimationType.NONE,7, GoBildaPrismDriver.LayerHeight.LAYER_7),
-        LAYER_8 (PrismAnimations.AnimationType.NONE,8, GoBildaPrismDriver.LayerHeight.LAYER_8),
-        LAYER_9 (PrismAnimations.AnimationType.NONE,9, GoBildaPrismDriver.LayerHeight.LAYER_9);
+        LAYER_0 (AnimationType.NONE,0,LayerHeight.LAYER_0),
+        LAYER_1 (AnimationType.NONE,1,LayerHeight.LAYER_1),
+        LAYER_2 (AnimationType.NONE,2,LayerHeight.LAYER_2),
+        LAYER_3 (AnimationType.NONE,3,LayerHeight.LAYER_3),
+        LAYER_4 (AnimationType.NONE,4,LayerHeight.LAYER_4),
+        LAYER_5 (AnimationType.NONE,5,LayerHeight.LAYER_5),
+        LAYER_6 (AnimationType.NONE,6,LayerHeight.LAYER_6),
+        LAYER_7 (AnimationType.NONE,7,LayerHeight.LAYER_7),
+        LAYER_8 (AnimationType.NONE,8,LayerHeight.LAYER_8),
+        LAYER_9 (AnimationType.NONE,9,LayerHeight.LAYER_9);
 
-        private PrismAnimations.AnimationType animationType;
+        private AnimationType animationType;
         private final int index;
-        private final GoBildaPrismDriver.LayerHeight layerHeight;
+        private final LayerHeight layerHeight;
 
-        Layers(PrismAnimations.AnimationType animationType, int index, GoBildaPrismDriver.LayerHeight layerHeight){
+        Layers(AnimationType animationType, int index, LayerHeight layerHeight){
             this.animationType = animationType;
             this.index = index;
             this.layerHeight = layerHeight;
@@ -146,7 +151,7 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
 
     Layers selectedLayer = Layers.LAYER_0;
 
-    GoBildaPrismDriver.Artboard selectedArtboard = GoBildaPrismDriver.Artboard.ARTBOARD_0;
+    Artboard selectedArtboard = Artboard.ARTBOARD_0;
 
     /*
      * Create each Prism Animation which can be customized by the user.
@@ -163,7 +168,7 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
     PrismAnimations.Sparkle sparkle = new PrismAnimations.Sparkle();
     PrismAnimations.SingleFill singleFill = new PrismAnimations.SingleFill();
     PrismAnimations.RainbowSnakes rainbowSnakes = new PrismAnimations.RainbowSnakes();
-    PrismAnimations.PoliceLights policeLights = new PrismAnimations.PoliceLights();
+    PoliceLights policeLights = new PoliceLights();
 
 
     @Override
@@ -389,24 +394,24 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
         telemetry.addLine("Select the Animation that you wish to use");
         telemetry.addLine("Use D-Pad up and D-Pad down to navigate through the Animations.");
         telemetry.addLine("");
-        telemetry.addData("Solid",animationCursor(PrismAnimations.AnimationType.SOLID,animationSelector));
-        telemetry.addData("Blink",animationCursor(PrismAnimations.AnimationType.BLINK,animationSelector));
-        telemetry.addData("Pulse",animationCursor(PrismAnimations.AnimationType.PULSE,animationSelector));
-        telemetry.addData("Sine Wave",animationCursor(PrismAnimations.AnimationType.SINE_WAVE,animationSelector));
-        telemetry.addData("Droid Scan",animationCursor(PrismAnimations.AnimationType.DROID_SCAN,animationSelector));
-        telemetry.addData("Rainbow",animationCursor(PrismAnimations.AnimationType.RAINBOW,animationSelector));
-        telemetry.addData("Snakes",animationCursor(PrismAnimations.AnimationType.SNAKES,animationSelector));
-        telemetry.addData("Random",animationCursor(PrismAnimations.AnimationType.RANDOM,animationSelector));
-        telemetry.addData("Sparkle",animationCursor(PrismAnimations.AnimationType.SPARKLE,animationSelector));
-        telemetry.addData("Single Fill",animationCursor(PrismAnimations.AnimationType.SINGLE_FILL,animationSelector));
-        telemetry.addData("Rainbow Snakes",animationCursor(PrismAnimations.AnimationType.RAINBOW_SNAKES,animationSelector));
-        telemetry.addData("Police Lights",animationCursor(PrismAnimations.AnimationType.POLICE_LIGHTS,animationSelector));
+        telemetry.addData("Solid",animationCursor(AnimationType.SOLID,animationSelector));
+        telemetry.addData("Blink",animationCursor(AnimationType.BLINK,animationSelector));
+        telemetry.addData("Pulse",animationCursor(AnimationType.PULSE,animationSelector));
+        telemetry.addData("Sine Wave",animationCursor(AnimationType.SINE_WAVE,animationSelector));
+        telemetry.addData("Droid Scan",animationCursor(AnimationType.DROID_SCAN,animationSelector));
+        telemetry.addData("Rainbow",animationCursor(AnimationType.RAINBOW,animationSelector));
+        telemetry.addData("Snakes",animationCursor(AnimationType.SNAKES,animationSelector));
+        telemetry.addData("Random",animationCursor(AnimationType.RANDOM,animationSelector));
+        telemetry.addData("Sparkle",animationCursor(AnimationType.SPARKLE,animationSelector));
+        telemetry.addData("Single Fill",animationCursor(AnimationType.SINGLE_FILL,animationSelector));
+        telemetry.addData("Rainbow Snakes",animationCursor(AnimationType.RAINBOW_SNAKES,animationSelector));
+        telemetry.addData("Police Lights",animationCursor(AnimationType.POLICE_LIGHTS,animationSelector));
         telemetry.addLine("");
         telemetry.addLine("Press A to continue");
         telemetry.addLine("Press B to go back");
     }
 
-    public String animationCursor(PrismAnimations.AnimationType animationType, int selector){
+    public String animationCursor(AnimationType animationType, int selector){
         if(animationType.AnimationTypeIndex == selector){
             selectedAnimation = animationType;
             configureAnimation(false,true);
@@ -564,17 +569,17 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
         return false;
     }
 
-    public SpeedType speedFromAnimation(PrismAnimations.AnimationType animationType){
-        if(animationType == PrismAnimations.AnimationType.BLINK || animationType == PrismAnimations.AnimationType.PULSE ||
-                animationType == PrismAnimations.AnimationType.SPARKLE || animationType == PrismAnimations.AnimationType.POLICE_LIGHTS){
+    public SpeedType speedFromAnimation(AnimationType animationType){
+        if(animationType == AnimationType.BLINK || animationType == AnimationType.PULSE ||
+                animationType == AnimationType.SPARKLE || animationType == AnimationType.POLICE_LIGHTS){
             return SpeedType.PERIOD_ONLY;
         }
-        if (animationType == PrismAnimations.AnimationType.DROID_SCAN || animationType == PrismAnimations.AnimationType.RAINBOW ||
-                animationType == PrismAnimations.AnimationType.SNAKES || animationType == PrismAnimations.AnimationType.RANDOM ||
-                animationType == PrismAnimations.AnimationType.RAINBOW_SNAKES){
+        if (animationType == AnimationType.DROID_SCAN || animationType == AnimationType.RAINBOW ||
+                animationType == AnimationType.SNAKES || animationType == AnimationType.RANDOM ||
+                animationType == AnimationType.RAINBOW_SNAKES){
             return SpeedType.SPEED_ONLY;
         }
-        if(animationType == PrismAnimations.AnimationType.SINE_WAVE || animationType == PrismAnimations.AnimationType.SINGLE_FILL){
+        if(animationType == AnimationType.SINE_WAVE || animationType == AnimationType.SINGLE_FILL){
             return SpeedType.PERIOD_AND_SPEED;
         }
         else return SpeedType.NO_SPEED;
@@ -595,20 +600,20 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
         telemetry.addLine("Select the Artboard that you wish to save to");
         telemetry.addLine("Use D-Pad up and D-Pad down to navigate through the Artboards.");
         telemetry.addLine("");
-        telemetry.addData("Artboard 0",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_0,artboardSelector));
-        telemetry.addData("Artboard 1",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_1,artboardSelector));
-        telemetry.addData("Artboard 2",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_2,artboardSelector));
-        telemetry.addData("Artboard 3",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_3,artboardSelector));
-        telemetry.addData("Artboard 4",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_4,artboardSelector));
-        telemetry.addData("Artboard 5",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_5,artboardSelector));
-        telemetry.addData("Artboard 6",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_6,artboardSelector));
-        telemetry.addData("Artboard 7",artboardCursor(GoBildaPrismDriver.Artboard.ARTBOARD_7,artboardSelector));
+        telemetry.addData("Artboard 0",artboardCursor(Artboard.ARTBOARD_0,artboardSelector));
+        telemetry.addData("Artboard 1",artboardCursor(Artboard.ARTBOARD_1,artboardSelector));
+        telemetry.addData("Artboard 2",artboardCursor(Artboard.ARTBOARD_2,artboardSelector));
+        telemetry.addData("Artboard 3",artboardCursor(Artboard.ARTBOARD_3,artboardSelector));
+        telemetry.addData("Artboard 4",artboardCursor(Artboard.ARTBOARD_4,artboardSelector));
+        telemetry.addData("Artboard 5",artboardCursor(Artboard.ARTBOARD_5,artboardSelector));
+        telemetry.addData("Artboard 6",artboardCursor(Artboard.ARTBOARD_6,artboardSelector));
+        telemetry.addData("Artboard 7",artboardCursor(Artboard.ARTBOARD_7,artboardSelector));
         telemetry.addLine("");
         telemetry.addLine("Press A to save");
         telemetry.addLine("Press B to go back");
     }
 
-    public String artboardCursor(GoBildaPrismDriver.Artboard artboard, int selector){
+    public String artboardCursor(Artboard artboard, int selector){
         if(artboard.index == selector){
             selectedArtboard = artboard;
             return "<--";
@@ -1046,17 +1051,17 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
         switch (policeLightsStyle){
             case Style1:
                 if(gamepad1.rightStickButtonWasPressed()){
-                    policeLightsStyle = PrismAnimations.PoliceLights.PoliceLightsStyle.Style2;
+                    policeLightsStyle = PoliceLights.PoliceLightsStyle.Style2;
                 }
                 break;
             case Style2:
                 if(gamepad1.rightStickButtonWasPressed()){
-                    policeLightsStyle = PrismAnimations.PoliceLights.PoliceLightsStyle.Style3;
+                    policeLightsStyle = PoliceLights.PoliceLightsStyle.Style3;
                 }
                 break;
             case Style3:
                 if(gamepad1.rightStickButtonWasPressed()){
-                    policeLightsStyle = PrismAnimations.PoliceLights.PoliceLightsStyle.Style1;
+                    policeLightsStyle = PoliceLights.PoliceLightsStyle.Style1;
                 }
                 break;
         }
@@ -1091,16 +1096,16 @@ public class GoBildaPrismConfigurator extends LinearOpMode {
     }
 
     public void resetStoredAnimations(){
-        Layers.LAYER_0.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_1.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_2.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_3.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_4.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_5.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_6.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_7.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_8.animationType = PrismAnimations.AnimationType.NONE;
-        Layers.LAYER_9.animationType = PrismAnimations.AnimationType.NONE;
+        Layers.LAYER_0.animationType = AnimationType.NONE;
+        Layers.LAYER_1.animationType = AnimationType.NONE;
+        Layers.LAYER_2.animationType = AnimationType.NONE;
+        Layers.LAYER_3.animationType = AnimationType.NONE;
+        Layers.LAYER_4.animationType = AnimationType.NONE;
+        Layers.LAYER_5.animationType = AnimationType.NONE;
+        Layers.LAYER_6.animationType = AnimationType.NONE;
+        Layers.LAYER_7.animationType = AnimationType.NONE;
+        Layers.LAYER_8.animationType = AnimationType.NONE;
+        Layers.LAYER_9.animationType = AnimationType.NONE;
     }
 
     /*

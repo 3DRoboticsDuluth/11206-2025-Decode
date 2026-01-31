@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.opMode;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.lights;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 
 import android.annotation.SuppressLint;
@@ -22,6 +23,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 import org.firstinspires.ftc.teamcode.game.Config;
 
@@ -161,6 +163,7 @@ public class ConfigSubsystem extends SubsystemBase {
     private void reset() {
         if (config.alliance == null || config.side == null) return;
         drive.resetPose();
+        lights.set(config.alliance == RED ? Color.RED : Color.BLUE);
     }
 
     public void start() {

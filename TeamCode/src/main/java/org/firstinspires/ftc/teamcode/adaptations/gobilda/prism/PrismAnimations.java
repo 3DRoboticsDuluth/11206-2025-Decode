@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.adaptations.gobilda;
+package org.firstinspires.ftc.teamcode.adaptations.gobilda.prism;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 import com.qualcomm.robotcore.util.TypeConversion;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver.LayerHeight;
 
 public class PrismAnimations {
     public enum AnimationType{
@@ -56,7 +57,7 @@ public class PrismAnimations {
         protected int brightness = 100;
         protected int startIndex = 0;
         protected int stopIndex  = 255;
-        protected GoBildaPrismDriver.LayerHeight layerHeight;
+        protected LayerHeight layerHeight;
 
         //region Constructors
         protected AnimationBase(AnimationType type){
@@ -99,7 +100,7 @@ public class PrismAnimations {
          * @param stopIndex from 0 to 255.
          * @param layerHeight the height that this animation should sit at from 0 to 9.
          */
-        protected AnimationBase(AnimationType type, int brightness, int startIndex, int stopIndex, GoBildaPrismDriver.LayerHeight layerHeight){
+        protected AnimationBase(AnimationType type, int brightness, int startIndex, int stopIndex, LayerHeight layerHeight){
             this(type, brightness, startIndex, stopIndex);
             this.layerHeight = layerHeight;
         }

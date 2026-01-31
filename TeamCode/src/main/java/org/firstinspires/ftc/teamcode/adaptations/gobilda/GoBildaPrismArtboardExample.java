@@ -20,14 +20,16 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.adaptations.gobilda;
 
 
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver.Artboard;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver;
 
-
-import org.firstinspires.ftc.teamcode.adaptations.gobilda.GoBildaPrismDriver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Prism Artboard Example", group="Linear OpMode")
-//@Disabled
+@Disabled
 
 public class GoBildaPrismArtboardExample extends LinearOpMode {
 
@@ -75,13 +77,13 @@ public class GoBildaPrismArtboardExample extends LinearOpMode {
         while (opModeIsActive()) {
 
             if(gamepad1.aWasPressed()){
-                prism.loadAnimationsFromArtboard(GoBildaPrismDriver.Artboard.ARTBOARD_0);
+                prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_0);
             } else if(gamepad1.bWasPressed()){
-                prism.loadAnimationsFromArtboard(GoBildaPrismDriver.Artboard.ARTBOARD_1);
+                prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_1);
             } else if(gamepad1.yWasPressed()){
-                prism.loadAnimationsFromArtboard(GoBildaPrismDriver.Artboard.ARTBOARD_2);
+                prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_2);
             } else if(gamepad1.xWasPressed()){
-                prism.loadAnimationsFromArtboard(GoBildaPrismDriver.Artboard.ARTBOARD_3);
+                prism.loadAnimationsFromArtboard(Artboard.ARTBOARD_3);
             }
 
             if(gamepad1.dpadLeftWasPressed()){prism.enableDefaultBootArtboard(false);}
