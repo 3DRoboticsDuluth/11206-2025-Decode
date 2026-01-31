@@ -29,21 +29,39 @@ public class NavSubsystem {
                     getStartSouthPose();
     }
 
+    // RED NORTH
+    // Drive (Pose): 62.9x, 17.6y, 0.1°
+    // Drive (Pose): 62.8x, 17.6y, 0.2°
+    // Drive (Pose): 62.9x, 17.5y, 0.3°
+
+    // BLUE NORTH
+    // Drive (Pose): 62.7x, -17.7y, 0.2°
+    // Drive (Pose): 62.6x, -18.2y, -0.1°
+    // Drive (Pose): 62.6x, -18.3y, 0.1°
+
     protected Pose getStartNorthPose() {
         return createPose(
-            3 * TILE_WIDTH,
-            config.alliance.sign * -1 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 0),
-            Axial.FRONT, config.alliance == RED ? Lateral.LEFT : Lateral.RIGHT, -3.25, 0
+            2.7 * TILE_WIDTH,
+            config.alliance.sign * -0.8 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0)
         );
     }
 
+    // RED SOUTH
+    // Drive (Pose): -64.1x, 18.3y, 0.3°
+    // Drive (Pose): -64.0x, 18.4y, 0.3°
+    // Drive (Pose): -64.1x, 18.4y, 0.0°
+
+    // BLUE SOUTH
+    // Drive (Pose): -64.0x, -17.8y, 0.7°
+    // Drive (Pose): -64.3x, -17.4y, -0.7°
+    // Drive (Pose): -64.2x, -17.6y, 0.2°
+
     protected Pose getStartSouthPose() {
         return createPose(
-            -3 * TILE_WIDTH,
-            config.alliance.sign * -1 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 0),
-            Axial.BACK, config.alliance == RED ? Lateral.LEFT : Lateral.RIGHT, +1, 0
+            -2.7 * TILE_WIDTH,
+            config.alliance.sign * -0.8 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 0)
         );
     }
 
