@@ -148,7 +148,7 @@ public class NavSubsystem {
     }
 
     public double getGoalDistance() {
-        return (config.goalLock ? config.pose : new Pose(0,0,0)).hypot(
+        return config.pose.hypot(
             getGoalPose()
         );
     }
