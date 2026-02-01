@@ -39,6 +39,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.8;
     public static double TO_FAR = TILE_WIDTH * 3;
+    public static boolean ARTIFACT_LOCK = false;
 
     public static Follower follower;
 
@@ -72,6 +73,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
+        config.artifactLock = ARTIFACT_LOCK;
+
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
         pTurn.setP(config.responsiveness);
@@ -104,6 +107,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
         telemetry.addData("Drive (Goal Remain)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
         telemetry.addData("Drive (Goal Dist)", () -> String.format("%.1f", nav.getGoalDistance()));
+        telemetry.addData("Drive (Artifact)", () -> String.format("%.1f", toDegrees(nav.getArtifactHeadingRemaining())));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);

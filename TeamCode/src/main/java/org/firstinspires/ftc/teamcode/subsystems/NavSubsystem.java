@@ -150,7 +150,7 @@ public class NavSubsystem {
 
     public double getArtifactHeadingRemaining() {
         return normalizeHeading(
-            config.pose.heading - vision.elementPose.heading
+                 config.pose.heading - config.pose.face(vision.elementPose).heading
         );
     }
 
