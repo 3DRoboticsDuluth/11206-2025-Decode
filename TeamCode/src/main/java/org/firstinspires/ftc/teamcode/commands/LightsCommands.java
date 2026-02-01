@@ -13,6 +13,6 @@ public class LightsCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, lights);
+        return new InstantCommand(runnable);
     }
 }

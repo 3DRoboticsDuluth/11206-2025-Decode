@@ -19,6 +19,6 @@ public class GateCommands {
     }
 
     private Command complete(Runnable runnable) {
-        return new InstantCommand(runnable, gate);
+        return new InstantCommand(runnable);
     }
 }

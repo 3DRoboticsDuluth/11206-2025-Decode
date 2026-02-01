@@ -37,7 +37,7 @@ public class ConfigCommands {
 
     public Command complete(Runnable runnable) {
         return new SelectCommand(
-            () -> new InstantCommand(runnable, Subsystems.config)
+            () -> new InstantCommand(runnable)
         );
     }
 }
