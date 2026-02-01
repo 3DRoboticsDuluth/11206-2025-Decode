@@ -6,7 +6,10 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 
+import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static java.lang.Double.isNaN;
 import static java.lang.Math.pow;
 
 import android.annotation.SuppressLint;
@@ -53,19 +56,19 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     public void forward() {
-        //VEL = FWD;
+        VEL = FWD;
     }
 
     public void stop() {
-        //VEL = STOP;
+        VEL = STOP;
     }
 
     public void reverse() {
-        //VEL = REV;
+        VEL = REV;
     }
 
     public void hold() {
-        //VEL = HOLD;
+        VEL = HOLD;
     }
 
     public boolean isReady() {
@@ -75,7 +78,17 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     private double calculateVelocity() {
-        return 1.064487 + (0.2797805 - 1.064487)/(1 + pow(nav.getGoalDistance()/177.5942, 3.400669));
+        double velocity = VEL;
+
+        if (config.started && (config.goalLock || config.robotCentric))
+            velocity = (
+                1.064487 + (0.2797805 - 1.064487)/(1 + pow(nav.getGoalDistance()/177.5942, 3.400669))
+            ) + controllerAxial.calculate(
+                drive.follower.getVelocity().getXComponent(),
+                drive.follower.getAcceleration().getXComponent()
+            );
+
+        return velocity;
     }
 
     private void configure(MotorEx motor, boolean inverted) {

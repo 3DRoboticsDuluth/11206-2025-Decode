@@ -47,6 +47,7 @@ public class DeflectorSubsystem extends HardwareSubsystem {
     }
 
     private double calculatePosition() {
+        if (!config.started) return POS;
         return 1.064487 + (0.2797805 - 1.064487) / (1 + pow(nav.getGoalDistance() / 177.5942, 3.400669));
     }
 }
