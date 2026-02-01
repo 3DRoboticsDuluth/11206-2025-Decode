@@ -6,6 +6,9 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static java.lang.Math.pow;
+
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -72,7 +75,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     }
 
     private double calculateVelocity() {
-        return VEL;
+        return 1.064487 + (0.2797805 - 1.064487)/(1 + pow(nav.getGoalDistance()/177.5942, 3.400669));
     }
 
     private void configure(MotorEx motor, boolean inverted) {

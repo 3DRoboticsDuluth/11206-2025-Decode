@@ -4,6 +4,9 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_11
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static java.lang.Math.pow;
+
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -16,7 +19,6 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     public static double FWD = 0.5;
     public static double REV = -0.2;
     public static double VEL = STOP;
-    public static double LAUNCH = 1;
     public static boolean TEL = false;
 
     public MotorEx motor;
@@ -35,7 +37,7 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     }
 
     public void launch() {
-        VEL = LAUNCH;
+        VEL = calculateVelocity();
     }
 
     public void forward() {
@@ -48,6 +50,10 @@ public class ConveyorSubsystem extends HardwareSubsystem {
 
     public void stop() {
         VEL = STOP;
+    }
+
+    private double calculateVelocity() {
+        return 1.158969 + (0.7886366 - 1.158969)/(1 + pow(nav.getGoalDistance() /116.6622, 2.41902));
     }
 
     private void configure(MotorEx motor) {
