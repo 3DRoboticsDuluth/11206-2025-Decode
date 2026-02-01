@@ -74,7 +74,7 @@ public class VisionSubsystem extends HardwareSubsystem {
             }
         );
 
-        servo = getServo("turret", POS_MIN, POS_MAX);
+        servo = getServo("turret", s -> s.scaleRange(POS_MIN, POS_MAX));
 
         processors = new HashMap<Pipeline, Consumer<LLResult>>() {{
             put(QRCODE, VisionSubsystem.this::processQrCode);

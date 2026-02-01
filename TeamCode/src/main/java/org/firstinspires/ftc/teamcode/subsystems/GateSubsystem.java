@@ -10,15 +10,15 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 public class GateSubsystem extends HardwareSubsystem {
     public static double MIN = 0;
     public static double MAX = 0.5;
-    public static double OPEN = 0;
-    public static double CLOSE = 1;
+    public static double CLOSE = 0;
+    public static double OPEN = 1;
     public static double POS = CLOSE;
     public static boolean TEL = false;
 
     public ServoEx servo;
 
     public GateSubsystem() {
-        servo = getServo("gate", s -> s.getServo().scaleRange(MIN, MAX));
+        servo = getServo("gate", s -> s.scaleRange(MIN, MAX, true));
     }
 
     @Override

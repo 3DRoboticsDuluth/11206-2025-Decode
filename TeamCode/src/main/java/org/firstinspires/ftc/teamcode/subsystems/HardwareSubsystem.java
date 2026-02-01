@@ -35,20 +35,12 @@ public class HardwareSubsystem extends SubsystemBase {
     }
 
     protected ServoEx getServo(String id) {
-        return getServo(id, 0, 1, s -> {});
+        return getServo(id, s -> {});
     }
 
     protected ServoEx getServo(String id, Consumer<ServoEx> consumer) {
-        return getServo(id, 0, 1, consumer);
-    }
-
-    protected ServoEx getServo(String id, double min, double max) {
-        return getServo(id, min, max, s -> {});
-    }
-
-    protected ServoEx getServo(String id, double min, double max, Consumer<ServoEx> consumer) {
         return getHardware(() -> {
-            ServoEx servo = new ServoEx(hardwareMap, id, min, max);
+            ServoEx servo = new ServoEx(hardwareMap, id);
             consumer.accept(servo);
             return servo;
         });

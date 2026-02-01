@@ -11,6 +11,6 @@ public class KickstandControls {
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(LEFT_BUMPER))
             .and(gamepad2.getGamepadButton(RIGHT_BUMPER))
-            .whenActive(kickstand.engage());
+            .toggleWhenActive(kickstand.engage(), kickstand.disengage());
     }
 }

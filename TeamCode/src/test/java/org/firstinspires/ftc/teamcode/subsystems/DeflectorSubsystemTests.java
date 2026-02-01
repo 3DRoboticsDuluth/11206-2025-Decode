@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.INC;
 import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.MAX;
-import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.MID;
 import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.MIN;
 import static org.firstinspires.ftc.teamcode.subsystems.DeflectorSubsystem.POS;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.deflector;
@@ -33,22 +32,17 @@ public class DeflectorSubsystemTests extends TestHarness {
 
     @Test
     public void testUp() {
-        POS = MID;
+        double mid = (MIN + MAX) / 2;
+        POS = mid;
         deflector.up();
-        assert POS == MID + INC;
+        assert POS == mid + INC;
     }
 
     @Test
     public void testDown() {
-        POS = MID;
+        double mid = (MIN + MAX) / 2;
+        POS = mid;
         deflector.down();
-        assert POS == MID - INC;
-    }
-
-    @Test
-    public void testCompensate() {
-        POS = MIN;
-        deflector.compensate();
-        assert POS == MID;
+        assert POS == mid - INC;
     }
 }
