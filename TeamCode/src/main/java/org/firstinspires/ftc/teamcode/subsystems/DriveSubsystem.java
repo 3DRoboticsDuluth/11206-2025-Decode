@@ -35,11 +35,11 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
-    public static double POWER_INTAKE = 0.8;
+    public static double POWER_INTAKE = 0.5;
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
-    public static double POWER_AUTO = 0.8;
+    public static double POWER_AUTO = 0.80; // TODO: Consider POWER_HIGH?
     public static double TO_FAR = TILE_WIDTH * 3;
 
     public static Follower follower;
@@ -119,7 +119,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
         if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
-        if (isBusy()) return;
+        if (isBusy() || config.auto) return;
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, forward),
             this.strafe += pStrafe.calculate(this.strafe, strafe),
@@ -147,7 +147,11 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public boolean isControlled() {
-        return gamepad1.getLeftX() != 0 || gamepad1.getLeftY() != 0 || gamepad1.getRightX() != 0;
+        return config.teleop && (
+            gamepad1.getLeftX() != 0 ||
+            gamepad1.getLeftY() != 0 ||
+            gamepad1.getRightX() != 0
+        );
     }
 
     public void initializeFollower() {

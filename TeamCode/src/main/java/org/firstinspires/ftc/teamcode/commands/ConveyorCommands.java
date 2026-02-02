@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.conveyor;
 
 import com.seattlesolvers.solverslib.command.Command;
@@ -20,6 +21,10 @@ public class ConveyorCommands {
 
     public Command stop() {
         return complete(conveyor::stop);
+    }
+
+    public Command waitUntilStopped() {
+        return wait.until(conveyor::stopped);
     }
 
     private Command complete(Runnable runnable) {

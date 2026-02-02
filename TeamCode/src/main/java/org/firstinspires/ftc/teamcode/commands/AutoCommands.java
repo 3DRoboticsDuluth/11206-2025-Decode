@@ -65,8 +65,11 @@ public class AutoCommands {
             }}, () -> spike
         ).alongWith(
             drive.untilPathCompletion(0.5).andThen(
+                drive.setPowerIntake(), // TODO: Review
                 auto.intakeStart()
             )
+        ).andThen(
+            drive.setPowerAuto() // TODO: Review
         );
     }
 
@@ -95,10 +98,14 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(-6).andThen(
-                    drive.untilHeading(2),
+                drive.untilDistance(-6),
+                drive.untilHeading(1),
+                conveyor.waitUntilStopped(),
+                wait.doherty()
+            ).andThen(
+                auto.fork(
                     auto.depositStart().andThen(
-                        wait.doherty(2),
+                        wait.doherty(4),
                         auto.depositStop()
                     )
                 )

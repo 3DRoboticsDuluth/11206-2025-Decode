@@ -120,7 +120,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike1().axial(TILE_WIDTH * -1.1) :
                     nav.getSpike1().axial(TILE_WIDTH * -1.85).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
-                nav.getSpike1().axial(TILE_WIDTH * 1.15)
+                nav.getSpike1().axial(TILE_WIDTH * 1.4)
             )
         );
     }
@@ -131,7 +131,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.35 * config.alliance.sign) :
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
-                nav.getSpike2().axial(TILE_WIDTH * 1.15)
+                nav.getSpike2().axial(TILE_WIDTH * 1.4)
             )
         );
     }
@@ -142,7 +142,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike3(),
-                nav.getSpike3().axial(TILE_WIDTH * 0.9)
+                nav.getSpike3().axial(TILE_WIDTH * 1.1)
             )
         );
     }
