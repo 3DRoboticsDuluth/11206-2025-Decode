@@ -28,7 +28,7 @@ public class AutoOpMode extends OpMode {
         
         if (isStopRequested()) return;
 
-        if (config.auto && config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN)
+        if (config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN)
             throw new RuntimeException("Alliance and/or Side is null");
 
         schedule(

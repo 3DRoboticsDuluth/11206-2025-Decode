@@ -155,8 +155,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public void initializeFollower() {
         // NOTE: When invoking setStartingPose with Pinpoint it offsets the new pose from Pinpoints
         // current pose which produces the wrong result. As a work around the follower is recreated.
-        if (follower == null)
-            follower = getFollower();
+        follower = getFollower();
         follower.startTeleopDrive();
         follower.setMaxPower(config.auto ? POWER_AUTO : POWER_HIGH);
         if (config.auto) config.pose = nav.getStartPose();

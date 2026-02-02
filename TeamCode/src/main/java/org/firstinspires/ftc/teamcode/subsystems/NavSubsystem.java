@@ -21,10 +21,10 @@ public class NavSubsystem {
     public static double ROBOT_WIDTH = 11.375;
 
     public Pose getStartPose() {
-        return config.side == null || config.side == Side.UNKNOWN ||
-            config.alliance == null || config.alliance == Alliance.UNKNOWN ?
-            new Pose(0, 0, 0) :
-                config.side == Side.NORTH ?
+        return (config.side == null || config.side == Side.UNKNOWN ||
+            config.alliance == null || config.alliance == Alliance.UNKNOWN) ?
+                new Pose(2, 2, 0) :
+                (config.side == Side.NORTH) ?
                     getStartNorthPose() :
                     getStartSouthPose();
     }
