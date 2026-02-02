@@ -201,6 +201,12 @@ public class DriveCommands {
         );
     }
 
+    public Command artifactLock(boolean enabled) {
+        return complete(
+            () -> config.artifactLock = enabled
+        );
+    }
+
     public Command untilDistance(double distance) {
         return wait.doherty().andThen(
             distance > 0 ?

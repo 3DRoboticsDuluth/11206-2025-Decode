@@ -14,6 +14,12 @@ public class VisionCommands {
         );
     }
 
+    public Command artifactLock(boolean enabled) {
+        return complete(
+            () -> vision.artifactLock(enabled)
+        );
+    }
+
     /** @noinspection unused*/
     public Command switchPipeline(Pipeline pipeline) {
         return complete(

@@ -126,6 +126,12 @@ public class AutoCommands {
         );
     }
 
+    public Command artifactLock(boolean enabled) {
+        return drive.artifactLock(enabled).alongWith(
+            vision.artifactLock(enabled)
+        );
+    }
+
     public Command stop() {
         return drive.goalLock(false).alongWith(
             drive.setPowerHigh(),

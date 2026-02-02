@@ -35,6 +35,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,20 +43,21 @@ import java.util.Map;
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean CAMERA_UPSIDE_DOWN = true;
-    public static double CAMERA_X_INCHES = -8.472874016;
-    public static double CAMERA_Y_INCHES = -0.014212598;
-    public static double CAMERA_Z_INCHES = 10.00492126;
+    public static double CAMERA_X_INCHES = 4.125;
+    public static double CAMERA_Y_INCHES = 0;
+    public static double CAMERA_Z_INCHES = 15.5;
     public static double CAMERA_YAW_DEGREES = 0;
-    public static double ELEMENT_HEIGHT = 5;
+    public static double ELEMENT_RADIUS = 2.5;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
-    public static double POS_GOAL_LOCK = 0.1;
-    public static double POS_MIN = .1;
-    public static double POS_MAX = .85;
-    public static double POS = 0.5; //POS_GOAL_LOCK;
-    public static double DEG_MIN = -232.5;
-    public static double DEG_MAX = 67.5;
+    public static double POS_GOAL_LOCK = 0.10;
+    public static double POS_ARTIFACT_LOCK = 0.70;
+    public static double POS_MIN = 0.10;
+    public static double POS_MAX = 0.85;
+    public static double POS = POS_GOAL_LOCK;
+    public static double DEG_MIN = -213.0;
+    public static double DEG_MAX = 29.0;
     public static double DEG = 0;
     public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
     public static double PHANTOM_ANGLE = 0;
@@ -69,8 +71,10 @@ public class VisionSubsystem extends HardwareSubsystem {
     public Pose detectionPose = null;
     public int detectionCount = 0;
     public Pose elementPose = null;
+    public List<Pose> elementPoses = new ArrayList<>();
 
     Map<Pipeline, Consumer<LLResult>> processors;
+
 
     public VisionSubsystem() {
         limelight = getDevice(
@@ -127,7 +131,7 @@ public class VisionSubsystem extends HardwareSubsystem {
         processors.get(PIPELINE).accept(result);
     }
 
-    public void drawPhantomArtifact(){
+    public void drawPhantomArtifact() {
         double angle = PHANTOM_ANGLE == 0 ?
             2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
             toRadians(PHANTOM_ANGLE);
@@ -147,6 +151,12 @@ public class VisionSubsystem extends HardwareSubsystem {
         if (!enabled) return;
         switchPipeline(APRILTAG, false);
         POS = POS_GOAL_LOCK;
+    }
+
+    public void artifactLock(boolean enabled) {
+        if (!enabled) return;
+        switchPipeline(PURPLE, false);
+        POS = POS_ARTIFACT_LOCK;
     }
 
     public void switchPipeline(Pipeline pipeline, boolean elementReset) {
@@ -245,6 +255,8 @@ public class VisionSubsystem extends HardwareSubsystem {
             );
 
             elementPose = getElementPose(crx, cry);
+            elementPoses.removeIf(existing -> existing.hypot(elementPose) < ELEMENT_RADIUS);
+            elementPoses.add(elementPose);
 
             telemetry.addData(
                 "Vision (Element Pose)",
@@ -270,7 +282,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     @SuppressLint("DefaultLocale")
     private Pose getElementPose(double targetYawAngle, double targetPitchAngle) {
-        double heightDiff = CAMERA_Z_INCHES - ELEMENT_HEIGHT / 2;
+        double heightDiff = CAMERA_Z_INCHES - ELEMENT_RADIUS / 2;
         double elevationAngle = toRadians(DEG - targetPitchAngle);
         double bearingAngle = toRadians(CAMERA_YAW_DEGREES + targetYawAngle);
 
