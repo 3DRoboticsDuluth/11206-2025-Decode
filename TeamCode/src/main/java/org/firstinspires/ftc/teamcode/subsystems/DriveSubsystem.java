@@ -12,19 +12,16 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Double.isNaN;
-import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 import static java.lang.Math.toDegrees;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
 
-import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
@@ -44,7 +41,6 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.8;
     public static double TO_FAR = TILE_WIDTH * 3;
-    public static boolean CHASING = false;
 
     public static Follower follower;
 
@@ -60,7 +56,6 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pTurn = new PController(config.responsiveness);
     private final PIDFController pidfGoalLock = new PIDFController(GOAL_LOCK_HEADING_PIDF);
     private final FFController ffGoalLock = new FFController(GOAL_LOCK_LATERAL_FF);
-    private Supplier<Pose> chasePose = null;
 
     private double forward = 0;
     private double strafe = 0;
@@ -163,11 +158,10 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public void startChasing() {
-        chasePose = () -> vision.elementPose;
+        // TODO
     }
 
     public void stopChasing() {
-        follower.breakFollowing();
-        chasePose = null;
+        // TODO
     }
 }

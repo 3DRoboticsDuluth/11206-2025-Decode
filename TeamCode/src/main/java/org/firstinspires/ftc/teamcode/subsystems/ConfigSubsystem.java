@@ -163,7 +163,6 @@ public class ConfigSubsystem extends SubsystemBase {
     private void reset() {
         if (config.alliance == null || config.side == null) return;
         drive.initializeFollower();
-        lights.set(config.alliance == RED ? Color.RED : Color.BLUE);
     }
 
     public void start() {

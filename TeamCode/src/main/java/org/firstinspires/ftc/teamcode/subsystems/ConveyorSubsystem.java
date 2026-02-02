@@ -53,7 +53,7 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     }
 
     private double calculateVelocity() {
-        return 1.158969 + (0.7886366 - 1.158969)/(1 + pow(nav.getGoalDistance() /116.6622, 2.41902));
+        return 1.158969 + (0.7886366 - 1.158969) / (1 + pow(nav.getGoalDistance() / 116.6622, 2.41902));
     }
 
     private void configure(MotorEx motor) {

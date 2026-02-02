@@ -7,6 +7,7 @@ import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.BARE;
 
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
@@ -84,8 +85,8 @@ public class FlywheelSubsystem extends HardwareSubsystem {
             velocity = (
                 1.064487 + (0.2797805 - 1.064487)/(1 + pow(nav.getGoalDistance()/177.5942, 3.400669))
             ) + controllerAxial.calculate(
-                drive.follower.getVelocity().getXComponent(),
-                drive.follower.getAcceleration().getXComponent()
+                follower.getVelocity().getXComponent(),
+                follower.getAcceleration().getXComponent()
             );
 
         return velocity;
