@@ -162,7 +162,7 @@ public class ConfigSubsystem extends SubsystemBase {
     
     private void reset() {
         if (config.alliance == null || config.side == null) return;
-        drive.resetPose();
+        drive.initializeFollower();
         lights.set(config.alliance == RED ? Color.RED : Color.BLUE);
     }
 

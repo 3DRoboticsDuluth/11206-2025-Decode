@@ -65,10 +65,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     private double turn = 0;
 
     public DriveSubsystem() {
-        follower = getFollower();
-        if (follower != null)
-            resetPose();
-
+        initializeFollower();
         driveFrontLeft = getMotor("driveFrontLeft", RPM_1150);
         driveFrontRight = getMotor("driveFrontRight", RPM_1150);
         driveBackLeft = getMotor("driveBackLeft", RPM_1150);
@@ -155,10 +152,11 @@ public class DriveSubsystem extends HardwareSubsystem {
         return gamepad1.getLeftX() != 0 || gamepad1.getLeftY() != 0 || gamepad1.getRightX() != 0;
     }
 
-    public void resetPose() {
+    public void initializeFollower() {
         // NOTE: When invoking setStartingPose with Pinpoint it offsets the new pose from Pinpoints
         // current pose which produces the wrong result. As a work around the follower is recreated.
-        follower = getFollower();
+        if (follower == null)
+            follower = getFollower();
         follower.startTeleopDrive();
         follower.setMaxPower(config.auto ? POWER_AUTO : POWER_HIGH);
         if (config.auto) config.pose = nav.getStartPose();
