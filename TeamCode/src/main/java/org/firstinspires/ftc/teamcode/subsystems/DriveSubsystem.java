@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
+import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawDebug;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.fromPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
@@ -29,8 +30,9 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.65, 0.0065, 0.065, 0.065);
+    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
     public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0, 0);
+    public static double GOAL_LOCK_MAX_TURN = 0.4;
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
     public static double POWER_INTAKE = 0.5;
@@ -137,7 +139,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         else return turn;
 
         return (
-            pidfGoalLock.calculate(remaining) - signum(remaining) * pidfGoalLock.getF()
+            clamp(pidfGoalLock.calculate(remaining) - signum(remaining) * pidfGoalLock.getF(), -GOAL_LOCK_MAX_TURN, GOAL_LOCK_MAX_TURN)
         ) + ffGoalLock.calculate(
             follower.getVelocity().getYComponent(),
             follower.getAcceleration().getYComponent()
