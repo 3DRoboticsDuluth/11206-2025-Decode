@@ -120,7 +120,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike1().axial(TILE_WIDTH * -1.1) :
                     nav.getSpike1().axial(TILE_WIDTH * -1.85).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
-                nav.getSpike1().axial(TILE_WIDTH * 1.4)
+                nav.getSpike1().axial(TILE_WIDTH * 1.1)
             )
         );
     }
@@ -131,7 +131,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.35 * config.alliance.sign) :
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
-                nav.getSpike2().axial(TILE_WIDTH * 1.4)
+                nav.getSpike2().axial(TILE_WIDTH * 1.1)
             )
         );
     }
@@ -142,7 +142,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike3(),
-                nav.getSpike3().axial(TILE_WIDTH * 1.1)
+                nav.getSpike3().axial(TILE_WIDTH * 0.9)
             )
         );
     }
@@ -171,6 +171,16 @@ public class DriveCommands {
 
     public Command toBase() {
         return curve(nav.getBasePose());
+    }
+
+    public Command hold() {
+        return new SelectCommand(
+            () -> complete(
+                () -> follower.holdPoint(
+                    toPedroPose(config.pose)
+                )
+            )
+        );
     }
 
     public Command stop() {
@@ -216,7 +226,7 @@ public class DriveCommands {
     }
 
     public Command untilHeading(double heading) {
-        return wait.until(() -> abs(nav.getGoalHeadingRemaining()) < heading);
+        return wait.until(() -> abs(nav.getGoalHeadingRemaining()) < toRadians(heading));
     }
 
     public boolean isToFar(Pose pose) {

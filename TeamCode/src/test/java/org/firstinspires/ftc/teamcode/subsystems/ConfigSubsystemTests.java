@@ -49,7 +49,7 @@ public class ConfigSubsystemTests extends TestHarness {
         Subsystems.config.setEditable(true);
         Subsystems.config.changeValue(Change.NEXT);
         assert config.alliance == Alliance.BLUE;
-        verify(drive).initializeFollower();
+        verify(drive).configureFollower(null);
     }
     
     @Test
@@ -60,7 +60,7 @@ public class ConfigSubsystemTests extends TestHarness {
         Subsystems.config.changeItem(Change.NEXT);
         Subsystems.config.changeValue(Change.NEXT);
         assert config.side == Side.SOUTH;
-        verify(drive).initializeFollower();
+        verify(drive).configureFollower(null);
     }
 
     @Test

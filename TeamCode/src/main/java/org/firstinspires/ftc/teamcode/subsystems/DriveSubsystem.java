@@ -10,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.opmodes.OpMode.opMode;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Double.isNaN;
 import static java.lang.Math.signum;
 import static java.lang.Math.toDegrees;
@@ -22,12 +21,11 @@ import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.seattlesolvers.solverslib.controller.PController;
 
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
-
-import java.util.function.Supplier;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
@@ -39,7 +37,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
-    public static double POWER_AUTO = 0.80; // TODO: Consider POWER_HIGH?
+    public static double POWER_AUTO = 0.8;
     public static double TO_FAR = TILE_WIDTH * 3;
 
     public static Follower follower;
@@ -62,7 +60,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     private double turn = 0;
 
     public DriveSubsystem() {
-        initializeFollower();
+        configureFollower(null);
         driveFrontLeft = getMotor("driveFrontLeft", RPM_1150);
         driveFrontRight = getMotor("driveFrontRight", RPM_1150);
         driveBackLeft = getMotor("driveBackLeft", RPM_1150);
@@ -81,7 +79,6 @@ public class DriveSubsystem extends HardwareSubsystem {
 
         if (opMode.isStopRequested()) {
             follower.breakFollowing();
-            follower.setTeleOpDrive(0, 0, 0);
             return;
         }
 
@@ -154,10 +151,11 @@ public class DriveSubsystem extends HardwareSubsystem {
         );
     }
 
-    public void initializeFollower() {
-        if (follower == null) follower = getFollower();
-        if (config.auto) follower.setStartingPose(toPedroPose(nav.getStartPose()));
+    public void configureFollower(Pose pose) {
+        if (follower != null && pose == null) return;
+        follower = getFollower();
         follower.setMaxPower(config.auto ? POWER_AUTO : POWER_HIGH);
+        follower.setStartingPose(toPedroPose(pose == null ? new Pose(0, 0, 0) : pose));
         follower.startTeleopDrive();
     }
 

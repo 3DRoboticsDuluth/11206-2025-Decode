@@ -24,9 +24,10 @@ import java.util.HashMap;
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-             quanomous.execute()
+            quanomous.execute(),
+            wait.seconds(1)
         ).withTimeout(29500).andThen(
-             auto.stop().asProxy()
+            auto.stop().asProxy()
         );
     }
 
@@ -64,12 +65,9 @@ public class AutoCommands {
                 put(3, drive.toSpike3());
             }}, () -> spike
         ).alongWith(
-            drive.untilPathCompletion(0.5).andThen(
-                drive.setPowerIntake(), // TODO: Review
+            drive.untilPathCompletion(0.33).andThen(
                 auto.intakeStart()
             )
-        ).andThen(
-            drive.setPowerAuto() // TODO: Review
         );
     }
 
@@ -83,33 +81,38 @@ public class AutoCommands {
     }
 
     public Command depositStop() {
-        return auto.goalLock(false).alongWith(
-            conveyor.stop(),
-            flywheel.stop(),
-            intake.stop()
+        return new SelectCommand(() ->
+            auto.goalLock(false).alongWith(
+                conveyor.stop(),
+                flywheel.stop(),
+                config.auto ? wait.noop() : intake.stop()
+            )
         );
     }
 
     public Command deposit(Side side, double axialOffset, double lateralOffset) {
-        return auto.intakeStop().alongWith(
-            new SelectCommand(
-                new HashMap<Object, Command>() {{
-                    put(NORTH, drive.toDepositNorth(axialOffset, lateralOffset));
-                    put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
-                }}, () -> side
-            ).alongWith(
-                drive.untilDistance(-6),
-                drive.untilHeading(1),
-                conveyor.waitUntilStopped(),
-                wait.doherty()
-            ).andThen(
+        return new SelectCommand(
+            new HashMap<Object, Command>() {{
+                put(NORTH, drive.toDepositNorth(axialOffset, lateralOffset));
+                put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
+            }}, () -> side
+        ).alongWith(
+            drive.untilPathCompletion(0.5).andThen(
                 auto.fork(
-                    auto.depositStart().andThen(
-                        wait.doherty(4),
-                        auto.depositStop()
-                    )
+                    auto.intakeStop()
+                )
+            ), auto.fork(
+                drive.untilHeading(2).alongWith( // TODO: Might need to be 3 or 4
+                    drive.untilDistance(-8),
+                    conveyor.waitUntilStopped()
+                ).andThen(
+                    auto.depositStart(),
+                    wait.doherty(3),
+                    auto.depositStop()
                 )
             )
+        ).andThen(
+            wait.doherty()
         );
     }
 
@@ -125,7 +128,7 @@ public class AutoCommands {
 
     public Command stop() {
         return drive.goalLock(false).alongWith(
-            drive.setPowerLow(),
+            drive.setPowerHigh(),
             drive.stop(),
             intake.stop(),
             conveyor.stop(),

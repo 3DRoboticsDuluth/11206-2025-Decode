@@ -24,7 +24,9 @@ public class ConveyorCommands {
     }
 
     public Command waitUntilStopped() {
-        return wait.until(conveyor::stopped);
+        return wait.doherty().andThen(
+            wait.until(conveyor::stopped)
+        );
     }
 
     private Command complete(Runnable runnable) {

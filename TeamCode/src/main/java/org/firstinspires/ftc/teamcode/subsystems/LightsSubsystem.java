@@ -55,7 +55,7 @@ public class LightsSubsystem extends HardwareSubsystem {
     }
 
     private void configure(GoBildaPrismDriver prism) {
-        prism.setStripLength(36);
+        prism.setStripLength(48);
         prism.insertAndUpdateAnimation(LAYER_0, new PrismAnimations.Solid(RED));
         prism.saveCurrentAnimationsToArtboard(ARTBOARD_0);
         prism.setDefaultBootArtboard(ARTBOARD_0);
