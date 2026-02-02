@@ -12,10 +12,12 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Double.isNaN;
+import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 import static java.lang.Math.toDegrees;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -44,7 +46,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double TO_FAR = TILE_WIDTH * 3;
     public static boolean CHASING = false;
 
-    public Follower follower;
+    public static Follower follower;
 
     public MotorEx driveFrontLeft;
     public MotorEx driveFrontRight;
@@ -83,8 +85,9 @@ public class DriveSubsystem extends HardwareSubsystem {
         pidfGoalLock.setPIDFCoefficients(GOAL_LOCK_HEADING_PIDF);
 
         if (opMode.isStopRequested()) {
-            follower.startTeleopDrive();
-            inputs(0, 0, 0);
+            follower.breakFollowing();
+            follower.setTeleOpDrive(0, 0, 0);
+            return;
         }
 
         follower.update();
@@ -153,22 +156,17 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public void initializeFollower() {
-        // NOTE: When invoking setStartingPose with Pinpoint it offsets the new pose from Pinpoints
-        // current pose which produces the wrong result. As a work around the follower is recreated.
-        follower = getFollower();
-        follower.startTeleopDrive();
+        if (follower == null) follower = getFollower();
+        if (config.auto) follower.setStartingPose(toPedroPose(nav.getStartPose()));
         follower.setMaxPower(config.auto ? POWER_AUTO : POWER_HIGH);
-        if (config.auto) config.pose = nav.getStartPose();
-        follower.setStartingPose(
-            toPedroPose(config.pose)
-        );
+        follower.startTeleopDrive();
     }
 
     public void startChasing() {
         chasePose = () -> vision.elementPose;
     }
 
-    public void stopChasing(){
+    public void stopChasing() {
         follower.breakFollowing();
         chasePose = null;
     }

@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INT
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
@@ -59,31 +60,31 @@ public class DriveCommands {
 
     public Command setPowerIntake() {
         return complete(
-            () -> drive.follower.setMaxPower(POWER_INTAKE)
+            () -> follower.setMaxPower(POWER_INTAKE)
         );
     }
 
     public Command setPowerLow() {
         return complete(
-            () -> drive.follower.setMaxPower(POWER_LOW)
+            () -> follower.setMaxPower(POWER_LOW)
         );
     }
 
     public Command setPowerMedium() {
         return complete(
-            () -> drive.follower.setMaxPower(POWER_MEDIUM)
+            () -> follower.setMaxPower(POWER_MEDIUM)
         );
     }
 
     public Command setPowerHigh() {
         return complete(
-            () -> drive.follower.setMaxPower(POWER_HIGH)
+            () -> follower.setMaxPower(POWER_HIGH)
         );
     }
 
     public Command setPowerAuto() {
         return complete(
-            () -> drive.follower.setMaxPower(POWER_AUTO)
+            () -> follower.setMaxPower(POWER_AUTO)
         );
     }
 
@@ -175,8 +176,8 @@ public class DriveCommands {
     public Command stop() {
         return complete(
             () -> {
-                drive.follower.startTeleOpDrive();
-                drive.follower.setTeleOpDrive(0,0,0,0);
+                follower.startTeleOpDrive();
+                follower.setTeleOpDrive(0,0,0,0);
             }
         );
     }
@@ -193,24 +194,24 @@ public class DriveCommands {
     public Command untilDistance(double distance) {
         return wait.doherty().andThen(
             distance > 0 ?
-                wait.until(() -> drive.follower.getDistanceTraveledOnPath() >= distance) :
-                wait.until(() -> drive.follower.getDistanceRemaining() < -distance)
+                wait.until(() -> follower.getDistanceTraveledOnPath() >= distance) :
+                wait.until(() -> follower.getDistanceRemaining() < -distance)
         );
     }
 
     public Command untilPathCompletion(double percentage) {
         return wait.doherty().andThen(
             percentage > 0 ?
-                wait.until(() -> drive.follower.getPathCompletion() >= percentage) :
-                wait.until(() -> drive.follower.getPathCompletion() < 1 + percentage)
+                wait.until(() -> follower.getPathCompletion() >= percentage) :
+                wait.until(() -> follower.getPathCompletion() < 1 + percentage)
         );
     }
 
     public Command untilTValue(double t) {
         return wait.doherty().andThen(
             t > 0 ?
-                wait.until(() -> drive.follower.getCurrentTValue() >= t) :
-                wait.until(() -> drive.follower.getCurrentTValue() < 1 + t)
+                wait.until(() -> follower.getCurrentTValue() >= t) :
+                wait.until(() -> follower.getCurrentTValue() < 1 + t)
         );
     }
 
@@ -347,7 +348,7 @@ public class DriveCommands {
     }
 
     public Command follow(Consumer<PathBuilder> consumer, boolean holdEnd) {
-        PathBuilder pathBuilder = drive.follower.pathBuilder();
+        PathBuilder pathBuilder = follower.pathBuilder();
         consumer.accept(pathBuilder);
         PathChain pathChain = pathBuilder.build();
         return follow(pathChain, holdEnd);
@@ -355,7 +356,7 @@ public class DriveCommands {
 
     public Command follow(PathChain pathChain, boolean holdEnd) {
         return controlsReset().andThen(
-            new FollowPathCommand(drive.follower, pathChain, holdEnd)
+            new FollowPathCommand(follower, pathChain, holdEnd)
         );
     }
 

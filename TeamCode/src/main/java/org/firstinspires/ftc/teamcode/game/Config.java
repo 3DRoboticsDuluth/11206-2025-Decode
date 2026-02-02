@@ -11,7 +11,7 @@ public class Config {
     public transient boolean teleop;
     public transient boolean started;
     public transient boolean interrupt;
-    public Pose pose = new Pose(1, 1, 0);
+    public Pose pose = new Pose(0, 0, 0);
     public Alliance alliance = Alliance.UNKNOWN;
     public Side side = Side.UNKNOWN;
     public String quanomous = null;

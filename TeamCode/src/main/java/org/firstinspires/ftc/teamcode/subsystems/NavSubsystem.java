@@ -23,7 +23,7 @@ public class NavSubsystem {
     public Pose getStartPose() {
         return (config.side == null || config.side == Side.UNKNOWN ||
             config.alliance == null || config.alliance == Alliance.UNKNOWN) ?
-                new Pose(2, 2, 0) :
+                new Pose(0, 0, 0) :
                 (config.side == Side.NORTH) ?
                     getStartNorthPose() :
                     getStartSouthPose();
