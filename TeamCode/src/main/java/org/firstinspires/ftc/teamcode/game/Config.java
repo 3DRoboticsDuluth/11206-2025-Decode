@@ -20,8 +20,8 @@ public class Config {
     public boolean robotCentric = false;
     public boolean goalLock = false;
     public boolean artifactLock = false;
-    public double goalDistanceOffsetSouth = 18;
-    public double goalDistanceOffsetNorth = 21;
+    public double goalDistanceOffsetSouth = 0;
+    public double goalDistanceOffsetNorth = 0;
     public double goalAngleOffsetSouth = 0;
     public double goalAngleOffsetNorth = 0;
 }

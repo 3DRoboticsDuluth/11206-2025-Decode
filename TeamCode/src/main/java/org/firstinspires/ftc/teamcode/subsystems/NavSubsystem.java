@@ -116,6 +116,16 @@ public class NavSubsystem {
         );
     }
 
+    public double getGoalDistanceOffset() {
+        return config.pose.x > TILE_WIDTH ?
+            config.goalDistanceOffsetNorth :
+            config.goalDistanceOffsetSouth;
+    }
+
+    public double getGoalDistance() {
+        return config.pose.hypot(this.getGoalPose()) + this.getGoalDistanceOffset();
+    }
+
     public double getGoalHeadingOffset() {
         return config.pose.x > TILE_WIDTH ?
             config.goalAngleOffsetNorth :
@@ -124,19 +134,13 @@ public class NavSubsystem {
 
     public double getGoalHeadingRemaining() {
         return normalizeHeading(
-            config.pose.heading - (getGoalPose().atan2(config.pose) + toRadians(getGoalHeadingOffset()))
+            config.pose.heading - (this.getGoalPose().atan2(config.pose) + toRadians(this.getGoalHeadingOffset()))
         );
     }
 
     public double getArtifactHeadingRemaining() {
         return normalizeHeading(
-                 config.pose.heading - config.pose.face(vision.elementPose).heading
-        );
-    }
-
-    public double getGoalDistance() {
-        return config.pose.hypot(
-            getGoalPose()
+             config.pose.heading - config.pose.face(vision.elementPose).heading
         );
     }
 
@@ -147,7 +151,6 @@ public class NavSubsystem {
             toRadians(config.alliance.sign * 0)
         );
     }
-
 
     public enum Axial {
         FRONT(+1), CENTER(0), BACK(-1);
