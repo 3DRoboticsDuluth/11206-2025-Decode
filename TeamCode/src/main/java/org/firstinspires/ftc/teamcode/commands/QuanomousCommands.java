@@ -99,7 +99,7 @@ public class QuanomousCommands {
         String axial = obj.optString("axial", "center").toLowerCase();
         String lateral = obj.optString("lateral", "center").toLowerCase();
         return withTimeout(
-            () -> drive.curve(
+            () -> auto.drive(
                 nav.createPose(
                     tx * TILE_WIDTH,
                     ty * -config.alliance.sign * TILE_WIDTH,
@@ -126,6 +126,7 @@ public class QuanomousCommands {
             default: return NavSubsystem.Lateral.CENTER;
         }
     }
+
 
     /** @noinspection DataFlowIssue*/
     public Command execute() {

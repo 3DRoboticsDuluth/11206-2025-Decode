@@ -52,8 +52,8 @@ public class NavSubsystem {
     public Pose getSpike0() {
         return createPose(
             2.1 * TILE_WIDTH,
-            config.alliance.sign * -2.75 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -12)
+            config.alliance.sign * -2.7 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -15)
         );
     }
 
@@ -67,7 +67,7 @@ public class NavSubsystem {
 
     public Pose getSpike2() {
         return createPose(
-            0.6 * TILE_WIDTH,
+            0.5 * TILE_WIDTH,
             config.alliance.sign * -1.1 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
@@ -75,7 +75,7 @@ public class NavSubsystem {
 
     public Pose getSpike3() {
         return createPose(
-            -0.4 * TILE_WIDTH,
+            -0.5 * TILE_WIDTH,
             config.alliance.sign * -1.1 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
@@ -199,9 +199,9 @@ public class NavSubsystem {
 
     public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
         return createPose(
-            gate ? 0 * TILE_WIDTH : (config.side.sign * 2.4 * TILE_WIDTH),
+            gate ? 0 * TILE_WIDTH : (config.side.sign * (config.side == NORTH ? 2.6 : 2.4) * TILE_WIDTH),
             gate ? (1.75 * -config.alliance.sign * TILE_WIDTH) : ((config.side == NORTH ? -1.75 : -1) * TILE_WIDTH * config.alliance.sign),
-            gate ? toRadians(config.side.sign * -90) : toRadians(90 + config.side.sign * 90),
+            gate ? toRadians(config.alliance.sign * -90) : toRadians(90 + config.side.sign * 90),
             axial,
             lateral
         );

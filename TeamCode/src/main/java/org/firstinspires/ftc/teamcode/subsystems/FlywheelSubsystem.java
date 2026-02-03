@@ -10,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
-import static java.lang.Double.isNaN;
 import static java.lang.Math.pow;
 
 import android.annotation.SuppressLint;
@@ -27,12 +26,12 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients PIDF = new PIDFCoefficients(64, 0, 0, 8);
     //public static PIDFCoefficients PIDF = new PIDFCoefficients(128, 0, 0, 8); // TODO: Test!
     //public static PIDFCoefficients PIDF = new PIDFCoefficients(256, 0, 0, 16); // TODO: Test!
-    public static FFCoefficients AXIAL_FF = new FFCoefficients(0, .00059, 0);
+    public static FFCoefficients AXIAL_FF = new FFCoefficients(0, 0.0008, 0);
     public static double FWD = 0.4;
     public static double REV = -0.5;
     public static double HOLD = -0.2;
     public static double STOP = 0;
-    public static double THRESH = 0.98;
+    public static double THRESH = 0.85;
     public static double VEL = STOP;
     public static boolean TEL = false;
 
@@ -74,8 +73,9 @@ public class FlywheelSubsystem extends HardwareSubsystem {
 
     public boolean isReady() {
         VEL = calculateVelocity();
-        return motorLeft.getVelocityPercentage() >= VEL * THRESH &&
-            motorRight.getVelocityPercentage() >= VEL * THRESH;
+        double threshold = motorLeft.getMaxRPM() / 60 * motorLeft.getCPR() * VEL * THRESH;
+        return motorLeft.motorEx.getVelocity() >= threshold &&
+            motorRight.motorEx.getVelocity() >= threshold;
     }
 
     private double calculateVelocity() {

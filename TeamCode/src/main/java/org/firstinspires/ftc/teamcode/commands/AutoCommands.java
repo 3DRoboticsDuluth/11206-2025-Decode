@@ -15,12 +15,12 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.RepeatCommand;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
@@ -72,6 +72,7 @@ public class AutoCommands {
             }}, () -> spike
         ).alongWith(
             wait.doherty(2).andThen(
+                auto.depositStop(),
                 auto.intakeStart(),
                 drive.untilDistance(TILE_WIDTH * -1.5),
                 drive.setPowerIntake()
@@ -106,21 +107,22 @@ public class AutoCommands {
                 }}, () -> side
             ).alongWith(
                 drive.untilDistance(side == NORTH ? -10 : -30).andThen(
-                    drive.untilHeading(10),
+                    drive.untilHeading(20),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
-                    conveyor.waitUntilStopped(),
-                    // TODO: Add flywheel.isReady() for NORTH?
+                    side == NORTH ? conveyor.waitUntilStopped() : wait.noop(),
+                    side == NORTH ? flywheel.isReady() : wait.noop(),
                     auto.depositStart(),
-                    wait.doherty(2),
-                    auto.depositStop()
+                    wait.doherty(side == NORTH ? 2 : 0)
                 )
             )
         );
     }
 
     public Command releaseGate() {
-        return drive.toGate();
+        return drive.toGate().alongWith(
+            gate.close()
+        );
     }
 
     public Command gateIntake() {
@@ -142,12 +144,18 @@ public class AutoCommands {
         );
     }
 
+    public Command drive(Pose pose) {
+        return drive.curve(pose).alongWith(
+            auto.depositStop()
+        );
+    }
+
     public Command chase(int cycles) {
         return vision.chaseLock(true).alongWith(
             lights.set(TRANSPARENT),
             new RepeatCommand(
                 execution -> drive.toChase(execution).alongWith(
-                    drive.untilDistance(-1.5 * TILE_WIDTH).andThen(drive.setPowerLow()),
+                    drive.untilDistance(-TILE_WIDTH).andThen(drive.setPowerLow()),
                     wait.milliseconds(50).andThen(vision.resetElement()),
                     auto.intakeStart()
                 ).withTimeout(2000 + 200L * execution).andThen(
@@ -162,9 +170,9 @@ public class AutoCommands {
     /** @noinspection unused*/
     public Command park(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
         return drive.setPowerAuto().alongWith(
-            drive.curve(
-                nav.getParkingPose(config.parkGate, axial, lateral)
-            )
+            drive.toParking(config.parkGate, axial, lateral)
+        ).andThen(
+            stop()
         );
     }
 

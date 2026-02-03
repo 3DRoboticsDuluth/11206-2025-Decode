@@ -36,6 +36,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.ChaseCommand;
+import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +98,7 @@ public class DriveCommands {
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
-                    nav.getSpike0().axial(TILE_WIDTH * 3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
+                    nav.getSpike0().axial(TILE_WIDTH * -3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
@@ -110,8 +111,8 @@ public class DriveCommands {
         return new DeferredCommand(
             () -> curve(
                 config.pose.x > 1 ?
-                    nav.getSpike1().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0) :
-                    nav.getSpike1().axial(TILE_WIDTH * -1.85).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
+                    nav.getSpike1().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.3 * config.alliance.sign) :
+                    nav.getSpike1().axial(TILE_WIDTH * -1.85).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.3 * config.alliance.sign),
                 nav.getSpike1().axial(TILE_WIDTH * 1.5)
             ), null
         );
@@ -121,8 +122,8 @@ public class DriveCommands {
         return new DeferredCommand(
             () -> curve(
                 config.pose.x > 1 ?
-                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.35 * config.alliance.sign) :
-                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0),
+                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.4 * config.alliance.sign) :
+                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.4 * config.alliance.sign),
                 nav.getSpike2().axial(TILE_WIDTH * 1.5)
             ), null
         );
@@ -133,7 +134,7 @@ public class DriveCommands {
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
-                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0),
+                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
                 nav.getSpike3().axial(TILE_WIDTH * 1.2)
             ), null
         );
@@ -179,6 +180,12 @@ public class DriveCommands {
 
     public Command toBase() {
         return curve(nav.getBasePose());
+    }
+
+    public Command toParking(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
+        return curve(
+            nav.getParkingPose(gate, axial, lateral)
+        );
     }
 
     public Command hold() {
