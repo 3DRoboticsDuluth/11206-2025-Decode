@@ -10,22 +10,18 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
-import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
-import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
-
-import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.HashMap;
 
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            quanomous.execute(),
-            wait.seconds(1)
+            quanomous.execute()
         ).withTimeout(29500).andThen(
             auto.stop().asProxy()
         );
@@ -41,22 +37,30 @@ public class AutoCommands {
         return auto.goalLock(false).alongWith(
             intake.forward(),
             conveyor.forward(),
-            gate.close()
+            gate.close(),
+            flywheel.hold()
         );
     }
 
     public Command intakeStop() {
-        return auto.goalLock(true).alongWith(
-            intake.hold(),
-            conveyor.reverse().andThen(
-                wait.doherty(),
-                conveyor.stop()
-            ), gate.hold(),
-            flywheel.forward()
+        return auto.goalLock(true).andThen(
+            flywheel.forward(),
+            conveyor.reverse(),
+            gate.open(),
+            wait.doherty(2),
+            conveyor.stop(),
+            intake.hold()
         );
     }
 
-    public Command intake(int spike) {
+    public Command actionCancel() {
+        return drive.goalLock(false).alongWith(
+            auto.stop(),
+            drive.setPowerLow()
+        );
+    }
+
+    public Command intakeSpike(int spike) {
         return new SelectCommand(
             new HashMap<Object, Command>() {{
                 put(0, drive.toSpike0());
@@ -65,55 +69,59 @@ public class AutoCommands {
                 put(3, drive.toSpike3());
             }}, () -> spike
         ).alongWith(
-            drive.untilPathCompletion(0.33).andThen(
+            wait.doherty(2).andThen(
+                drive.untilDistance(TILE_WIDTH * -1.5),
+                drive.setPowerIntake(),
                 auto.intakeStart()
             )
         );
     }
 
     public Command depositStart() {
-        return auto.goalLock(true).alongWith(
+        return auto.goalLock(true).andThen(
             intake.forward(),
             flywheel.forward(),
-            conveyor.launch(),
-            gate.open()
+            conveyor.launch()
         );
     }
 
     public Command depositStop() {
-        return new SelectCommand(() ->
-            auto.goalLock(false).alongWith(
-                conveyor.stop(),
-                flywheel.stop(),
-                config.auto ? wait.noop() : intake.stop()
+        return auto.goalLock(false).alongWith(
+            conveyor.stop(),
+            flywheel.stop(),
+            intake.stop()
+        );
+    }
+
+    public Command depositSouth(double axialOffset, double lateralOffset) {
+        return auto.intakeStop().alongWith(
+            drive.setPowerAuto(),
+            drive.toDepositSouth(axialOffset, lateralOffset).andThen(
+                drive.untilDistance(-6),
+                //drive.untilHeading(2),
+                auto.deposit()
             )
         );
     }
 
-    public Command deposit(Side side, double axialOffset, double lateralOffset) {
-        return new SelectCommand(
-            new HashMap<Object, Command>() {{
-                put(NORTH, drive.toDepositNorth(axialOffset, lateralOffset));
-                put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
-            }}, () -> side
-        ).alongWith(
-            drive.untilPathCompletion(0.5).andThen(
-                auto.fork(
-                    auto.intakeStop()
-                )
-            ), auto.fork(
-                drive.untilHeading(2).alongWith( // TODO: Might need to be 3 or 4
-                    drive.untilDistance(-8),
-                    conveyor.waitUntilStopped()
-                ).andThen(
-                    auto.depositStart(),
-                    wait.doherty(3),
-                    auto.depositStop()
-                )
+    public Command depositNorth(double axialOffset, double lateralOffset) {
+        return auto.intakeStop().alongWith(
+            drive.setPowerAuto(),
+            drive.toDepositNorth(axialOffset, lateralOffset).andThen(
+                drive.untilDistance(-6),
+                //drive.untilHeading(2),
+                auto.deposit()
             )
-        ).andThen(
-            wait.doherty()
         );
+    }
+
+    public Command deposit() {
+        return /*auto.fork(*/
+            auto.depositStart().andThen(
+                wait.doherty(2),
+                auto.depositStop()
+            )
+            /*)*/;
     }
 
     public Command releaseGate() {
@@ -126,16 +134,8 @@ public class AutoCommands {
         );
     }
 
-    public Command artifactLock(boolean enabled) {
-        return drive.artifactLock(enabled).alongWith(
-            vision.artifactLock(enabled)
-        );
-    }
-
     public Command stop() {
-        return drive.goalLock(false).alongWith(
-            drive.setPowerHigh(),
-            drive.stop(),
+        return drive.stop().alongWith(
             intake.stop(),
             conveyor.stop(),
             gate.close(),
