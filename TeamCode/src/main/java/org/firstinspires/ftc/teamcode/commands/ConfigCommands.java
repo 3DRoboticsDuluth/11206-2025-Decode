@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.commands;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.SelectCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
@@ -36,8 +36,8 @@ public class ConfigCommands {
     }
 
     public Command complete(Runnable runnable) {
-        return new SelectCommand(
-            () -> new InstantCommand(runnable)
+        return new DeferredCommand(
+            () -> new InstantCommand(runnable), null
         );
     }
 }

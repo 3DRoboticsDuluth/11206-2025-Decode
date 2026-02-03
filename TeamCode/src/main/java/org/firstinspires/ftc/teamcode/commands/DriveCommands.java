@@ -26,9 +26,9 @@ import com.pedropathing.geometry.FuturePose;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
-import com.seattlesolvers.solverslib.command.SelectCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
@@ -101,7 +101,7 @@ public class DriveCommands {
     }
 
     public Command toSpike0() {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
@@ -110,49 +110,49 @@ public class DriveCommands {
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
                 nav.getSpike0().axial(TILE_WIDTH * 0.4).lateral(TILE_WIDTH * 0.1 * config.alliance.sign)
-            )
+            ), null
         );
     }
 
     public Command toSpike1() {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike1().axial(TILE_WIDTH * -1.1) :
                     nav.getSpike1().axial(TILE_WIDTH * -1.85).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
                 nav.getSpike1().axial(TILE_WIDTH * 1.5)
-            )
+            ), null
         );
     }
 
     public Command toSpike2() {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.35 * config.alliance.sign) :
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * 0.35 * config.alliance.sign),
                 nav.getSpike2().axial(TILE_WIDTH * 1.5)
-            )
+            ), null
         );
     }
 
     public Command toSpike3() {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike3().axial(TILE_WIDTH * -1.5),
                 nav.getSpike3().axial(TILE_WIDTH * 1.2)
-            )
+            ), null
         );
     }
 
     public Command toDepositSouth(double axialOffset, double lateralOffset) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> curve(
                 new Pose(config.pose.x, 0, 0),
                 nav.getDepositSouthPose(axialOffset, lateralOffset)
-            )
+            ), null
         );
     }
 
@@ -174,11 +174,9 @@ public class DriveCommands {
     }
 
     public Command hold() {
-        return new SelectCommand(
-            () -> complete(
-                () -> follower.holdPoint(
-                    toPedroPose(config.pose)
-                )
+        return complete(
+            () -> follower.holdPoint(
+                toPedroPose(config.pose)
             )
         );
     }
@@ -269,30 +267,30 @@ public class DriveCommands {
     }
 
     public Command forward(double distance) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> to(
                 endPose.x + cos(endPose.heading) * distance,
                 endPose.y + sin(endPose.heading) * distance,
                 toDegrees(endPose.heading)
-            )
+            ), null
         );
     }
 
     public Command strafe(double distance) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> to(
                 endPose.x + cos(endPose.heading + PI / 2) * distance,
                 endPose.y + sin(endPose.heading + PI / 2) * distance,
                 toDegrees(endPose.heading)
-            )
+            ), null
         );
     }
 
     public Command turn(double heading) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> to(
                 endPose.turn(heading)
-            )
+            ), null
         );
     }
 
@@ -309,19 +307,19 @@ public class DriveCommands {
     }
 
     public Command to(Pose pose, boolean holdEnd) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> follow(builder -> {
                 startPose = getPose();
                 builder
                     .addPath(new BezierCurve(() -> toPedroPose(startPose), toPedroPose(startPose.midpoint(pose)), toPedroPose(pose)))
                     .setLinearHeadingInterpolation(startPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
-            }, holdEnd)
+            }, holdEnd), null
         );
     }
 
     public Command curve(Pose... poses) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> follow(builder -> {
                 List<FuturePose> futurePoses = new ArrayList<>();
                 futurePoses.add(toPedroPose(startPose = getPose()));
@@ -333,12 +331,12 @@ public class DriveCommands {
                     .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
                     .setLinearHeadingInterpolation(startPose.heading, endPose.heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
-            }, true)
+            }, true), null
         );
     }
 
     public Command curves(Pose... poses) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> follow(builder -> {
                 startPose = endPose = getPose();
                 for (Pose pose : poses) {
@@ -347,19 +345,19 @@ public class DriveCommands {
                         .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                     if (reverse) builder.setReversed();
                 }
-            }, true)
+            }, true), null
         );
     }
 
     /** @noinspection unchecked*/
     public Command paths(Consumer<PathBuilder>... consumers) {
-        return new SelectCommand(
+        return new DeferredCommand(
             () -> follow(
                 builder -> {
                     for (Consumer<PathBuilder> consumer : consumers)
                         consumer.accept(builder);
                 }, true
-            )
+            ), null
         );
     }
 
@@ -385,9 +383,7 @@ public class DriveCommands {
     }
 
     public Command controlsReset() {
-        return new SelectCommand(
-            () -> complete(() -> drive.controlsReset = false)
-        );
+        return complete(() -> drive.controlsReset = false);
     }
 
     private Command complete(Runnable runnable) {

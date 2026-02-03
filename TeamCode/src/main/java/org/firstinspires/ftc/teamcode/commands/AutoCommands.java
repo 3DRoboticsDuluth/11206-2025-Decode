@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
 import java.util.HashMap;
@@ -28,8 +29,8 @@ public class AutoCommands {
     }
 
     public Command delayStart() {
-        return new SelectCommand(
-            () -> wait.seconds(config.delay)
+        return new DeferredCommand(
+            () -> wait.seconds(config.delay), null
         );
     }
 
