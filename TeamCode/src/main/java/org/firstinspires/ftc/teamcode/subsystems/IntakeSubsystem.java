@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 public class IntakeSubsystem extends HardwareSubsystem {
     public static final double STOP = 0;
     public static double HOLD = 0.25;
-    public static double FWD = 0.5;
+    public static double FWD = 0.75;
     public static double REV = -0.25;
     public static double VEL = STOP;
     public static boolean TEL = false;

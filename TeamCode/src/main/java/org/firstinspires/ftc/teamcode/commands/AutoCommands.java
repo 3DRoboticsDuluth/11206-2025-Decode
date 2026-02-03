@@ -22,9 +22,10 @@ import java.util.HashMap;
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            quanomous.execute()
+            quanomous.execute(),
+            wait.seconds(1)
         ).withTimeout(29500).andThen(
-            auto.stop().asProxy()
+            auto.stop()
         );
     }
 
