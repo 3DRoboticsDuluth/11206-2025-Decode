@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIGH;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -13,7 +14,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
-import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 import org.junit.Test;
 
 public class DriveCommandsTests extends TestHarness {
@@ -29,31 +29,25 @@ public class DriveCommandsTests extends TestHarness {
     @Test
     public void testSetPowerLow() {
         drive.setPowerLow().initialize();
-        verify(Subsystems.drive.follower).setMaxPower(POWER_LOW);
+        verify(follower).setMaxPower(POWER_LOW);
     }
 
     @Test
     public void testSetPowerMedium() {
         drive.setPowerMedium().initialize();
-        verify(Subsystems.drive.follower).setMaxPower(POWER_MEDIUM);
+        verify(follower).setMaxPower(POWER_MEDIUM);
     }
 
     @Test
     public void testSetPowerHigh() {
         drive.setPowerHigh().initialize();
-        verify(Subsystems.drive.follower).setMaxPower(POWER_HIGH);
+        verify(follower).setMaxPower(POWER_HIGH);
     }
 
     @Test
     public void testToStart() {
         drive.toStart().initialize();
         verify(nav).getStartPose();
-    }
-
-    @Test
-    public void testToClosestArtifact() {
-        drive.toClosestArtifact().initialize();
-        // TODO: Add verification
     }
 
     @Test

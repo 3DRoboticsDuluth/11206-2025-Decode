@@ -16,18 +16,11 @@ public class AutoOpMode extends OpMode {
     @Override
     public void initialize() {
         config = new Config();
-        config.alliance = Alliance.UNKNOWN;
-        config.side = Side.UNKNOWN;
-        config.quanomous = null;
-        config.delay = 0;
-        config.robotCentric = false;
-
         super.initialize();
-
         Controls.initializeAuto();
 
         waitForStart();
-        
+
         if (isStopRequested()) return;
 
         if (config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN)

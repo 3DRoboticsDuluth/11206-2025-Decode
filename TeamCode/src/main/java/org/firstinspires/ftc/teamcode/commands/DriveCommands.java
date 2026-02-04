@@ -43,7 +43,7 @@ import java.util.function.DoubleSupplier;
 
 /** @noinspection unused, UnusedReturnValue */
 public class DriveCommands {
-    public static double HEADING_END_TIME = 0.5;
+    public static double HEADING_END_TIME = 0.5; // TODO: Test higher deposit, lower intake?
     private boolean reverse = false;
     private Pose startPose = new Pose(0, 0, 0);
     private Pose endPose = new Pose(0, 0, 0);

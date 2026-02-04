@@ -22,6 +22,7 @@ public class TimingSubsystem extends SubsystemBase {
     public void periodic() {
         ++periodicCount;
 
+        // TODO: Control Review
         if (!hasRumbled && playTimer.seconds() >= 75) {
             gamepad1.gamepad.rumble(1.0, 1.0, 1000);
             gamepad2.gamepad.rumble(1.0, 1.0, 1000);

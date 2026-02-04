@@ -82,7 +82,7 @@ public class AutoCommands {
     public Command depositStart() {
         return auto.goalLock(true).andThen(
             intake.forward(),
-            flywheel.forward(),
+            flywheel.forward(), // TODO: Try flywheel.launch()?
             conveyor.launch()
         );
     }
@@ -100,10 +100,10 @@ public class AutoCommands {
             drive.setPowerAuto(),
             drive.toDepositSouth(axialOffset, lateralOffset).alongWith(
                 drive.untilDistance(-30).andThen(
-                        conveyor.waitUntilStopped(),
-                        auto.deposit()
+                    conveyor.waitUntilStopped(),
+                    // TODO: Add flywheel.isReady() for NORTH?
+                    auto.deposit()
                 )
-                //drive.untilHeading(2),
             )
         );
     }
@@ -113,21 +113,19 @@ public class AutoCommands {
             drive.setPowerAuto(),
             drive.toDepositNorth(axialOffset, lateralOffset).alongWith(
                 drive.untilDistance(-30).andThen(
-                        conveyor.waitUntilStopped(),
-                        auto.deposit()
+                    conveyor.waitUntilStopped(),
+                    // TODO: Add flywheel.isReady() for NORTH?
+                    auto.deposit()
                 )
-                //drive.untilHeading(2),
             )
         );
     }
 
     public Command deposit() {
-        return /*auto.fork(*/
-            auto.depositStart().andThen(
-                wait.doherty(2),
-                auto.depositStop()
-            )
-            /*)*/;
+        return auto.depositStart().andThen(
+            wait.doherty(2),
+            auto.depositStop()
+        );
     }
 
     public Command releaseGate() {
@@ -147,9 +145,5 @@ public class AutoCommands {
             gate.close(),
             flywheel.stop()
         );
-    }
-
-    public Command fork(Command command) {
-        return new InstantCommand(command::schedule);
     }
 }

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
-import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.BLUE;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.ORANGE;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.RED;
@@ -10,7 +8,6 @@ import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPr
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver.LayerHeight.LAYER_0;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.timing;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 
 import android.annotation.SuppressLint;
@@ -19,12 +16,11 @@ import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color;
 import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver;
 import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.PrismAnimations;
 import org.firstinspires.ftc.teamcode.game.Alliance;
-import org.firstinspires.ftc.teamcode.game.Side;
 
 public class LightsSubsystem extends HardwareSubsystem {
     public GoBildaPrismDriver prism;
 
-    public Color color;
+    public Color color = RED;
 
     public LightsSubsystem() {
         prism = getDevice(GoBildaPrismDriver.class, "prism", this::configure);
@@ -35,6 +31,7 @@ public class LightsSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
+        // TODO: Control Review
         if (!config.started) {
             if (config.alliance == Alliance.RED) set(RED);
             else if (config.alliance == Alliance.BLUE) set(BLUE);

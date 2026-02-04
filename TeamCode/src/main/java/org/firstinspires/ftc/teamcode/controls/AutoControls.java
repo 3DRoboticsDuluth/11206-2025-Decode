@@ -45,7 +45,8 @@ public class AutoControls {
                 .and(gamepad2.getGamepadButton(B))
                 .toggleWhenActive(drive.startChasing(), drive.stopChasing());
 
-        //Config Controls
+        // TODO: Control Review
+        // Config Controls
 
         gamepad2.getGamepadButton(DPAD_LEFT)
             .whenPressed(() -> Config.config.goalAngleOffsetNorth += GOAL_ANGLE_INCREMENT);

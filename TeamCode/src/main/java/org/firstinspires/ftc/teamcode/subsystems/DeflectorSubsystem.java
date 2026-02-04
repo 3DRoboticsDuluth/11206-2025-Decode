@@ -9,7 +9,6 @@ import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
 
-import org.firstinspires.ftc.teamcode.adaptations.ballistics.BallisticsModel;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 
 @Configurable

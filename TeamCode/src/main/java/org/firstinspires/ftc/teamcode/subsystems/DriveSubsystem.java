@@ -93,14 +93,11 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
-        drawDebug(follower);
+        // TODO: Enable?
+        //if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null)
+        //    configureFollower(config.pose = vision.detectionPose);
 
-        /*if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null) {
-            config.pose = vision.detectionPose;
-            follower.setStartingPose(toPedroPose(config.pose));
-            final Style style = new Style("", "#b53fad", 0.0);
-            drawRobot(toPedroPose(config.pose), style);
-        }*/
+        drawDebug(follower);
 
         telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
@@ -163,18 +160,19 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public void configureFollower(Pose pose) {
-        if (follower != null && pose == null) return;
-        follower = getFollower();
+        if (follower == null || pose != null)
+            follower = getFollower();
         follower.setMaxPower(config.auto ? POWER_AUTO : POWER_HIGH);
-        follower.setStartingPose(toPedroPose(pose == null ? new Pose(0, 0, 0) : pose));
+        if (pose != null)
+            follower.setStartingPose(toPedroPose(pose));
         follower.startTeleopDrive();
     }
 
     public void startChasing() {
-        // TODO
+        // TODO: Chasing, Start
     }
 
     public void stopChasing() {
-        // TODO
+        // TODO: Chasing, Stop
     }
 }
