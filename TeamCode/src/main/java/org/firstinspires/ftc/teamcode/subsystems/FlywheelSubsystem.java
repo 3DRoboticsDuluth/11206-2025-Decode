@@ -75,7 +75,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     public boolean isReady() {
         VEL = calculateVelocity();
         return motorLeft.getRpm() >= VEL * THRESH &&
-            motorRight.getRpm() >= VEL * THRESH;
+                motorRight.getRpm() >= VEL * THRESH;
     }
 
     private double calculateVelocity() {

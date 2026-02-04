@@ -69,8 +69,8 @@ public class NavSubsystem {
     public Pose getSpike0() {
         return createPose(
             2.1 * TILE_WIDTH,
-            config.alliance.sign * -2.8 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -10)
+            config.alliance.sign * -2.75 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -15)
         );
     }
 

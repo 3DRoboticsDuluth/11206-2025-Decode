@@ -98,10 +98,12 @@ public class AutoCommands {
     public Command depositSouth(double axialOffset, double lateralOffset) {
         return auto.intakeStop().alongWith(
             drive.setPowerAuto(),
-            drive.toDepositSouth(axialOffset, lateralOffset).andThen(
-                drive.untilDistance(-6),
+            drive.toDepositSouth(axialOffset, lateralOffset).alongWith(
+                drive.untilDistance(-30).andThen(
+                        conveyor.waitUntilStopped(),
+                        auto.deposit()
+                )
                 //drive.untilHeading(2),
-                auto.deposit()
             )
         );
     }
@@ -109,10 +111,12 @@ public class AutoCommands {
     public Command depositNorth(double axialOffset, double lateralOffset) {
         return auto.intakeStop().alongWith(
             drive.setPowerAuto(),
-            drive.toDepositNorth(axialOffset, lateralOffset).andThen(
-                drive.untilDistance(-6),
+            drive.toDepositNorth(axialOffset, lateralOffset).alongWith(
+                drive.untilDistance(-30).andThen(
+                        conveyor.waitUntilStopped(),
+                        auto.deposit()
+                )
                 //drive.untilHeading(2),
-                auto.deposit()
             )
         );
     }
