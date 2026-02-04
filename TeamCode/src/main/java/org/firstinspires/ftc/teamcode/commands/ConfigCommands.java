@@ -36,8 +36,6 @@ public class ConfigCommands {
     }
 
     public Command complete(Runnable runnable) {
-        return new DeferredCommand(
-            () -> new InstantCommand(runnable), null
-        );
+        return new InstantCommand(runnable);
     }
 }
