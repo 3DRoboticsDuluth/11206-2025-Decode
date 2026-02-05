@@ -10,12 +10,15 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
+
+import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.HashMap;
 
@@ -23,7 +26,7 @@ public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
             quanomous.execute(),
-            wait.seconds(1)
+            wait.doherty(2)
         ).withTimeout(29500).andThen(
             auto.stop()
         );
@@ -39,8 +42,7 @@ public class AutoCommands {
         return auto.goalLock(false).alongWith(
             intake.forward(),
             conveyor.forward(),
-            gate.close(),
-            flywheel.hold()
+            gate.close()
         );
     }
 
@@ -55,14 +57,7 @@ public class AutoCommands {
         );
     }
 
-    public Command actionCancel() {
-        return drive.goalLock(false).alongWith(
-            auto.stop(),
-            drive.setPowerLow()
-        );
-    }
-
-    public Command intakeSpike(int spike) {
+    public Command intake(int spike) {
         return new SelectCommand(
             new HashMap<Object, Command>() {{
                 put(0, drive.toSpike0());
@@ -72,9 +67,9 @@ public class AutoCommands {
             }}, () -> spike
         ).alongWith(
             wait.doherty(2).andThen(
+                auto.intakeStart(),
                 drive.untilDistance(TILE_WIDTH * -1.5),
-                drive.setPowerIntake(),
-                auto.intakeStart()
+                drive.setPowerIntake()
             )
         );
     }
@@ -82,7 +77,7 @@ public class AutoCommands {
     public Command depositStart() {
         return auto.goalLock(true).andThen(
             intake.forward(),
-            flywheel.forward(), // TODO: Try flywheel.launch()?
+            flywheel.forward(),
             conveyor.launch()
         );
     }
@@ -95,36 +90,23 @@ public class AutoCommands {
         );
     }
 
-    public Command depositSouth(double axialOffset, double lateralOffset) {
+    public Command deposit(Side side, double axialOffset, double lateralOffset) {
         return auto.intakeStop().alongWith(
             drive.setPowerAuto(),
-            drive.toDepositSouth(axialOffset, lateralOffset).alongWith(
+            new SelectCommand(
+                new HashMap<Object, Command>() {{
+                    put(NORTH, drive.toDepositNorth(axialOffset, lateralOffset));
+                    put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
+                }}, () -> side
+            ).alongWith(
                 drive.untilDistance(-30).andThen(
                     conveyor.waitUntilStopped(),
                     // TODO: Add flywheel.isReady() for NORTH?
-                    auto.deposit()
+                    auto.depositStart(),
+                    wait.doherty(2),
+                    auto.depositStop()
                 )
             )
-        );
-    }
-
-    public Command depositNorth(double axialOffset, double lateralOffset) {
-        return auto.intakeStop().alongWith(
-            drive.setPowerAuto(),
-            drive.toDepositNorth(axialOffset, lateralOffset).alongWith(
-                drive.untilDistance(-30).andThen(
-                    conveyor.waitUntilStopped(),
-                    // TODO: Add flywheel.isReady() for NORTH?
-                    auto.deposit()
-                )
-            )
-        );
-    }
-
-    public Command deposit() {
-        return auto.depositStart().andThen(
-            wait.doherty(2),
-            auto.depositStop()
         );
     }
 
