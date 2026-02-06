@@ -43,10 +43,10 @@ import java.util.Map;
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean CAMERA_UPSIDE_DOWN = true;
-    public static double CAMERA_X_INCHES = 4.125;
+    public static double CAMERA_X_INCHES = 5.375;
     public static double CAMERA_Y_INCHES = 0;
     public static double CAMERA_Z_INCHES = 15.5;
-    public static double CAMERA_YAW_DEGREES = 0;
+    public static double CAMERA_YAW_DEGREES = -172.5;
     public static double ELEMENT_RADIUS = 2.5;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
