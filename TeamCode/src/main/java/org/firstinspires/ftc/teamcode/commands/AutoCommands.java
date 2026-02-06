@@ -99,7 +99,8 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(-30).andThen(
+                drive.untilDistance(side == NORTH  ? -12 : -30).andThen(
+                    drive.untilHeading(10),
                     conveyor.waitUntilStopped(),
                     // TODO: Add flywheel.isReady() for NORTH?
                     auto.depositStart(),
