@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Double.isNaN;
+import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 import static java.lang.Math.toDegrees;
 
@@ -30,8 +31,12 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients GOAL_LOCK_HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
-    public static FFCoefficients GOAL_LOCK_LATERAL_FF = new FFCoefficients(0, 0, 0);
+    public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.008, 0.005, 0, 0.05);
+    public static FFCoefficients FORWARD_FF = new FFCoefficients(0, 0, 0);
+    public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.05, 0, 0, 0.01);
+    public static FFCoefficients STRAFE_FF = new FFCoefficients(0, 0, 0);
+    public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
+    public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
     public static double GOAL_LOCK_MAX_TURN = 0.4;
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
@@ -55,8 +60,12 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pForward = new PController(config.responsiveness);
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
-    private final PIDFController pidfGoalLock = new PIDFController(GOAL_LOCK_HEADING_PIDF);
-    private final FFController ffGoalLock = new FFController(GOAL_LOCK_LATERAL_FF);
+    private final PIDFController pidfForward = new PIDFController(FORWARD_PIDF);
+    private final FFController ffForward = new FFController(FORWARD_FF);
+    private final PIDFController pidfStrafe = new PIDFController(STRAFE_PIDF);
+    private final FFController ffStrafe = new FFController(STRAFE_FF);
+    private final PIDFController pidfTurn = new PIDFController(HEADING_PIDF);
+    private final FFController ffTurn = new FFController(HEADING_FF);
 
     private double forward = 0;
     private double strafe = 0;
@@ -80,7 +89,10 @@ public class DriveSubsystem extends HardwareSubsystem {
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
         pTurn.setP(config.responsiveness);
-        pidfGoalLock.setPIDFCoefficients(GOAL_LOCK_HEADING_PIDF);
+        pidfForward.setPIDFCoefficients(FORWARD_PIDF);
+        pidfStrafe.setPIDFCoefficients(STRAFE_PIDF);
+        pidfTurn.setPIDFCoefficients(HEADING_PIDF);
+
 
         if (opMode.isStopRequested()) {
             follower.breakFollowing();
@@ -106,7 +118,9 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
         telemetry.addData("Drive (Goal Remain)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
         telemetry.addData("Drive (Goal Dist)", () -> String.format("%.1f", nav.getGoalDistance()));
-        telemetry.addData("Drive (Artifact)", () -> String.format("%.1f", toDegrees(nav.getArtifactHeadingRemaining())));
+        telemetry.addData("Drive (Artifact Forward Remaining)", () -> String.format("%.1f", nav.getArtifactForwardRemaining()));
+        telemetry.addData("Drive (Artifact Strafe Remaining)", () -> String.format("%.1f", nav.getArtifactStrafeRemaining()));
+        telemetry.addData("Drive (Artifact Heading Remaining)", () -> String.format("%.1f", toDegrees(nav.getArtifactHeadingRemaining())));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
@@ -121,11 +135,26 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
         if (isBusy() || config.auto) return;
         follower.setTeleOpDrive(
-            this.forward += pForward.calculate(this.forward, forward),
-            this.strafe += pStrafe.calculate(this.strafe, strafe),
+            this.forward += pForward.calculate(this.forward, calculateForward(forward)),
+            this.strafe += pStrafe.calculate(this.strafe, calculateStrafe(strafe)),
             this.turn += pTurn.calculate(this.turn, calculateTurn(turn)),
-            config.robotCentric, config.robotCentric || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90
+            config.robotCentric  && !config.artifactLock,
+            config.robotCentric || config.artifactLock || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90
         );
+    }
+
+    public double calculateForward(double forward) {
+        if (!config.artifactLock) return forward;
+        double remaining = nav.getArtifactForwardRemaining();
+        if (abs(remaining) < 1) return forward;
+        return pidfForward.calculate(remaining) - signum(remaining) * pidfForward.getF();
+    }
+
+    public double calculateStrafe(double strafe) {
+        if (!config.artifactLock) return strafe;
+        double remaining = nav.getArtifactStrafeRemaining();
+        if (abs(remaining) < 1) return strafe;
+        return pidfStrafe.calculate(remaining) - signum(remaining) * pidfStrafe.getF();
     }
 
     public double calculateTurn(double turn) {
@@ -135,9 +164,11 @@ public class DriveSubsystem extends HardwareSubsystem {
         else if (config.artifactLock) remaining = nav.getArtifactHeadingRemaining();
         else return turn;
 
+        if (config.artifactLock && abs(toDegrees(remaining)) < 2) return turn;
+
         return (
-            clamp(pidfGoalLock.calculate(remaining) - signum(remaining) * pidfGoalLock.getF(), -GOAL_LOCK_MAX_TURN, GOAL_LOCK_MAX_TURN)
-        ) + ffGoalLock.calculate(
+            clamp(pidfTurn.calculate(remaining) - signum(remaining) * pidfTurn.getF(), -GOAL_LOCK_MAX_TURN, GOAL_LOCK_MAX_TURN)
+        ) + ffTurn.calculate(
             follower.getVelocity().getYComponent(),
             follower.getAcceleration().getYComponent()
         );

@@ -138,9 +138,21 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getArtifactPose() {
+        return vision.elementPose.face(config.pose).axial(ROBOT_LENGTH / 2 + 3.75).reverse();
+    }
+
+    public double getArtifactForwardRemaining() {
+        return config.pose.x - getArtifactPose().x;
+    }
+
+    public double getArtifactStrafeRemaining() {
+        return config.pose.y - getArtifactPose().y;
+    }
+
     public double getArtifactHeadingRemaining() {
         return normalizeHeading(
-             config.pose.heading - config.pose.face(vision.elementPose).heading
+             config.pose.heading - getArtifactPose().heading
         );
     }
 
