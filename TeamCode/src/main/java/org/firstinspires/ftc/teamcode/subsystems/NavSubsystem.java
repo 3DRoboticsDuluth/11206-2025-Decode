@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
@@ -153,6 +155,16 @@ public class NavSubsystem {
     public double getArtifactHeadingRemaining() {
         return normalizeHeading(
              config.pose.heading - getArtifactPose().heading
+        );
+    }
+
+    public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
+        return createPose(
+            gate ? 0 * TILE_WIDTH : (config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH),
+            gate ? 2 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
+            -config.alliance.sign * Math.toRadians(90),
+            axial,
+            lateral
         );
     }
 

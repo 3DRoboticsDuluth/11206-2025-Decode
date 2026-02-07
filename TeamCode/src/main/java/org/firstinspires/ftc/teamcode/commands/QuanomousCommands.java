@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
+import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
@@ -13,11 +14,13 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Lateral.RIG
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
+import static java.lang.Math.subtractExact;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.json.JSONArray;
@@ -35,6 +38,8 @@ public class QuanomousCommands {
             put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
             put("release", Lambda.unchecked(QuanomousCommands::release));
             put("drive", Lambda.unchecked(QuanomousCommands::drive));
+            put("chase", Lambda.unchecked(QuanomousCommands::chase));
+            put("park", Lambda.unchecked(QuanomousCommands::park));
         }};
 
     public static Command delay(JSONObject obj) throws Exception {
@@ -68,13 +73,42 @@ public class QuanomousCommands {
                 obj.getDouble("tx") * TILE_WIDTH,
                 abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
                 obj.getDouble("h"),
-                (axial.equals("front") ? FRONT : (axial.equals("back") ? BACK : NavSubsystem.Axial.CENTER)),
-                (lateral.equals("left") ? LEFT : (lateral.equals("right") ? RIGHT : NavSubsystem.Lateral.CENTER))
+                parseAxial(axial),
+                parseLateral(lateral)
             )
         );
     }
 
-    // TODO: Quanomous Park?
+    public static Command chase(JSONObject obj) throws Exception {
+        int cycles = obj.getInt("cycles");
+        return auto.chase(cycles);
+    }
+
+    public static Command park(JSONObject obj) throws Exception {
+        String axial = obj.optString("axial", "center").toLowerCase();
+        String lateral = obj.optString("lateral", "center").toLowerCase();
+        boolean gate = obj.optBoolean("gate", false);
+        return drive.curve(
+            nav.getParkingPose(gate, parseAxial(axial), parseLateral(lateral))
+        );
+    }
+
+    public static NavSubsystem.Axial parseAxial(String axial) {
+        switch (axial.toLowerCase()) {
+            case "front": return NavSubsystem.Axial.FRONT;
+            case "back": return NavSubsystem.Axial.BACK;
+            default: return NavSubsystem.Axial.CENTER;
+        }
+    }
+
+    public static NavSubsystem.Lateral parseLateral(String lateral) {
+        switch (lateral.toLowerCase()) {
+            case "left": return NavSubsystem.Lateral.LEFT;
+            case "right": return NavSubsystem.Lateral.RIGHT;
+            default: return NavSubsystem.Lateral.CENTER;
+        }
+    }
+
 
     /** @noinspection DataFlowIssue*/
     public Command execute() {
