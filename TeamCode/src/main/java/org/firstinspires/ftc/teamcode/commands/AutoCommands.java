@@ -120,6 +120,15 @@ public class AutoCommands {
             vision.goalLock(enabled)
         );
     }
+    public Command artifactLock(boolean enabled) {
+        return drive.artifactLock(enabled).alongWith(
+            vision.artifactLock(enabled)
+        );
+    }
+
+    public Command chase(int cycles) {
+        return auto.intakeStart();
+    }
 
     public Command stop() {
         return drive.stop().alongWith(

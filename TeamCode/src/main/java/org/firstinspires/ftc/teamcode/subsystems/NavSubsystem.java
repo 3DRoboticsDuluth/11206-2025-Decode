@@ -230,6 +230,28 @@ public class NavSubsystem {
         return new Pose(jitter(x), jitter(y), jitter(heading));
     }
 
+    public Axial parseAxial(String axial) {
+        switch (axial.toLowerCase()) {
+            case "front": return Axial.FRONT;
+            case "back": return Axial.BACK;
+            case "center":
+            default: return Axial.CENTER;
+        }
+    }
+
+    public Lateral parseLateral(String lateral) {
+        switch (lateral.toLowerCase()) {
+            case "left": return Lateral.LEFT;
+            case "right": return Lateral.RIGHT;
+            case "center":
+            default: return Lateral.CENTER;
+        }
+    }
+
+    public Pose createPose(double x, double y, double heading, String axial, String lateral) {
+        return createPose(x, y, heading, parseAxial(axial), parseLateral(lateral), 0, 0);
+    }
+
     public double normalizeHeading(double heading) {
         if (heading > +PI) heading -= PI * 2;
         if (heading < -PI) heading += PI * 2;

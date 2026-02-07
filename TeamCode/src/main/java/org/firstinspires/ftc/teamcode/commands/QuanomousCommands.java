@@ -13,11 +13,13 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Lateral.RIG
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
+import static java.lang.Math.subtractExact;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.json.JSONArray;
@@ -35,6 +37,8 @@ public class QuanomousCommands {
             put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
             put("release", Lambda.unchecked(QuanomousCommands::release));
             put("drive", Lambda.unchecked(QuanomousCommands::drive));
+            put("chase", Lambda.unchecked(QuanomousCommands::chase));
+            put("park", Lambda.unchecked(QuanomousCommands::park));
         }};
 
     public static Command delay(JSONObject obj) throws Exception {
@@ -74,7 +78,25 @@ public class QuanomousCommands {
         );
     }
 
-    // TODO: Quanomous Park?
+    public static Command chase(JSONObject obj) throws Exception {
+        int cycles = obj.getInt("cycles");
+        return auto.chase(cycles);
+    }
+
+    public static Command park(JSONObject obj) throws Exception {
+        String axial = obj.optString("axial", "center").toLowerCase();
+        String lateral = obj.optString("lateral", "center").toLowerCase();
+        boolean gate = obj.optBoolean("gate", false);
+        return drive.curve(
+            nav.createPose(
+                gate ? 0 * TILE_WIDTH: config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH,
+                gate ? 2 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
+                config.alliance.sign * 90,
+                axial,
+                lateral
+            )
+        );
+    }
 
     /** @noinspection DataFlowIssue*/
     public Command execute() {
