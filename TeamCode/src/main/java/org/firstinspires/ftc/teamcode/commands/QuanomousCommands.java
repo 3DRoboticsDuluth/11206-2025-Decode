@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
+import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
@@ -72,8 +73,8 @@ public class QuanomousCommands {
                 obj.getDouble("tx") * TILE_WIDTH,
                 abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
                 obj.getDouble("h"),
-                (axial.equals("front") ? FRONT : (axial.equals("back") ? BACK : NavSubsystem.Axial.CENTER)),
-                (lateral.equals("left") ? LEFT : (lateral.equals("right") ? RIGHT : NavSubsystem.Lateral.CENTER))
+                parseAxial(axial),
+                parseLateral(lateral)
             )
         );
     }
@@ -88,15 +89,26 @@ public class QuanomousCommands {
         String lateral = obj.optString("lateral", "center").toLowerCase();
         boolean gate = obj.optBoolean("gate", false);
         return drive.curve(
-            nav.createPose(
-                gate ? 0 * TILE_WIDTH: config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH,
-                gate ? 2 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
-                config.alliance.sign * 90,
-                axial,
-                lateral
-            )
+            nav.getParkingPose(gate, parseAxial(axial), parseLateral(lateral))
         );
     }
+
+    public static NavSubsystem.Axial parseAxial(String axial) {
+        switch (axial.toLowerCase()) {
+            case "front": return NavSubsystem.Axial.FRONT;
+            case "back": return NavSubsystem.Axial.BACK;
+            default: return NavSubsystem.Axial.CENTER;
+        }
+    }
+
+    public static NavSubsystem.Lateral parseLateral(String lateral) {
+        switch (lateral.toLowerCase()) {
+            case "left": return NavSubsystem.Lateral.LEFT;
+            case "right": return NavSubsystem.Lateral.RIGHT;
+            default: return NavSubsystem.Lateral.CENTER;
+        }
+    }
+
 
     /** @noinspection DataFlowIssue*/
     public Command execute() {

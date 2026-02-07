@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
+import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
@@ -144,6 +146,16 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
+        return createPose(
+            gate ? 0 * TILE_WIDTH : (config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH),
+            gate ? 1.5 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
+            config.alliance.sign * 90,
+            axial,
+            lateral
+        );
+    }
+
     public Pose getBasePose() {
         return createPose(
             1.5 * TILE_WIDTH,
@@ -228,28 +240,6 @@ public class NavSubsystem {
         y += sin(lateralHeading) * lateralOffset;
         
         return new Pose(jitter(x), jitter(y), jitter(heading));
-    }
-
-    public Axial parseAxial(String axial) {
-        switch (axial.toLowerCase()) {
-            case "front": return Axial.FRONT;
-            case "back": return Axial.BACK;
-            case "center":
-            default: return Axial.CENTER;
-        }
-    }
-
-    public Lateral parseLateral(String lateral) {
-        switch (lateral.toLowerCase()) {
-            case "left": return Lateral.LEFT;
-            case "right": return Lateral.RIGHT;
-            case "center":
-            default: return Lateral.CENTER;
-        }
-    }
-
-    public Pose createPose(double x, double y, double heading, String axial, String lateral) {
-        return createPose(x, y, heading, parseAxial(axial), parseLateral(lateral), 0, 0);
     }
 
     public double normalizeHeading(double heading) {
