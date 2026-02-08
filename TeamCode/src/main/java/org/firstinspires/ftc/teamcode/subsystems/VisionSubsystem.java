@@ -55,7 +55,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double POS_ARTIFACT_LOCK = 0.70;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
-    public static double POS = POS_GOAL_LOCK;
+    public static double POS = 1;
     public static double DEG_MIN = -213.0;
     public static double DEG_MAX = 29.0;
     public static double DEG = 0;
