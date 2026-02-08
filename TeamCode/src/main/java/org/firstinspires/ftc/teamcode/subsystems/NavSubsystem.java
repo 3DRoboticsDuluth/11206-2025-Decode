@@ -141,7 +141,7 @@ public class NavSubsystem {
     }
 
     public Pose getArtifactPose() {
-        return vision.elementPose.face(config.pose).axial(ROBOT_LENGTH / 2 + 3.75).reverse();
+        return vision.elementPose.face(config.pose).axial(ROBOT_LENGTH / 2 + 0.75).reverse();
     }
 
     public double getArtifactForwardRemaining() {

@@ -31,9 +31,9 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.008, 0.005, 0, 0.05);
+    public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
     public static FFCoefficients FORWARD_FF = new FFCoefficients(0, 0, 0);
-    public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.05, 0, 0, 0.01);
+    public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
     public static FFCoefficients STRAFE_FF = new FFCoefficients(0, 0, 0);
     public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
