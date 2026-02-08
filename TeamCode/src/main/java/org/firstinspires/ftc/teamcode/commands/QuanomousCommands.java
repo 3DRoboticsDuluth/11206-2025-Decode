@@ -2,25 +2,18 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
-import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
-import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Axial.BACK;
-import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Axial.FRONT;
-import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Lateral.LEFT;
-import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.Lateral.RIGHT;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.abs;
-import static java.lang.Math.subtractExact;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
-import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.json.JSONArray;
@@ -37,9 +30,9 @@ public class QuanomousCommands {
             put("intake", Lambda.unchecked(QuanomousCommands::intake));
             put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
             put("release", Lambda.unchecked(QuanomousCommands::release));
-            put("drive", Lambda.unchecked(QuanomousCommands::drive));
             put("chase", Lambda.unchecked(QuanomousCommands::chase));
             put("park", Lambda.unchecked(QuanomousCommands::park));
+            put("drive", Lambda.unchecked(QuanomousCommands::drive));
         }};
 
     public static Command delay(JSONObject obj) throws Exception {
@@ -65,6 +58,20 @@ public class QuanomousCommands {
         return auto.releaseGate();
     }
 
+    public static Command chase(JSONObject obj) throws Exception {
+        int cycles = obj.getInt("cycles");
+        return auto.chase(cycles == 0 ? Integer.MAX_VALUE : cycles);
+    }
+
+    public static Command park(JSONObject obj) {
+        String axial = obj.optString("axial", "center").toLowerCase();
+        String lateral = obj.optString("lateral", "center").toLowerCase();
+        boolean gate = obj.optBoolean("gate", false);
+        return drive.curve(
+            nav.getParkingPose(gate, parseAxial(axial), parseLateral(lateral))
+        );
+    }
+
     public static Command drive(JSONObject obj) throws Exception {
         String axial = obj.optString("axial", "center").toLowerCase();
         String lateral = obj.optString("lateral", "center").toLowerCase();
@@ -76,20 +83,6 @@ public class QuanomousCommands {
                 parseAxial(axial),
                 parseLateral(lateral)
             )
-        );
-    }
-
-    public static Command chase(JSONObject obj) throws Exception {
-        int cycles = obj.getInt("cycles");
-        return auto.chase(cycles);
-    }
-
-    public static Command park(JSONObject obj) throws Exception {
-        String axial = obj.optString("axial", "center").toLowerCase();
-        String lateral = obj.optString("lateral", "center").toLowerCase();
-        boolean gate = obj.optBoolean("gate", false);
-        return drive.curve(
-            nav.getParkingPose(gate, parseAxial(axial), parseLateral(lateral))
         );
     }
 

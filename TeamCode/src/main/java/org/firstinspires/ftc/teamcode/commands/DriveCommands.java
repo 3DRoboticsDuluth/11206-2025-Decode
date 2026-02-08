@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -34,6 +35,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.ChaseCommand;
 import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 
@@ -199,9 +201,25 @@ public class DriveCommands {
         );
     }
 
-    public Command artifactLock(boolean enabled) {
+    public Command chaseLock(boolean enabled) {
         return complete(
-            () -> config.artifactLock = enabled
+            () -> config.chaseLock = enabled
+        );
+    }
+
+    public Command toScan() {
+        return curve(
+            nav.getScanPose()
+        );
+    }
+
+    public Command chase() {
+        return new ChaseCommand(() -> vision.elementPose);
+    }
+
+    public Command chase2() {
+        return wait.until(
+            () -> vision.elementPose == null || config.pose.hypot(vision.elementPose) < 2
         );
     }
 

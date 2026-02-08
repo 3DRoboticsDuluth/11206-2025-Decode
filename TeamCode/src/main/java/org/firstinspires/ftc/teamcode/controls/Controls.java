@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.controls;
 public class Controls {
     public static void initializeAuto() {
         new ConfigControls();
+        new DriveControls();
     }
 
     public static void initializeTeleop() {

@@ -31,7 +31,7 @@ public class Drawing {
         "#666", "#3F51B5", 2.0
     );
     private static final Style artifactLook = new Style(
-            "#6C3BAA", "#000000", 0.5
+        "#ED9D13", "#000000", 0.5
     );
     private static final Style historyLook = new Style(
         "#666", "#4CAF50", 2.0

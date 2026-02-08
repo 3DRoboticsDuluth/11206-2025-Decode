@@ -158,6 +158,12 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getScanPose() {
+        return config.pose.face(
+            new Pose(2 * TILE_WIDTH, -2 * TILE_WIDTH * config.alliance.sign, 0)
+        );
+    }
+
     public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
         return createPose(
             gate ? 0 * TILE_WIDTH : (config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH),

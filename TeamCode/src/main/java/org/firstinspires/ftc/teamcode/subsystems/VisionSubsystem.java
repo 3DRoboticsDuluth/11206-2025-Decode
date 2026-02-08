@@ -34,6 +34,8 @@ import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+import org.firstinspires.ftc.teamcode.game.Alliance;
+import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +54,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
     public static double POS_GOAL_LOCK = 0.10;
-    public static double POS_ARTIFACT_LOCK = 0.70;
+    public static double POS_CHASE_LOCK = 0.70;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
     public static double POS = 1;
@@ -74,7 +76,6 @@ public class VisionSubsystem extends HardwareSubsystem {
     public List<Pose> elementPoses = new ArrayList<>();
 
     Map<Pipeline, Consumer<LLResult>> processors;
-
 
     public VisionSubsystem() {
         if (config.auto) POS = 1;
@@ -104,7 +105,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        drawPhantomArtifact();
+        //drawPhantomArtifact();
+
+        processColor2();
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
@@ -155,16 +158,25 @@ public class VisionSubsystem extends HardwareSubsystem {
         POS = POS_GOAL_LOCK;
     }
 
-    public void artifactLock(boolean enabled) {
+    public void chaseLock(boolean enabled) {
         if (!enabled) return;
         switchPipeline(PURPLE, false);
-        POS = POS_ARTIFACT_LOCK;
+        POS = POS_CHASE_LOCK;
     }
 
     public void switchPipeline(Pipeline pipeline, boolean elementReset) {
         if (limelight == null) return;
         if (elementReset) elementPose = null;
         limelight.pipelineSwitch((PIPELINE = pipeline).index);
+    }
+
+    public void scan() {
+        elementPose = null;
+        elementPoses.clear();
+    }
+
+    public void nextElement() {
+        elementPose = elementPoses.isEmpty() ? null : elementPoses.remove(0);
     }
 
     @SuppressLint("DefaultLocale")
@@ -232,54 +244,72 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     @SuppressLint("DefaultLocale")
-    private void processColor(LLResult result) {
-        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+    private void processColor2() {
+        if (config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN) return;
 
-        for (LLResultTypes.ColorResult cr : colorResults) {
-            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
-            double crx = direction * cr.getTargetXDegrees();
-            double cry = direction * cr.getTargetYDegrees();
-
-            telemetry.addData(
-                "Vision (Color Result)",
-                () -> String.format(
-                    "%.2f°tx, %.2f°ty",
-                    crx, cry
-                )
-            );
-
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
-                    crx, cry
-                )
-            );
-
-            elementPose = getElementPose(crx, cry);
-            elementPoses.removeIf(existing -> existing.hypot(elementPose) < ELEMENT_RADIUS);
-            elementPoses.add(elementPose);
-
-            telemetry.addData(
-                "Vision (Element Pose)",
-                () -> String.format(
-                    "%.1fx, %.1fy, %.1f°",
-                    elementPose.x,
-                    elementPose.y,
-                    toDegrees(elementPose.heading)
-                )
-            );
-
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Element Pose) | %.1fx, %.1fy, %.1f°",
-                    elementPose.x,
-                    elementPose.y,
-                    toDegrees(elementPose.heading)
-                )
-            );
+        if (elementPose == null) {
+            if (elementPoses.isEmpty()) {
+                elementPose = new Pose(2.0 * TILE_WIDTH, -2 * TILE_WIDTH * config.alliance.sign, 0);
+                elementPoses.add(new Pose(2.5 * TILE_WIDTH, -2.5 * TILE_WIDTH * config.alliance.sign, 0));
+                elementPoses.add(new Pose(1.5 * TILE_WIDTH, -2.5 * TILE_WIDTH * config.alliance.sign, 0));
+            } else {
+                elementPose = elementPoses.remove(0);
+            }
         }
+
+        drawArtifact(toPedroPose(elementPose));
+        elementPoses.forEach(p -> drawArtifact(toPedroPose(p)));
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void processColor(LLResult result) {
+//        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+//
+//        for (LLResultTypes.ColorResult cr : colorResults) {
+//            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+//            double crx = direction * cr.getTargetXDegrees();
+//            double cry = direction * cr.getTargetYDegrees();
+//
+//            telemetry.addData(
+//                "Vision (Color Result)",
+//                () -> String.format(
+//                    "%.2f°tx, %.2f°ty",
+//                    crx, cry
+//                )
+//            );
+//
+//            Log.i(
+//                this.getClass().getSimpleName(),
+//                String.format(
+//                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
+//                    crx, cry
+//                )
+//            );
+//
+//            elementPose = getElementPose(crx, cry);
+//            elementPoses.removeIf(existing -> existing.hypot(elementPose) < ELEMENT_RADIUS);
+//            elementPoses.add(elementPose);
+//
+//            telemetry.addData(
+//                "Vision (Element Pose)",
+//                () -> String.format(
+//                    "%.1fx, %.1fy, %.1f°",
+//                    elementPose.x,
+//                    elementPose.y,
+//                    toDegrees(elementPose.heading)
+//                )
+//            );
+//
+//            Log.i(
+//                this.getClass().getSimpleName(),
+//                String.format(
+//                    "Vision (Element Pose) | %.1fx, %.1fy, %.1f°",
+//                    elementPose.x,
+//                    elementPose.y,
+//                    toDegrees(elementPose.heading)
+//                )
+//            );
+//        }
     }
 
     @SuppressLint("DefaultLocale")

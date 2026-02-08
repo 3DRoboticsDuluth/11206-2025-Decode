@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
-import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -16,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
+import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
 import org.firstinspires.ftc.teamcode.game.Side;
@@ -25,7 +25,9 @@ import java.util.HashMap;
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            quanomous.execute(),
+            /*quanomous.execute(),*/
+            auto.deposit(NORTH, 0, 0),
+            auto.chase(0),
             wait.doherty(2)
         ).withTimeout(29500).andThen(
             auto.stop()
@@ -117,19 +119,32 @@ public class AutoCommands {
     }
 
     public Command goalLock(boolean enabled) {
-        return drive.goalLock(enabled).alongWith(
-            vision.goalLock(enabled)
+        return vision.goalLock(enabled).alongWith(
+            drive.goalLock(enabled)
         );
     }
 
-    public Command artifactLock(boolean enabled) {
-        return drive.artifactLock(enabled).alongWith(
-            vision.artifactLock(enabled)
+    public Command chaseLock(boolean enabled) {
+        return vision.chaseLock(enabled).alongWith(
+            drive.chaseLock(enabled)
         );
     }
 
     public Command chase(int cycles) {
-        return auto.intakeStart();
+        return new RepeatCommand(
+            drive.toScan().andThen(
+                vision.scan(),
+                auto.intakeStart(),
+                auto.chaseLock(true),
+                new RepeatCommand(
+                    vision.nextElement().andThen(
+                        drive.chase()
+                    ), 3),
+                auto.chaseLock(false),
+                auto.intakeStop(),
+                auto.deposit(NORTH, 0, 0)
+            ), cycles
+        );
     }
 
     public Command stop() {
