@@ -36,9 +36,9 @@ public class LightsSubsystem extends HardwareSubsystem {
             if (config.alliance == Alliance.RED) set(RED);
             else if (config.alliance == Alliance.BLUE) set(BLUE);
         } else if (!config.auto) {
-            if (playTimer.seconds() > 143) set(RED);
-            else if (playTimer.seconds() > 130) set(ORANGE);
-            else if (playTimer.seconds() > 105) set(WHITE);
+            if (playTimer.seconds() > 110) set(RED);
+            else if (playTimer.seconds() > 100) set(ORANGE);
+            else if (playTimer.seconds() > 80) set(WHITE);
         }
 
         telemetry.addData("Lights", () -> String.format("%d leds %d fps", prism.getNumberOfLEDs(), prism.getCurrentFPS()));
