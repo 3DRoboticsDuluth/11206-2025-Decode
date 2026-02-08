@@ -161,7 +161,7 @@ public class NavSubsystem {
     public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
         return createPose(
             gate ? 0 * TILE_WIDTH : (config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH),
-            gate ? 2 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
+            gate ? 1.75 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
             -config.alliance.sign * Math.toRadians(90),
             axial,
             lateral

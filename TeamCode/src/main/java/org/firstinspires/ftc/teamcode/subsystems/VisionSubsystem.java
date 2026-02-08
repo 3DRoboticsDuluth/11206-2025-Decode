@@ -77,6 +77,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
 
     public VisionSubsystem() {
+        if (config.auto) POS = 1;
+
         limelight = getDevice(
             Limelight3A.class,
             "limelight",

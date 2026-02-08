@@ -11,7 +11,7 @@ public class GateSubsystem extends HardwareSubsystem {
     public static double MIN = 0;
     public static double MAX = 0.5;
     public static double CLOSE = 0;
-    public static double HOLD = 0.6;
+    public static double HOLD = 0.5;
     public static double OPEN = 1;
     public static double POS = CLOSE;
     public static boolean TEL = false;

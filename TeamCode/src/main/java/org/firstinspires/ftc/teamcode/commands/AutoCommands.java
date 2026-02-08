@@ -50,7 +50,7 @@ public class AutoCommands {
         return auto.goalLock(true).andThen(
             flywheel.forward(),
             conveyor.reverse(),
-            gate.open(),
+            gate.hold(),
             wait.doherty(2),
             conveyor.stop(),
             intake.hold()
@@ -76,6 +76,7 @@ public class AutoCommands {
 
     public Command depositStart() {
         return auto.goalLock(true).andThen(
+            gate.open(),
             intake.forward(),
             flywheel.forward(),
             conveyor.launch()
@@ -120,6 +121,7 @@ public class AutoCommands {
             vision.goalLock(enabled)
         );
     }
+
     public Command artifactLock(boolean enabled) {
         return drive.artifactLock(enabled).alongWith(
             vision.artifactLock(enabled)
@@ -131,7 +133,8 @@ public class AutoCommands {
     }
 
     public Command stop() {
-        return drive.stop().alongWith(
+        return drive.goalLock(false).alongWith(
+            drive.stop(),
             intake.stop(),
             conveyor.stop(),
             gate.close(),

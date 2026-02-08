@@ -14,7 +14,7 @@ import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import com.seattlesolvers.solverslib.command.button.Trigger;
 
 public class AutoControls {
-    private static final double TRIGGER_THRESHOLD = 0.5;
+    private static final double TRIGGER_THRESHOLD = 0.2;
     public AutoControls() {
         new Trigger(() -> gamepad1.getTrigger(LEFT_TRIGGER) > TRIGGER_THRESHOLD)
             .whenActive(auto.intakeStart())
