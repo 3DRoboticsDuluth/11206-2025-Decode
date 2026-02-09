@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.game.Side;
 @Configurable
 public class NavSubsystem {
     public static double TILE_WIDTH = 23.5;
-    public static double ROBOT_LENGTH = 14.25;
-    public static double ROBOT_WIDTH = 11.375;
+    public static double ROBOT_LENGTH = 14.25; // 0.361950 meters
+    public static double ROBOT_WIDTH = 11.375; // 0.288925 meters
 
     public Pose getStartPose() {
         return (config.side == null || config.side == Side.UNKNOWN ||
