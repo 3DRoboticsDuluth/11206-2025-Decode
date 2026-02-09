@@ -48,13 +48,14 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double CAMERA_X_INCHES = 3.93701; // 0.1 meters
     public static double CAMERA_Y_INCHES = -0.3937008; // 0.01 meters
     public static double CAMERA_Z_INCHES = 16.14173; // 0.42 meters
+    public static double CAMERA_PITCH_DEGREES = -0.75;
     public static double CAMERA_YAW_DEGREES = 1.15;
     public static double ELEMENT_RADIUS = 2.5;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
     public static double POS_GOAL_LOCK = 0.10;
-    public static double POS_CHASE_LOCK = 0.70;
+    public static double POS_CHASE_LOCK = 0.75;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
     public static double POS = 1;
@@ -84,7 +85,7 @@ public class VisionSubsystem extends HardwareSubsystem {
             Limelight3A.class,
             "limelight",
             l -> {
-                l.pipelineSwitch((PIPELINE = QRCODE).index);
+                l.pipelineSwitch((PIPELINE = PURPLE).index); // TODO: Restore QRCODE
                 l.start();
             }
         );
@@ -107,7 +108,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         //drawPhantomArtifact();
 
-        processColor2();
+        //processColor2();
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
@@ -263,60 +264,60 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     @SuppressLint("DefaultLocale")
     private void processColor(LLResult result) {
-//        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-//
-//        for (LLResultTypes.ColorResult cr : colorResults) {
-//            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
-//            double crx = direction * cr.getTargetXDegrees();
-//            double cry = direction * cr.getTargetYDegrees();
-//
-//            telemetry.addData(
-//                "Vision (Color Result)",
-//                () -> String.format(
-//                    "%.2f°tx, %.2f°ty",
-//                    crx, cry
-//                )
-//            );
-//
-//            Log.i(
-//                this.getClass().getSimpleName(),
-//                String.format(
-//                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
-//                    crx, cry
-//                )
-//            );
-//
-//            elementPose = getElementPose(crx, cry);
-//            elementPoses.removeIf(existing -> existing.hypot(elementPose) < ELEMENT_RADIUS);
-//            elementPoses.add(elementPose);
-//
-//            telemetry.addData(
-//                "Vision (Element Pose)",
-//                () -> String.format(
-//                    "%.1fx, %.1fy, %.1f°",
-//                    elementPose.x,
-//                    elementPose.y,
-//                    toDegrees(elementPose.heading)
-//                )
-//            );
-//
-//            Log.i(
-//                this.getClass().getSimpleName(),
-//                String.format(
-//                    "Vision (Element Pose) | %.1fx, %.1fy, %.1f°",
-//                    elementPose.x,
-//                    elementPose.y,
-//                    toDegrees(elementPose.heading)
-//                )
-//            );
-//        }
+        List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
+
+        //elementPoses.clear();
+
+        for (LLResultTypes.ColorResult cr : colorResults) {
+            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+            double crx = direction * cr.getTargetXDegrees();
+            double cry = direction * cr.getTargetYDegrees();
+
+            telemetry.addData(
+                "Vision (Color Result)",
+                () -> String.format(
+                    "%.2f°tx, %.2f°ty",
+                    crx, cry
+                )
+            );
+
+            Log.i(
+                this.getClass().getSimpleName(),
+                String.format(
+                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
+                    crx, cry
+                )
+            );
+
+            Pose latestPose = getElementPose(crx, cry);
+            elementPoses.removeIf(existing -> existing.hypot(latestPose) < ELEMENT_RADIUS * 2);
+            elementPoses.add(latestPose);
+
+            telemetry.addData(
+                "Vision (Element Pose)",
+                latestPose::toString
+            );
+
+            Log.i(
+                this.getClass().getSimpleName(),
+                String.format(
+                    "Vision (Element Pose) | %s",
+                    latestPose
+                )
+            );
+        }
+
+        elementPoses.forEach(p -> drawArtifact(toPedroPose(p)));
+
+        if (!elementPoses.isEmpty())
+            elementPose = elementPoses.get(0);
     }
 
     @SuppressLint("DefaultLocale")
     private Pose getElementPose(double targetYawAngle, double targetPitchAngle) {
         double heightDiff = CAMERA_Z_INCHES - ELEMENT_RADIUS / 2;
-        double elevationAngle = toRadians(DEG - targetPitchAngle);
-        double bearingAngle = toRadians(CAMERA_YAW_DEGREES + targetYawAngle);
+        double elevationAngle = toRadians(CAMERA_PITCH_DEGREES + DEG + targetPitchAngle);
+        double bearingAngle = toRadians(CAMERA_YAW_DEGREES - targetYawAngle);
 
         telemetry.addData("Vision (Height Diff)", () -> String.format("%.1f", heightDiff));
         telemetry.addData("Vision (Elevation Angle)", () -> String.format("%.1f°", toDegrees(elevationAngle)));
