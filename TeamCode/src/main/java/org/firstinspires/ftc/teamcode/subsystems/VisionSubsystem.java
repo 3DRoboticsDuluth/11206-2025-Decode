@@ -26,6 +26,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -50,7 +51,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double CAMERA_Z_INCHES = 16.14173; // 0.42 meters
     public static double CAMERA_PITCH_DEGREES = -0.75;
     public static double CAMERA_YAW_DEGREES = 1.15;
-    public static double ELEMENT_RADIUS = 2.5;
+    public static double ELEMENT_RADIUS = 4;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
@@ -59,6 +60,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
     public static double POS = 1;
+    public static double POS_LAST = POS;
     public static double DEG_MIN = -213.0;
     public static double DEG_MAX = 29.0;
     public static double DEG = 0;
@@ -71,6 +73,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public final ServoEx servo;
 
     public Pipeline PIPELINE;
+    public ElapsedTime piplineTimer = new ElapsedTime();
     public Pose detectionPose = null;
     public int detectionCount = 0;
     public Pose elementPose = null;
@@ -79,7 +82,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     Map<Pipeline, Consumer<LLResult>> processors;
 
     public VisionSubsystem() {
-        if (config.auto) POS = 1;
+        if (config.auto) POS = 0.75;
 
         limelight = getDevice(
             Limelight3A.class,
@@ -122,14 +125,20 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         LLResult result = limelight.getLatestResult();
 
+        if (POS_LAST != POS) {
+            piplineTimer.reset();
+            POS_LAST = POS;
+        }
+
         servo.set(POS);
 
         telemetry.addData("Vision (Pipeline)", () -> String.format("%s", PIPELINE));
+        telemetry.addData("Vision (Timer)", () -> String.format("%.1f", piplineTimer.seconds()));
         telemetry.addData("Vision (Deg)", () -> String.format("%.1f", DEG = (DEG_MAX - DEG_MIN) * POS + DEG_MIN));
 
         servo.addTelemetry(TEL);
 
-        if (result == null || !result.isValid()) {
+        if (result == null || !result.isValid() || piplineTimer.seconds() < 0.6) {
             telemetry.addData("Vision (Results)", () -> "None available");
             return;
         }
@@ -161,7 +170,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void chaseLock(boolean enabled) {
         if (!enabled) return;
-        switchPipeline(PURPLE, false);
+        switchPipeline(PURPLE, true);
         POS = POS_CHASE_LOCK;
     }
 
@@ -169,11 +178,6 @@ public class VisionSubsystem extends HardwareSubsystem {
         if (limelight == null) return;
         if (elementReset) elementPose = null;
         limelight.pipelineSwitch((PIPELINE = pipeline).index);
-    }
-
-    public void scan() {
-        elementPose = null;
-        elementPoses.clear();
     }
 
     public void nextElement() {
@@ -264,9 +268,10 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     @SuppressLint("DefaultLocale")
     private void processColor(LLResult result) {
+        if (!config.started) return;
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
-        //elementPoses.clear();
+//        elementPoses.clear();
 
         for (LLResultTypes.ColorResult cr : colorResults) {
             double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
@@ -290,8 +295,13 @@ public class VisionSubsystem extends HardwareSubsystem {
             );
 
             Pose latestPose = getElementPose(crx, cry);
-            elementPoses.removeIf(existing -> existing.hypot(latestPose) < ELEMENT_RADIUS * 2);
-            elementPoses.add(latestPose);
+            Pose latestPose2 = config.pose.axial(latestPose.x).lateral(latestPose.y);
+            if (abs(latestPose2.x) > TILE_WIDTH * 3 ||
+                abs(latestPose2.y) > TILE_WIDTH * 3 ||
+                abs(latestPose2.x) < .25 * TILE_WIDTH ||
+                abs(latestPose2.y) < .25 * TILE_WIDTH) continue;
+            elementPoses.removeIf(existing -> existing.hypot(latestPose2) < ELEMENT_RADIUS * 3);
+            elementPoses.add(latestPose2);
 
             telemetry.addData(
                 "Vision (Element Pose)",
@@ -309,8 +319,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         elementPoses.forEach(p -> drawArtifact(toPedroPose(p)));
 
-        if (!elementPoses.isEmpty())
-            elementPose = elementPoses.get(0);
+        elementPose = elementPoses.isEmpty() ? null : elementPoses.get(0);
     }
 
     @SuppressLint("DefaultLocale")

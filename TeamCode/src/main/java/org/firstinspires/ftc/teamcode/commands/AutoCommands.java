@@ -13,6 +13,8 @@ import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 
+import static java.lang.Integer.MAX_VALUE;
+
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.RepeatCommand;
@@ -27,7 +29,7 @@ public class AutoCommands {
         return auto.delayStart().andThen(
             /*quanomous.execute(),*/
             auto.deposit(NORTH, 0, 0),
-            auto.chase(0),
+            auto.chase(1),
             wait.doherty(2)
         ).withTimeout(29500).andThen(
             auto.stop()
@@ -131,20 +133,28 @@ public class AutoCommands {
     }
 
     public Command chase(int cycles) {
-        return new RepeatCommand(
-            drive.toScan().andThen(
-                vision.scan(),
-                auto.intakeStart(),
+        return /*new RepeatCommand(*/
+            drive.toChaseScan().andThen(
                 auto.chaseLock(true),
-                new RepeatCommand(
+                auto.intakeStart(),
+                wait.seconds(2),
+               // wait.seconds(MAX_VALUE),
+                //new RepeatCommand(
                     vision.nextElement().andThen(
                         drive.chase()
-                    ), 3),
-                auto.chaseLock(false),
+                    ).withTimeout(3000),
+                    vision.nextElement().andThen(
+                        drive.chase()
+                    ).withTimeout(3000),
+                    vision.nextElement().andThen(
+                        drive.chase()
+                    ).withTimeout(3000),
+                //    ), 3),
                 auto.intakeStop(),
+                auto.chaseLock(false),
                 auto.deposit(NORTH, 0, 0)
-            ), cycles
-        );
+            )/*, cycles
+        )*/;
     }
 
     public Command stop() {

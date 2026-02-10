@@ -207,9 +207,12 @@ public class DriveCommands {
         );
     }
 
-    public Command toScan() {
-        return curve(
-            nav.getScanPose()
+    public Command toChaseScan() {
+        return new DeferredCommand(
+            () -> setPowerLow().andThen(
+                curve(nav.getChaseScanPose()),
+                setPowerAuto()
+            ), null
         );
     }
 

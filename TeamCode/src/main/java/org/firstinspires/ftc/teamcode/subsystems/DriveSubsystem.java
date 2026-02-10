@@ -87,7 +87,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        config.chaseLock = CHASE_LOCK;
+//        config.chaseLock = CHASE_LOCK;
 
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
@@ -118,7 +118,8 @@ public class DriveSubsystem extends HardwareSubsystem {
 
         drawDebug(follower);
 
-        telemetry.addData("Drive (Artifact Lock)", () -> String.format("%s", config.chaseLock));
+        telemetry.addData("Drive (Goal Lock)", () -> String.format("%s", config.goalLock));
+        telemetry.addData("Drive (Chase Lock)", () -> String.format("%s", config.chaseLock));
         telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
@@ -152,14 +153,14 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public double calculateForward(double forward) {
-        if (!config.chaseLock) return forward;
+        if (!config.chaseLock || vision.elementPose == null) return forward;
         double remaining = nav.getArtifactForwardRemaining();
         if (abs(remaining) < 1) return forward;
         return pidfForward.calculate(remaining) - signum(remaining) * pidfForward.getF();
     }
 
     public double calculateStrafe(double strafe) {
-        if (!config.chaseLock) return strafe;
+        if (!config.chaseLock || vision.elementPose == null) return strafe;
         double remaining = nav.getArtifactStrafeRemaining();
         if (abs(remaining) < 1) return strafe;
         return pidfStrafe.calculate(remaining) - signum(remaining) * pidfStrafe.getF();
@@ -169,7 +170,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         double remaining;
 
         if (config.goalLock) remaining = nav.getGoalHeadingRemaining();
-        else if (config.chaseLock) remaining = nav.getArtifactHeadingRemaining();
+        else if (config.chaseLock && vision.elementPose != null) remaining = nav.getArtifactHeadingRemaining();
         else return turn;
 
         if (config.chaseLock && abs(toDegrees(remaining)) < 2) return turn;

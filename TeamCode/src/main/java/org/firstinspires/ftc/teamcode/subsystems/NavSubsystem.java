@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
@@ -93,7 +92,7 @@ public class NavSubsystem {
 
     public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
-            2.25 * TILE_WIDTH,
+            2.3 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance == RED ? +180 : -180
@@ -158,9 +157,11 @@ public class NavSubsystem {
         );
     }
 
-    public Pose getScanPose() {
-        return config.pose.face(
-            new Pose(2 * TILE_WIDTH, -2 * TILE_WIDTH * config.alliance.sign, 0)
+    public Pose getChaseScanPose() {
+        return new Pose(
+            2.25 * TILE_WIDTH,
+            -0.5 * TILE_WIDTH * config.alliance.sign,
+            -config.alliance.sign * Math.toRadians(85)
         );
     }
 
