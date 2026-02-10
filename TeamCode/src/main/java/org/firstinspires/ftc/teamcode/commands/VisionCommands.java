@@ -19,9 +19,9 @@ public class VisionCommands {
         );
     }
 
-    public Command nextElement() {
+    public Command resetElement() {
         return new DeferredCommand(
-            () -> complete(vision::nextElement), null
+            () -> complete(vision::resetElement), null
         );
     }
 

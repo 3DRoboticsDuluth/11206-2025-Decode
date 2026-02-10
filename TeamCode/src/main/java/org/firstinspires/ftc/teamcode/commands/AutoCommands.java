@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.GREEN;
-import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.ORANGE;
-import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.PURPLE;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.TRANSPARENT;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.conveyor;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
@@ -10,32 +8,44 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.lights;
+import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
-
-import static java.lang.Integer.MAX_VALUE;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
-import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.RepeatCommand;
 import org.firstinspires.ftc.teamcode.game.Side;
+import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 
 import java.util.HashMap;
 
 public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
-            /*quanomous.execute(),*/
-            auto.deposit(NORTH, 0, 0),
-            auto.chase(1),
+            quanomous.execute(),
             wait.doherty(2)
         ).withTimeout(29500).andThen(
+            auto.stop()
+        );
+    }
+
+    public Command executeChasing() {
+        return auto.delayStart().andThen(
+            /*quanomous.execute(),*/
+            auto.deposit(NORTH, 0, 0),
+            auto.chase(5),
+        /*).withTimeout(2800).andThen(*/
+            auto.park(true, NavSubsystem.Axial.CENTER, NavSubsystem.Lateral.CENTER),
+            wait.doherty(2),
+        /*).withTimeout(29500).andThen(*/
             auto.stop()
         );
     }
@@ -108,7 +118,7 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(side == NORTH  ? -12 : -30).andThen(
+                drive.untilDistance(side == NORTH ? -10 : -30).andThen(
                     drive.untilHeading(10),
                     conveyor.waitUntilStopped(),
                     // TODO: Add flywheel.isReady() for NORTH?
@@ -130,39 +140,27 @@ public class AutoCommands {
         );
     }
 
-    public Command chaseLock(boolean enabled) {
-        return vision.chaseLock(enabled).alongWith(
-            drive.chaseLock(enabled)
+    public Command chase(int cycles) {
+        return vision.chaseLock(true).alongWith(
+            lights.set(TRANSPARENT),
+            new RepeatCommand(
+                execution -> drive.toChase(execution).alongWith(
+                    drive.untilDistance(-1.5 * TILE_WIDTH).andThen(drive.setPowerLow()),
+                    wait.milliseconds(50).andThen(vision.resetElement()),
+                    auto.intakeStart()
+                ).withTimeout(2000 + 200L * execution).andThen(
+                    wait.doherty(),
+                    drive.setPowerAuto(),
+                    auto.deposit(NORTH, 0, 0)
+                ), cycles
+            )
         );
     }
 
-    public Command chase(int cycles) {
-        return /*new RepeatCommand(*/
-            drive.toChaseScan().andThen(
-                auto.chaseLock(true),
-                auto.intakeStart(),
-                wait.seconds(2),
-               // wait.seconds(MAX_VALUE),
-//                new RepeatCommand(
-                    vision.nextElement().andThen(
-                        drive.chase(),
-                        lights.set(ORANGE)
-                    ).withTimeout(2000),
-                    vision.nextElement().andThen(
-                        drive.chase(),
-                        lights.set(PURPLE)
-                    ).withTimeout(1000),
-                    vision.nextElement().andThen(
-                        drive.chase(),
-                        lights.set(GREEN)
-                    ).withTimeout(1000),
-                //    ), 3),
-                auto.chaseLock(false),
-                auto.deposit(NORTH, 0, 0).alongWith(
-                    auto.intakeStop()
-                )
-            )/*, cycles
-        )*/;
+    public Command park(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
+        return drive.curve(
+            nav.getParkingPose(gate, axial, lateral)
+        );
     }
 
     public Command stop() {

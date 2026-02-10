@@ -42,6 +42,7 @@ public class ConfigSubsystem extends SubsystemBase {
             .create();
 
     public static boolean PERSISTENCE = false;
+
     public static double DELAY_INCREMENT = 0.5;
     public static double RESPONSIVENESS_INCREMENT = 0.01;
     public static double GOAL_DISTANCE_INCREMENT = 6;

@@ -9,6 +9,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
+import android.util.Log;
+
 import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
@@ -95,20 +97,9 @@ public class NavSubsystem {
             2.3 * TILE_WIDTH,
             config.alliance.sign * -0.5 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? +180 : -180
+            getGoalPose(), config.alliance == RED ? +181 : -181
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? +180 : -180
-        );
-    }
-
-    public Pose getDepositChasePose(double axialOffset, double lateralOffset) {
-        return createPose(
-            2.4 * TILE_WIDTH,
-            config.alliance.sign * -0.75 * TILE_WIDTH
-        ).face(
-            getGoalPose(), config.alliance == RED ? +180 : -180
-        ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? +180 : -180
+            getGoalPose(), config.alliance == RED ? +181 : -181
         );
     }
 
@@ -150,8 +141,27 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getChaseScanPose() {
+        return new Pose(
+            2.5 * TILE_WIDTH,
+            -1 * TILE_WIDTH * config.alliance.sign,
+            -config.alliance.sign * Math.toRadians(85)
+        );
+    }
+
+    public Pose getChasePose(int execution) {
+        Log.i(this.getClass().getSimpleName(), String.format("execution: %d", execution));
+        Log.i(this.getClass().getSimpleName(), String.format("vision.element: %s", vision.element));
+        Log.i(this.getClass().getSimpleName(), String.format("getChasePose, x: %.1f", vision.element == null ? (2.75 - execution * 0.5) * TILE_WIDTH : vision.element.x));
+        return createPose(
+            vision.element == null ? (2.75 - execution * 0.5) * TILE_WIDTH : vision.element.x,
+            2.4 * TILE_WIDTH * -config.alliance.sign,
+            toRadians(config.alliance.sign * -80)
+        );
+    }
+
     public Pose getArtifactPose() {
-        return vision.elementPose.face(config.pose).axial(ROBOT_LENGTH / 2).reverse();
+        return vision.element.face(config.pose).axial(ROBOT_LENGTH / 2).reverse();
     }
 
     public double getArtifactForwardRemaining() {
@@ -165,14 +175,6 @@ public class NavSubsystem {
     public double getArtifactHeadingRemaining() {
         return normalizeHeading(
              config.pose.heading - getArtifactPose().heading
-        );
-    }
-
-    public Pose getChaseScanPose() {
-        return new Pose(
-            2.25 * TILE_WIDTH,
-            -0.5 * TILE_WIDTH * config.alliance.sign,
-            -config.alliance.sign * Math.toRadians(85)
         );
     }
 

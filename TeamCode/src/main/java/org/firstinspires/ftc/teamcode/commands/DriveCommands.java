@@ -90,14 +90,6 @@ public class DriveCommands {
         );
     }
 
-    public Command startChasing() {
-        return new InstantCommand(drive::startChasing, drive);
-    }
-
-    public Command stopChasing() {
-        return new InstantCommand(drive::stopChasing, drive);
-    }
-
     public Command toStart() {
         return to(nav.getStartPose());
     }
@@ -209,21 +201,21 @@ public class DriveCommands {
 
     public Command toChaseScan() {
         return new DeferredCommand(
-            () -> setPowerLow().andThen(
-                curve(nav.getChaseScanPose()),
-                setPowerAuto()
+            () -> curve(nav.getChaseScanPose()), null
+        );
+    }
+
+    public Command toChase(int execution) {
+        return new DeferredCommand(
+            () -> curve(
+                nav.getChasePose(execution).axial(-2.45 * TILE_WIDTH).lateral(config.alliance.sign * 0.25 * TILE_WIDTH),
+                nav.getChasePose(execution)
             ), null
         );
     }
 
     public Command chase() {
-        return new ChaseCommand(() -> vision.elementPose);
-    }
-
-    public Command chase2() {
-        return wait.until(
-            () -> vision.elementPose == null || config.pose.hypot(vision.elementPose) < 2
-        );
+        return new ChaseCommand(() -> vision.element);
     }
 
     public Command untilDistance(double distance) {

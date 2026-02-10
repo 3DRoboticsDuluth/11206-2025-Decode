@@ -67,9 +67,7 @@ public class QuanomousCommands {
         String axial = obj.optString("axial", "center").toLowerCase();
         String lateral = obj.optString("lateral", "center").toLowerCase();
         boolean gate = obj.optBoolean("gate", false);
-        return drive.curve(
-            nav.getParkingPose(gate, parseAxial(axial), parseLateral(lateral))
-        );
+        return auto.park(gate, parseAxial(axial), parseLateral(lateral));
     }
 
     public static Command drive(JSONObject obj) throws Exception {

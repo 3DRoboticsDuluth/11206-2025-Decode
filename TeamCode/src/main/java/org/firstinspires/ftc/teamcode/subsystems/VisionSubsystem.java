@@ -4,13 +4,14 @@ import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.dr
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE_LEFT;
+import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE_RIGHT;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
+import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
-import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -35,10 +36,7 @@ import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
-import org.firstinspires.ftc.teamcode.game.Alliance;
-import org.firstinspires.ftc.teamcode.game.Side;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,31 +62,27 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double DEG_MIN = -213.0;
     public static double DEG_MAX = 29.0;
     public static double DEG = 0;
-    public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
-    public static double PHANTOM_ANGLE = 0;
-    public static double PHANTOM_PERIOD = 15;
     public static boolean TEL = false;
 
     public final Limelight3A limelight;
     public final ServoEx servo;
 
     public Pipeline PIPELINE;
-    public ElapsedTime piplineTimer = new ElapsedTime();
-    public Pose detectionPose = null;
+    public ElapsedTime timer = new ElapsedTime();
+    public Pose detection = null;
     public int detectionCount = 0;
-    public Pose elementPose = null;
-    public List<Pose> elementPoses = new ArrayList<>();
+    public Pose element = null;
 
     Map<Pipeline, Consumer<LLResult>> processors;
 
     public VisionSubsystem() {
-        if (config.auto) POS = 0.75;
+        if (config.auto) POS = 1;
 
         limelight = getDevice(
             Limelight3A.class,
             "limelight",
             l -> {
-                l.pipelineSwitch((PIPELINE = PURPLE).index); // TODO: Restore QRCODE
+                l.pipelineSwitch((PIPELINE = QRCODE).index);
                 l.start();
             }
         );
@@ -100,6 +94,8 @@ public class VisionSubsystem extends HardwareSubsystem {
             put(APRILTAG, VisionSubsystem.this::processAprilTag);
             put(GREEN, VisionSubsystem.this::processColor);
             put(PURPLE, VisionSubsystem.this::processColor);
+            put(PURPLE_LEFT, VisionSubsystem.this::processColor);
+            put(PURPLE_RIGHT, VisionSubsystem.this::processColor);
         }};
     }
 
@@ -109,16 +105,15 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        //drawPhantomArtifact();
-
-        //processColor2();
+        if (element != null)
+            drawArtifact(toPedroPose(element));
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
             return;
         }
 
-        detectionPose = null;
+        detection = null;
 
         double yaw = toDegrees(config.pose.heading);
         limelight.updateRobotOrientation(yaw);
@@ -126,19 +121,19 @@ public class VisionSubsystem extends HardwareSubsystem {
         LLResult result = limelight.getLatestResult();
 
         if (POS_LAST != POS) {
-            piplineTimer.reset();
+            timer.reset();
             POS_LAST = POS;
         }
 
         servo.set(POS);
 
         telemetry.addData("Vision (Pipeline)", () -> String.format("%s", PIPELINE));
-        telemetry.addData("Vision (Timer)", () -> String.format("%.1f", piplineTimer.seconds()));
+        telemetry.addData("Vision (Timer)", () -> String.format("%.1f", timer.seconds()));
         telemetry.addData("Vision (Deg)", () -> String.format("%.1f", DEG = (DEG_MAX - DEG_MIN) * POS + DEG_MIN));
 
         servo.addTelemetry(TEL);
 
-        if (result == null || !result.isValid() || piplineTimer.seconds() < 0.6) {
+        if (result == null || !result.isValid() || timer.seconds() < 0.6) {
             telemetry.addData("Vision (Results)", () -> "None available");
             return;
         }
@@ -146,47 +141,26 @@ public class VisionSubsystem extends HardwareSubsystem {
         processors.get(PIPELINE).accept(result);
     }
 
-    public void drawPhantomArtifact() {
-        double angle = PHANTOM_ANGLE == 0 ?
-            2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
-            toRadians(PHANTOM_ANGLE);
-
-        elementPose = new Pose(
-            PHANTOM_RADIUS * cos(angle),
-            PHANTOM_RADIUS * sin(angle),
-            0
-        );
-
-        drawArtifact(
-            toPedroPose(elementPose)
-        );
-    }
-
     public void goalLock(boolean enabled) {
-        if (!enabled) return;
+        if (!enabled || !config.teleop) return;
         switchPipeline(APRILTAG, false);
         POS = POS_GOAL_LOCK;
     }
 
     public void chaseLock(boolean enabled) {
         if (!enabled) return;
-        elementPoses.clear();
-        nextCalled = false;
-        switchPipeline(PURPLE, true);
+        switchPipeline(config.alliance == RED ? PURPLE_RIGHT : PURPLE_LEFT, true);
         POS = POS_CHASE_LOCK;
     }
 
     public void switchPipeline(Pipeline pipeline, boolean elementReset) {
         if (limelight == null) return;
-        if (elementReset) elementPose = null;
+        if (elementReset) resetElement();
         limelight.pipelineSwitch((PIPELINE = pipeline).index);
     }
 
-    public boolean nextCalled = false;
-
-    public void nextElement() {
-        nextCalled = true;
-        elementPose = elementPoses.isEmpty() ? null : elementPoses.remove(0);
+    public void resetElement() {
+        element = null;
     }
 
     @SuppressLint("DefaultLocale")
@@ -213,7 +187,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     private void processAprilTag(LLResult result) {
         Pose3D botpose = result.getBotpose_MT2();
 
-        detectionPose = new Pose(
+        detection = new Pose(
             botpose.getPosition().x,
             botpose.getPosition().y,
             botpose.getOrientation().getYaw(AngleUnit.RADIANS)
@@ -227,9 +201,9 @@ public class VisionSubsystem extends HardwareSubsystem {
             "Vision (Detection Pose)",
             () -> String.format(
                 "%.1fx, %.1fy, %.1f°",
-                detectionPose.x,
-                detectionPose.y,
-                toDegrees(detectionPose.heading)
+                detection.x,
+                detection.y,
+                toDegrees(detection.heading)
             )
         );
 
@@ -237,9 +211,9 @@ public class VisionSubsystem extends HardwareSubsystem {
             this.getClass().getSimpleName(),
             String.format(
                 "Vision (Detection Pose) | %.1fx, %.1fy, %.1f°",
-                detectionPose.x,
-                detectionPose.y,
-                toDegrees(detectionPose.heading)
+                detection.x,
+                detection.y,
+                toDegrees(detection.heading)
             )
         );
 
@@ -254,81 +228,56 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     @SuppressLint("DefaultLocale")
-    private void processColor2() {
-        if (config.alliance == Alliance.UNKNOWN || config.side == Side.UNKNOWN) return;
-
-        if (elementPose == null) {
-            if (elementPoses.isEmpty()) {
-                elementPose = new Pose(2.0 * TILE_WIDTH, -2 * TILE_WIDTH * config.alliance.sign, 0);
-                elementPoses.add(new Pose(2.5 * TILE_WIDTH, -2.5 * TILE_WIDTH * config.alliance.sign, 0));
-                elementPoses.add(new Pose(1.5 * TILE_WIDTH, -2.5 * TILE_WIDTH * config.alliance.sign, 0));
-            } else {
-                elementPose = elementPoses.remove(0);
-            }
-        }
-
-        drawArtifact(toPedroPose(elementPose));
-        elementPoses.forEach(p -> drawArtifact(toPedroPose(p)));
-    }
-
-    @SuppressLint("DefaultLocale")
     private void processColor(LLResult result) {
         if (!config.started) return;
+
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
-//        elementPoses.clear();
+        if (colorResults.isEmpty()) return;
 
-        if (elementPoses.isEmpty()) {
-            for (LLResultTypes.ColorResult cr : colorResults) {
-                double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
-                double crx = direction * cr.getTargetXDegrees();
-                double cry = direction * cr.getTargetYDegrees();
+        LLResultTypes.ColorResult cr = colorResults.get(0);
 
-                telemetry.addData(
-                    "Vision (Color Result)",
-                    () -> String.format(
-                        "%.2f°tx, %.2f°ty",
-                        crx, cry
-                    )
-                );
+        double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+        double crx = direction * cr.getTargetXDegrees();
+        double cry = direction * cr.getTargetYDegrees();
 
-                Log.i(
-                    this.getClass().getSimpleName(),
-                    String.format(
-                        "Vision (Color Result) | %.2f°tx, %.2f°ty",
-                        crx, cry
-                    )
-                );
+        telemetry.addData(
+            "Vision (Color Result)",
+            () -> String.format(
+                "%.2f°tx, %.2f°ty",
+                crx, cry
+            )
+        );
 
-                if (!nextCalled) {
-                    Pose latestPose = getElementPose(crx, cry);
-                    Pose latestPose2 = config.pose.axial(latestPose.x).lateral(latestPose.y);
-                    if (abs(latestPose2.x) > TILE_WIDTH * 3 ||
-                        abs(latestPose2.y) > TILE_WIDTH * 3 ||
-                        abs(latestPose2.x) < .25 * TILE_WIDTH ||
-                        abs(latestPose2.y) < .25 * TILE_WIDTH) continue;
-                    elementPoses.removeIf(existing -> existing.hypot(latestPose2) < ELEMENT_RADIUS * 3);
-                    elementPoses.add(latestPose2);
+        Log.i(
+            this.getClass().getSimpleName(),
+            String.format(
+                "Vision (Color Result) | %.2f°tx, %.2f°ty",
+                crx, cry
+            )
+        );
 
-                    telemetry.addData(
-                        "Vision (Element Pose)",
-                        latestPose::toString
-                    );
+        Pose robotCentricPose = getElementPose(crx, cry);
+        Pose fieldCentricPose = config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
 
-                    Log.i(
-                        this.getClass().getSimpleName(),
-                        String.format(
-                            "Vision (Element Pose) | %s",
-                            latestPose
-                        )
-                    );
-                }
-            }
-        }
+        telemetry.addData(
+            "Vision (Element Pose)",
+            fieldCentricPose::toString
+        );
 
-        elementPoses.forEach(p -> drawArtifact(toPedroPose(p)));
+        Log.i(
+            this.getClass().getSimpleName(),
+            String.format(
+                "Vision (Element Pose) | %s",
+                fieldCentricPose
+            )
+        );
 
-        elementPose = elementPoses.isEmpty() ? null : elementPoses.get(0);
+        if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
+            abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
+            abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
+            abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
+            element = fieldCentricPose;
     }
 
     @SuppressLint("DefaultLocale")

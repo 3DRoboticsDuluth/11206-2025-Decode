@@ -31,9 +31,5 @@ public class AutoControls {
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
-
-        gamepad2.getGamepadButton(START).negate()
-                .and(gamepad2.getGamepadButton(B))
-                .toggleWhenActive(drive.startChasing(), drive.stopChasing());
     }
 }

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawDebug;
-import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawRobot;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.fromPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -34,9 +33,7 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
-    public static FFCoefficients FORWARD_FF = new FFCoefficients(0, 0, 0);
     public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
-    public static FFCoefficients STRAFE_FF = new FFCoefficients(0, 0, 0);
     public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
     public static double GOAL_LOCK_MAX_TURN = 0.4;
@@ -63,9 +60,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     private final PController pStrafe = new PController(config.responsiveness);
     private final PController pTurn = new PController(config.responsiveness);
     private final PIDFController pidfForward = new PIDFController(FORWARD_PIDF);
-    private final FFController ffForward = new FFController(FORWARD_FF);
     private final PIDFController pidfStrafe = new PIDFController(STRAFE_PIDF);
-    private final FFController ffStrafe = new FFController(STRAFE_FF);
     private final PIDFController pidfTurn = new PIDFController(HEADING_PIDF);
     private final FFController ffTurn = new FFController(HEADING_FF);
 
@@ -108,14 +103,6 @@ public class DriveSubsystem extends HardwareSubsystem {
             follower.getPose()
         );
 
-        // TODO: Enable?
-        //if (isStill() && !isBusy() && !isControlled() && vision.detectionPose != null)
-        //    configureFollower(config.pose = vision.detectionPose);
-
-        // TODO: Remove?
-        if (vision.elementPose != null)
-            drawRobot(toPedroPose(nav.getArtifactPose()));
-
         drawDebug(follower);
 
         telemetry.addData("Drive (Goal Lock)", () -> String.format("%s", config.goalLock));
@@ -127,9 +114,6 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
         telemetry.addData("Drive (Goal Remain)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
         telemetry.addData("Drive (Goal Dist)", () -> String.format("%.1f", nav.getGoalDistance()));
-        telemetry.addData("Drive (Artifact Forward Remaining)", () -> String.format("%.1f", nav.getArtifactForwardRemaining()));
-        telemetry.addData("Drive (Artifact Strafe Remaining)", () -> String.format("%.1f", nav.getArtifactStrafeRemaining()));
-        telemetry.addData("Drive (Artifact Heading Remaining)", () -> String.format("%.1f", toDegrees(nav.getArtifactHeadingRemaining())));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
@@ -153,14 +137,14 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public double calculateForward(double forward) {
-        if (!config.chaseLock || vision.elementPose == null) return forward;
+        if (!config.chaseLock || vision.element == null) return forward;
         double remaining = nav.getArtifactForwardRemaining();
         if (abs(remaining) < 1) return forward;
         return pidfForward.calculate(remaining) - signum(remaining) * pidfForward.getF();
     }
 
     public double calculateStrafe(double strafe) {
-        if (!config.chaseLock || vision.elementPose == null) return strafe;
+        if (!config.chaseLock || vision.element == null) return strafe;
         double remaining = nav.getArtifactStrafeRemaining();
         if (abs(remaining) < 1) return strafe;
         return pidfStrafe.calculate(remaining) - signum(remaining) * pidfStrafe.getF();
@@ -170,7 +154,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         double remaining;
 
         if (config.goalLock) remaining = nav.getGoalHeadingRemaining();
-        else if (config.chaseLock && vision.elementPose != null) remaining = nav.getArtifactHeadingRemaining();
+        else if (config.chaseLock && vision.element != null) remaining = nav.getArtifactHeadingRemaining();
         else return turn;
 
         if (config.chaseLock && abs(toDegrees(remaining)) < 2) return turn;
@@ -206,13 +190,5 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (pose != null)
             follower.setStartingPose(toPedroPose(pose));
         follower.startTeleopDrive();
-    }
-
-    public void startChasing() {
-        // TODO: Chasing, Start
-    }
-
-    public void stopChasing() {
-        // TODO: Chasing, Stop
     }
 }

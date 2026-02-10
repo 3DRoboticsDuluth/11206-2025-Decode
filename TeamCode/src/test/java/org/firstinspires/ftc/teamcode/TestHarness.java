@@ -87,7 +87,7 @@ public class TestHarness {
         Subsystems.deflector = mock(DeflectorSubsystem.class);
         Subsystems.flywheel = mock(FlywheelSubsystem.class);
         Subsystems.vision = mock(VisionSubsystem.class);
-        Subsystems.vision.elementPose = new Pose(0, 0, 0);
+        Subsystems.vision.element = new Pose(0, 0, 0);
         Subsystems.kickstand = mock(KickstandSubsystem.class);
         Subsystems.timing = mock(TimingSubsystem.class);
 

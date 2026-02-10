@@ -4,7 +4,9 @@ public enum Pipeline {
     QRCODE(0),
     APRILTAG(1),
     GREEN(2),
-    PURPLE(3);
+    PURPLE(3),
+    PURPLE_LEFT(4),
+    PURPLE_RIGHT(5);
 
     public final int index;
 
