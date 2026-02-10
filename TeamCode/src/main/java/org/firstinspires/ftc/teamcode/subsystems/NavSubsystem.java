@@ -9,8 +9,6 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
-import android.util.Log;
-
 import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
@@ -150,9 +148,6 @@ public class NavSubsystem {
     }
 
     public Pose getChasePose(int execution) {
-        Log.i(this.getClass().getSimpleName(), String.format("execution: %d", execution));
-        Log.i(this.getClass().getSimpleName(), String.format("vision.element: %s", vision.element));
-        Log.i(this.getClass().getSimpleName(), String.format("getChasePose, x: %.1f", vision.element == null ? (2.75 - execution * 0.5) * TILE_WIDTH : vision.element.x));
         return createPose(
             vision.element == null ? (2.75 - execution * 0.5) * TILE_WIDTH : vision.element.x,
             2.4 * TILE_WIDTH * -config.alliance.sign,

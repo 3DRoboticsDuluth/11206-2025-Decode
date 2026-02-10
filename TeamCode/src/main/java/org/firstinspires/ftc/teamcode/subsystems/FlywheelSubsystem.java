@@ -81,7 +81,7 @@ public class FlywheelSubsystem extends HardwareSubsystem {
     private double calculateVelocity() {
         double velocity = VEL;
 
-        if (config.started && (config.goalLock || config.robotCentric))
+        if (config.started && (drive.getGoalLock() || config.robotCentric))
             velocity = (
                 1.064487 + (0.2797805 - 1.064487)/(1 + pow(nav.getGoalDistance()/177.5942, 3.400669))
             ) + controllerAxial.calculate(

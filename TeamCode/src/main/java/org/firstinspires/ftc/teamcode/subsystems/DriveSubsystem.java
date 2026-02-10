@@ -29,6 +29,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFCoefficients;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.FFController;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.PIDFController;
+import org.firstinspires.ftc.teamcode.game.Alliance;
+import org.firstinspires.ftc.teamcode.game.Side;
 
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
@@ -36,7 +38,6 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
     public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
-    public static double GOAL_LOCK_MAX_TURN = 0.4;
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
     public static double POWER_INTAKE = 0.5;
@@ -45,6 +46,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static double POWER_HIGH = 1.00;
     public static double POWER_AUTO = 0.8;
     public static double TO_FAR = TILE_WIDTH * 3;
+    public static double GOAL_LOCK_MAX_TURN = 0.4;
+    public static boolean GOAL_LOCK = false;
     public static boolean CHASE_LOCK = false;
 
     public static Follower follower;
@@ -69,8 +72,9 @@ public class DriveSubsystem extends HardwareSubsystem {
     private double turn = 0;
 
     public DriveSubsystem() {
-        config.chaseLock = CHASE_LOCK = false;
-        configureFollower(null);
+        this.setGoalLock(false);
+        this.setChaseLock(false);
+        this.configureFollower(null);
         driveFrontLeft = getMotor("driveFrontLeft", RPM_1150);
         driveFrontRight = getMotor("driveFrontRight", RPM_1150);
         driveBackLeft = getMotor("driveBackLeft", RPM_1150);
@@ -82,7 +86,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-//        config.chaseLock = CHASE_LOCK;
+        if (CHASE_LOCK) config.chaseLock = true;
 
         pForward.setP(config.responsiveness);
         pStrafe.setP(config.responsiveness);
@@ -90,7 +94,6 @@ public class DriveSubsystem extends HardwareSubsystem {
         pidfForward.setPIDFCoefficients(FORWARD_PIDF);
         pidfStrafe.setPIDFCoefficients(STRAFE_PIDF);
         pidfTurn.setPIDFCoefficients(HEADING_PIDF);
-
 
         if (opMode.isStopRequested()) {
             follower.breakFollowing();
@@ -105,8 +108,6 @@ public class DriveSubsystem extends HardwareSubsystem {
 
         drawDebug(follower);
 
-        telemetry.addData("Drive (Goal Lock)", () -> String.format("%s", config.goalLock));
-        telemetry.addData("Drive (Chase Lock)", () -> String.format("%s", config.chaseLock));
         telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
@@ -114,6 +115,8 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
         telemetry.addData("Drive (Goal Remain)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
         telemetry.addData("Drive (Goal Dist)", () -> String.format("%.1f", nav.getGoalDistance()));
+        telemetry.addData("Drive (Goal Lock)", () -> String.format("%s", this.getGoalLock()));
+        telemetry.addData("Drive (Chase Lock)", () -> String.format("%s", this.getChaseLock()));
 
         driveFrontLeft.addTelemetry(TEL);
         driveFrontRight.addTelemetry(TEL);
@@ -126,25 +129,25 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
         if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
-        if (isBusy() || (config.auto && !config.chaseLock)) return;
+        if (isBusy() || (config.auto && !(this.getGoalLock() || this.getChaseLock()))) return;
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, calculateForward(forward)),
             this.strafe += pStrafe.calculate(this.strafe, calculateStrafe(strafe)),
             this.turn += pTurn.calculate(this.turn, calculateTurn(turn)),
-            config.robotCentric  && !config.chaseLock,
+            config.robotCentric  && !this.getChaseLock(),
             config.robotCentric || config.chaseLock || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90
         );
     }
 
     public double calculateForward(double forward) {
-        if (!config.chaseLock || vision.element == null) return forward;
+        if (!this.getChaseLock() || vision.element == null) return forward;
         double remaining = nav.getArtifactForwardRemaining();
         if (abs(remaining) < 1) return forward;
         return pidfForward.calculate(remaining) - signum(remaining) * pidfForward.getF();
     }
 
     public double calculateStrafe(double strafe) {
-        if (!config.chaseLock || vision.element == null) return strafe;
+        if (!this.getChaseLock() || vision.element == null) return strafe;
         double remaining = nav.getArtifactStrafeRemaining();
         if (abs(remaining) < 1) return strafe;
         return pidfStrafe.calculate(remaining) - signum(remaining) * pidfStrafe.getF();
@@ -153,11 +156,11 @@ public class DriveSubsystem extends HardwareSubsystem {
     public double calculateTurn(double turn) {
         double remaining;
 
-        if (config.goalLock) remaining = nav.getGoalHeadingRemaining();
-        else if (config.chaseLock && vision.element != null) remaining = nav.getArtifactHeadingRemaining();
+        if (this.getGoalLock()) remaining = nav.getGoalHeadingRemaining();
+        else if (this.getChaseLock() && vision.element != null) remaining = nav.getArtifactHeadingRemaining();
         else return turn;
 
-        if (config.chaseLock && abs(toDegrees(remaining)) < 2) return turn;
+        if (this.getChaseLock() && abs(toDegrees(remaining)) < 2) return turn;
 
         return (
             clamp(pidfTurn.calculate(remaining) - signum(remaining) * pidfTurn.getF(), -GOAL_LOCK_MAX_TURN, GOAL_LOCK_MAX_TURN)
@@ -181,6 +184,25 @@ public class DriveSubsystem extends HardwareSubsystem {
             gamepad1.getLeftY() != 0 ||
             gamepad1.getRightX() != 0
         );
+    }
+
+    public boolean getGoalLock() {
+        return config.goalLock || GOAL_LOCK;
+    }
+
+    public void setGoalLock(boolean enabled) {
+        config.goalLock = GOAL_LOCK =
+            config.started && !config.robotCentric &&
+                config.alliance != Alliance.UNKNOWN &&
+                config.side != Side.UNKNOWN && enabled;
+    }
+
+    public boolean getChaseLock() {
+        return config.chaseLock || CHASE_LOCK;
+    }
+
+    public void setChaseLock(boolean enabled) {
+        config.chaseLock = CHASE_LOCK = enabled;
     }
 
     public void configureFollower(Pose pose) {

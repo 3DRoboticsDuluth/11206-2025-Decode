@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawArtifact;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
@@ -12,6 +11,10 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
+import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -33,6 +36,7 @@ import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
@@ -44,9 +48,9 @@ import java.util.Map;
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean CAMERA_UPSIDE_DOWN = true;
-    public static double CAMERA_X_INCHES = 3.93701; // 0.1 meters
+    public static double CAMERA_X_INCHES = 3.93701;    // 0.10 meters
     public static double CAMERA_Y_INCHES = -0.3937008; // 0.01 meters
-    public static double CAMERA_Z_INCHES = 16.14173; // 0.42 meters
+    public static double CAMERA_Z_INCHES = 16.14173;   // 0.42 meters
     public static double CAMERA_PITCH_DEGREES = -0.75;
     public static double CAMERA_YAW_DEGREES = 1.15;
     public static double ELEMENT_RADIUS = 2.5;
@@ -62,6 +66,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double DEG_MIN = -213.0;
     public static double DEG_MAX = 29.0;
     public static double DEG = 0;
+    public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
+    public static double PHANTOM_ANGLE = NaN;
+    public static double PHANTOM_PERIOD = 15;
     public static boolean TEL = false;
 
     public final Limelight3A limelight;
@@ -105,8 +112,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        if (element != null)
-            drawArtifact(toPedroPose(element));
+        drawArtifact();
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
@@ -139,6 +145,26 @@ public class VisionSubsystem extends HardwareSubsystem {
         }
 
         processors.get(PIPELINE).accept(result);
+    }
+
+    public void drawArtifact() {
+        if (!isNaN(PHANTOM_ANGLE)) {
+            double angle = PHANTOM_ANGLE == 0 ?
+                2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
+                toRadians(PHANTOM_ANGLE);
+
+            element = new Pose(
+                PHANTOM_RADIUS * cos(angle),
+                PHANTOM_RADIUS * sin(angle),
+                0
+            );
+        }
+
+        if (element == null) return;
+
+        Drawing.drawArtifact(
+            toPedroPose(element)
+        );
     }
 
     public void goalLock(boolean enabled) {
