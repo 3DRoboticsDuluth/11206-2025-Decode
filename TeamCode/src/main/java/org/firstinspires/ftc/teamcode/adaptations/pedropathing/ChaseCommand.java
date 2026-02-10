@@ -24,7 +24,7 @@ public class ChaseCommand extends CommandBase {
         if (lastChasePose == null || config.pose.hypot(lastChasePose) > 8)
             lastChasePose = this.chasePoseSupplier.get();
         return lastChasePose == null ||
-            config.pose.hypot(lastChasePose) < 2 ||
+            config.pose.hypot(lastChasePose) < 3 ||
             config.pose.x < .5 * TILE_WIDTH ||
             abs(config.pose.y) < .25;
     }

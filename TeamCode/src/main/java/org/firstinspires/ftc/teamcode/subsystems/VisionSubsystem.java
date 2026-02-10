@@ -51,7 +51,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double CAMERA_Z_INCHES = 16.14173; // 0.42 meters
     public static double CAMERA_PITCH_DEGREES = -0.75;
     public static double CAMERA_YAW_DEGREES = 1.15;
-    public static double ELEMENT_RADIUS = 4;
+    public static double ELEMENT_RADIUS = 2.5;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
@@ -170,6 +170,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void chaseLock(boolean enabled) {
         if (!enabled) return;
+        elementPoses.clear();
+        nextCalled = false;
         switchPipeline(PURPLE, true);
         POS = POS_CHASE_LOCK;
     }
@@ -180,7 +182,10 @@ public class VisionSubsystem extends HardwareSubsystem {
         limelight.pipelineSwitch((PIPELINE = pipeline).index);
     }
 
+    public boolean nextCalled = false;
+
     public void nextElement() {
+        nextCalled = true;
         elementPose = elementPoses.isEmpty() ? null : elementPoses.remove(0);
     }
 
@@ -273,48 +278,52 @@ public class VisionSubsystem extends HardwareSubsystem {
 
 //        elementPoses.clear();
 
-        for (LLResultTypes.ColorResult cr : colorResults) {
-            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
-            double crx = direction * cr.getTargetXDegrees();
-            double cry = direction * cr.getTargetYDegrees();
+        if (elementPoses.isEmpty()) {
+            for (LLResultTypes.ColorResult cr : colorResults) {
+                double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+                double crx = direction * cr.getTargetXDegrees();
+                double cry = direction * cr.getTargetYDegrees();
 
-            telemetry.addData(
-                "Vision (Color Result)",
-                () -> String.format(
-                    "%.2f°tx, %.2f°ty",
-                    crx, cry
-                )
-            );
+                telemetry.addData(
+                    "Vision (Color Result)",
+                    () -> String.format(
+                        "%.2f°tx, %.2f°ty",
+                        crx, cry
+                    )
+                );
 
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
-                    crx, cry
-                )
-            );
+                Log.i(
+                    this.getClass().getSimpleName(),
+                    String.format(
+                        "Vision (Color Result) | %.2f°tx, %.2f°ty",
+                        crx, cry
+                    )
+                );
 
-            Pose latestPose = getElementPose(crx, cry);
-            Pose latestPose2 = config.pose.axial(latestPose.x).lateral(latestPose.y);
-            if (abs(latestPose2.x) > TILE_WIDTH * 3 ||
-                abs(latestPose2.y) > TILE_WIDTH * 3 ||
-                abs(latestPose2.x) < .25 * TILE_WIDTH ||
-                abs(latestPose2.y) < .25 * TILE_WIDTH) continue;
-            elementPoses.removeIf(existing -> existing.hypot(latestPose2) < ELEMENT_RADIUS * 3);
-            elementPoses.add(latestPose2);
+                if (!nextCalled) {
+                    Pose latestPose = getElementPose(crx, cry);
+                    Pose latestPose2 = config.pose.axial(latestPose.x).lateral(latestPose.y);
+                    if (abs(latestPose2.x) > TILE_WIDTH * 3 ||
+                        abs(latestPose2.y) > TILE_WIDTH * 3 ||
+                        abs(latestPose2.x) < .25 * TILE_WIDTH ||
+                        abs(latestPose2.y) < .25 * TILE_WIDTH) continue;
+                    elementPoses.removeIf(existing -> existing.hypot(latestPose2) < ELEMENT_RADIUS * 3);
+                    elementPoses.add(latestPose2);
 
-            telemetry.addData(
-                "Vision (Element Pose)",
-                latestPose::toString
-            );
+                    telemetry.addData(
+                        "Vision (Element Pose)",
+                        latestPose::toString
+                    );
 
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Element Pose) | %s",
-                    latestPose
-                )
-            );
+                    Log.i(
+                        this.getClass().getSimpleName(),
+                        String.format(
+                            "Vision (Element Pose) | %s",
+                            latestPose
+                        )
+                    );
+                }
+            }
         }
 
         elementPoses.forEach(p -> drawArtifact(toPedroPose(p)));

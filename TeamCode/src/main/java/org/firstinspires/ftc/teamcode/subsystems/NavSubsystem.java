@@ -101,6 +101,17 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getDepositChasePose(double axialOffset, double lateralOffset) {
+        return createPose(
+            2.4 * TILE_WIDTH,
+            config.alliance.sign * -0.75 * TILE_WIDTH
+        ).face(
+            getGoalPose(), config.alliance == RED ? +180 : -180
+        ).axial(axialOffset).lateral(lateralOffset).face(
+            getGoalPose(), config.alliance == RED ? +180 : -180
+        );
+    }
+
     public Pose getGatePose() {
         return createPose(
             0 * TILE_WIDTH,
@@ -140,7 +151,7 @@ public class NavSubsystem {
     }
 
     public Pose getArtifactPose() {
-        return vision.elementPose.face(config.pose).axial(ROBOT_LENGTH / 2 + 0.75).reverse();
+        return vision.elementPose.face(config.pose).axial(ROBOT_LENGTH / 2).reverse();
     }
 
     public double getArtifactForwardRemaining() {

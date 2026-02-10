@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commands;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
 public class VisionCommands {
@@ -19,7 +20,9 @@ public class VisionCommands {
     }
 
     public Command nextElement() {
-        return complete(vision::nextElement);
+        return new DeferredCommand(
+            () -> complete(vision::nextElement), null
+        );
     }
 
     private Command complete(Runnable runnable) {

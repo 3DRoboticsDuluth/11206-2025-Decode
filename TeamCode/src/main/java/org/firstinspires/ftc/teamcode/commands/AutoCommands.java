@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.GREEN;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.ORANGE;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.PURPLE;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.conveyor;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
+import static org.firstinspires.ftc.teamcode.commands.Commands.lights;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -139,20 +143,24 @@ public class AutoCommands {
                 auto.intakeStart(),
                 wait.seconds(2),
                // wait.seconds(MAX_VALUE),
-                //new RepeatCommand(
+//                new RepeatCommand(
                     vision.nextElement().andThen(
-                        drive.chase()
-                    ).withTimeout(3000),
+                        drive.chase(),
+                        lights.set(ORANGE)
+                    ).withTimeout(2000),
                     vision.nextElement().andThen(
-                        drive.chase()
-                    ).withTimeout(3000),
+                        drive.chase(),
+                        lights.set(PURPLE)
+                    ).withTimeout(1000),
                     vision.nextElement().andThen(
-                        drive.chase()
-                    ).withTimeout(3000),
+                        drive.chase(),
+                        lights.set(GREEN)
+                    ).withTimeout(1000),
                 //    ), 3),
-                auto.intakeStop(),
                 auto.chaseLock(false),
-                auto.deposit(NORTH, 0, 0)
+                auto.deposit(NORTH, 0, 0).alongWith(
+                    auto.intakeStop()
+                )
             )/*, cycles
         )*/;
     }
