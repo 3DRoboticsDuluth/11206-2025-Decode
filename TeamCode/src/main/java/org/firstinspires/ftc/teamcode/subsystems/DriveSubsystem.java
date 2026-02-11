@@ -129,7 +129,7 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
         if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
-        if (isBusy() || config.auto) return;
+        if (isBusy() || (config.auto && !this.getGoalLock())) return;
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, calculateForward(forward)),
             this.strafe += pStrafe.calculate(this.strafe, calculateStrafe(strafe)),

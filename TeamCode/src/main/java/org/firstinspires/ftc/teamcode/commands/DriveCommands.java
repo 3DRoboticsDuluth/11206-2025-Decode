@@ -250,6 +250,12 @@ public class DriveCommands {
         return wait.until(() -> abs(nav.getGoalHeadingRemaining()) < toRadians(heading));
     }
 
+    public Command untilNotBusy() {
+        return complete(
+            () -> wait.until(() -> !drive.isBusy())
+        );
+    }
+
     public boolean isToFar(Pose pose) {
         return config.teleop &&
             config.pose != null &&

@@ -127,6 +127,8 @@ public class AutoCommands {
             ).alongWith(
                 drive.untilDistance(side == NORTH ? -10 : -30).andThen(
                     drive.untilHeading(10),
+                    side == NORTH ? drive.untilNotBusy() : wait.noop(),
+                    side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
                     conveyor.waitUntilStopped(),
                     // TODO: Add flywheel.isReady() for NORTH?
                     auto.depositStart(),
