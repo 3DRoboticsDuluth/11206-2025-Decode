@@ -15,6 +15,7 @@ public class Config {
     public Alliance alliance = Alliance.UNKNOWN;
     public Side side = Side.UNKNOWN;
     public String quanomous = null;
+    public boolean parkGate = false;
     public double delay = 0;
     public double responsiveness = 0.5;
     public boolean robotCentric = false;

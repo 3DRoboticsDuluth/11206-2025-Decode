@@ -160,7 +160,7 @@ public class AutoCommands {
     public Command park(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
         return drive.setPowerAuto().alongWith(
             drive.curve(
-                nav.getParkingPose(gate, axial, lateral)
+                nav.getParkingPose(config.parkGate, axial, lateral)
             )
         );
     }

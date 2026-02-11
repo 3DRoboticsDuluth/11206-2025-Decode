@@ -184,7 +184,7 @@ public class NavSubsystem {
         return createPose(
             gate ? 0 * TILE_WIDTH : (config.side.sign * 2.6 * TILE_WIDTH),
             gate ? (1.75 * -config.alliance.sign * TILE_WIDTH) : ((config.side == NORTH ? -1.75 : -1) * TILE_WIDTH * config.alliance.sign),
-            Math.toRadians(90 + config.side.sign * 90),
+            gate ? toRadians(config.side.sign * -90) : toRadians(90 + config.side.sign * 90),
             axial,
             lateral
         );
