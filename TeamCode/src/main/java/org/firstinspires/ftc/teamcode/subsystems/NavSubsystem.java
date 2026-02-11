@@ -114,8 +114,16 @@ public class NavSubsystem {
     public Pose getGateIntakePose() {
         return createPose(
             .65 * TILE_WIDTH,
-            config.alliance.sign * 2.75,
-            toRadians(config.alliance.sign * -165)
+            config.alliance.sign * -2.75 * TILE_WIDTH,
+            toRadians(config.alliance.sign * -135)
+        );
+    }
+
+    public Pose getGateIntakeDepartPose() {
+        return createPose(
+            .25 * TILE_WIDTH,
+            config.alliance.sign * -2.65 * TILE_WIDTH,
+            toRadians(config.alliance.sign * 220)
         );
     }
 

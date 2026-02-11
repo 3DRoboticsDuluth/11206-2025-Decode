@@ -29,19 +29,19 @@ import java.util.HashMap;
 
 public class AutoCommands {
     public Command execute() {
-        return auto.delayStart().andThen(
-            quanomous.execute(),
-            wait.doherty(2)
-        ).withTimeout(29500).andThen(
-            auto.stop()
-        );
-//
 //        return auto.delayStart().andThen(
-//            deposit(SOUTH, 0, 0),
-//            releaseGate(),
-//            gateIntake(),
-//            deposit(SOUTH,0,0)
+//            quanomous.execute(),
+//            wait.doherty(2)
+//        ).withTimeout(29500).andThen(
+//            auto.stop()
 //        );
+//
+        return auto.delayStart().andThen(
+            deposit(SOUTH, 0, 0),
+            releaseGate(),
+            gateIntake(),
+            deposit(SOUTH,0,0)
+        );
     }
 
     public Command executeChasing() {
@@ -144,9 +144,13 @@ public class AutoCommands {
     }
 
     public Command gateIntake() {
-        return intakeStart().andThen(
+        return intakeStart().alongWith(
+            drive.setPowerHigh()).andThen(
             drive.toGateIntake(),
-            wait.seconds(2)
+            wait.doherty(1),
+            drive.setPowerLow(),
+            drive.toGateIntakeDepart().withTimeout(400),
+            drive.setPowerAuto()
         );
     }
 

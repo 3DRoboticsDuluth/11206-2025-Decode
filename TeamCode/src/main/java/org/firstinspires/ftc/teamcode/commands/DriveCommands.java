@@ -170,6 +170,13 @@ public class DriveCommands {
         );
     }
 
+    public Command toGateIntakeDepart() {
+        return curve(
+            nav.getGateIntakeDepartPose().axial(TILE_WIDTH * config.side.sign * -0.05).lateral(TILE_WIDTH * -.1),
+            nav.getGateIntakeDepartPose()
+        );
+    }
+
     public Command toBase() {
         return curve(nav.getBasePose());
     }
