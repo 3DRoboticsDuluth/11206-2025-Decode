@@ -1,0 +1,7 @@
+[
+	{"cmd":"deposit","locale":"far","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":0},
+	{"cmd":"deposit","locale":"far","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"chase","cycles":4},
+	{"cmd":"park","gate":false}
+]

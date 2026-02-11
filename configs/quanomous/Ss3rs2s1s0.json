@@ -2,9 +2,12 @@
 	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
 	{"cmd":"intake","spike":3},
 	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"release"},
 	{"cmd":"intake","spike":2},
 	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
 	{"cmd":"intake","spike":1},
+	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
+	{"cmd":"intake","spike":0},
 	{"cmd":"deposit","locale":"near","sorted":false,"txo":0,"tyo":0},
 	{"cmd":"park","gate":true}
 ]
