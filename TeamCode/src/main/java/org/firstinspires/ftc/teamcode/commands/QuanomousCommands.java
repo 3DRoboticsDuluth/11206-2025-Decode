@@ -8,9 +8,11 @@ import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Math.abs;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class QuanomousCommands {
     private final Map<String, Function<JSONObject, Command>> commands =
@@ -43,7 +46,9 @@ public class QuanomousCommands {
 
     public static Command intake(JSONObject obj) throws Exception {
         int spike = obj.getInt("spike");
-        return auto.intake(spike);
+        return withTimeout(
+            () -> auto.intake(spike)
+        );
     }
 
     public static Command deposit(JSONObject obj) throws Exception {
@@ -51,16 +56,22 @@ public class QuanomousCommands {
         Side side = locale.equals("near") ? SOUTH : NORTH;
         double txo = obj.getDouble("txo") * TILE_WIDTH;
         double tyo = obj.getDouble("tyo") * TILE_WIDTH;
-        return auto.deposit(side, txo, tyo);
+        return withTimeout(
+            () -> auto.deposit(side, txo, tyo)
+        );
     }
 
     public static Command release(JSONObject obj) {
-        return auto.releaseGate();
+        return withTimeout(
+            () -> auto.releaseGate()
+        );
     }
 
     public static Command chase(JSONObject obj) throws Exception {
         int cycles = obj.getInt("cycles");
-        return auto.chase(cycles == 0 ? Integer.MAX_VALUE : cycles);
+        return withTimeout(
+            () -> auto.chase(cycles == 0 ? Integer.MAX_VALUE : cycles)
+        );
     }
 
     public static Command park(JSONObject obj) {
@@ -71,15 +82,20 @@ public class QuanomousCommands {
     }
 
     public static Command drive(JSONObject obj) throws Exception {
+        double tx = obj.getDouble("tx");
+        double ty = abs(obj.getDouble("ty"));
+        double heading = obj.getDouble("h");
         String axial = obj.optString("axial", "center").toLowerCase();
         String lateral = obj.optString("lateral", "center").toLowerCase();
-        return drive.curve(
-            nav.createPose(
-                obj.getDouble("tx") * TILE_WIDTH,
-                abs(obj.getDouble("ty")) * -config.alliance.sign * TILE_WIDTH,
-                obj.getDouble("h"),
-                parseAxial(axial),
-                parseLateral(lateral)
+        return withTimeout(
+            () -> drive.curve(
+                nav.createPose(
+                    tx * TILE_WIDTH,
+                    ty * -config.alliance.sign * TILE_WIDTH,
+                    heading,
+                    parseAxial(axial),
+                    parseLateral(lateral)
+                )
             )
         );
     }
@@ -99,7 +115,6 @@ public class QuanomousCommands {
             default: return NavSubsystem.Lateral.CENTER;
         }
     }
-
 
     /** @noinspection DataFlowIssue*/
     public Command execute() {
@@ -133,5 +148,13 @@ public class QuanomousCommands {
                 }
             };
         }
+    }
+
+    private static Command withTimeout(Supplier<Command> supplier) {
+        return new DeferredCommand(
+            () -> supplier.get().withTimeout(
+                28000L - (long)playTimer.milliseconds()
+            ), null
+        );
     }
 }
