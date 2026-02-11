@@ -35,6 +35,13 @@ public class AutoCommands {
         ).withTimeout(29500).andThen(
             auto.stop()
         );
+//
+//        return auto.delayStart().andThen(
+//            deposit(SOUTH, 0, 0),
+//            releaseGate(),
+//            gateIntake(),
+//            deposit(SOUTH,0,0)
+//        );
     }
 
     public Command executeChasing() {
@@ -132,6 +139,13 @@ public class AutoCommands {
 
     public Command releaseGate() {
         return drive.toGate();
+    }
+
+    public Command gateIntake() {
+        return intakeStart().andThen(
+            drive.toGateIntake(),
+            wait.seconds(2)
+        );
     }
 
     public Command goalLock(boolean enabled) {

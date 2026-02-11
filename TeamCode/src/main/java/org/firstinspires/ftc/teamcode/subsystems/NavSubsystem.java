@@ -53,7 +53,7 @@ public class NavSubsystem {
         return createPose(
             2.1 * TILE_WIDTH,
             config.alliance.sign * -2.75 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -15)
+            toRadians(config.alliance.sign * -12)
         );
     }
 
@@ -97,9 +97,9 @@ public class NavSubsystem {
             (abs(config.pose.y) < TILE_WIDTH ? 2.5 : 2.3) * TILE_WIDTH,
             config.alliance.sign * (abs(config.pose.y) < TILE_WIDTH ? -0.65 : -0.75) * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -177 : +183)
+            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -183: -180)
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -177 : +183)
+            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -183 : -180)
         );
     }
 
@@ -108,6 +108,14 @@ public class NavSubsystem {
             0 * TILE_WIDTH,
             config.alliance.sign * -2 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
+        );
+    }
+
+    public Pose getGateIntakePose() {
+        return createPose(
+            .65 * TILE_WIDTH,
+            config.alliance.sign * 2.75,
+            toRadians(config.alliance.sign * -165)
         );
     }
 
