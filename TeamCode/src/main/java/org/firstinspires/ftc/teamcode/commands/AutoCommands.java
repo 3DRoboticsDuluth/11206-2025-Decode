@@ -151,7 +151,7 @@ public class AutoCommands {
                 ).withTimeout(2000 + 200L * execution).andThen(
                     wait.doherty(),
                     drive.setPowerAuto(),
-                    auto.deposit(NORTH, 0, 0.5 * TILE_WIDTH)
+                    auto.deposit(NORTH, -0.25 * TILE_WIDTH, config.alliance.sign * -0.0 * TILE_WIDTH)
                 ), cycles
             )
         );

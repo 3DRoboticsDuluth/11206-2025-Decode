@@ -36,8 +36,6 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.ChaseCommand;
-import org.firstinspires.ftc.teamcode.game.Alliance;
-import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +101,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
-                nav.getSpike0().axial(TILE_WIDTH * 0.4).lateral(TILE_WIDTH * 0.2 * config.alliance.sign)
+                nav.getSpike0().axial(TILE_WIDTH * 0.4).lateral(TILE_WIDTH * 0.0 * config.alliance.sign)
             ), null
         );
     }

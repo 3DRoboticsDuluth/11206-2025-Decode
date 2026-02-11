@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
+import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -52,7 +53,7 @@ public class NavSubsystem {
         return createPose(
             2.1 * TILE_WIDTH,
             config.alliance.sign * -2.75 * TILE_WIDTH,
-            toRadians(config.alliance.sign * -18)
+            toRadians(config.alliance.sign * -15)
         );
     }
 
@@ -93,12 +94,12 @@ public class NavSubsystem {
 
     public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
-            2.3 * TILE_WIDTH,
+            (abs(config.pose.y) < TILE_WIDTH ? 2.5 : 2.3) * TILE_WIDTH,
             config.alliance.sign * (abs(config.pose.y) < TILE_WIDTH ? -0.65 : -0.75) * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? +181 : -181
+            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -177 : +183)
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? +181 : -181
+            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -177 : +183)
         );
     }
 
@@ -156,7 +157,7 @@ public class NavSubsystem {
 
     public Pose getChasePose(int execution) {
         return createPose(
-            vision.element == null ? (2.75 - execution * 0.5) * TILE_WIDTH : vision.element.x,
+            vision.element == null ? (2.75 - (execution % 3) * 0.75) * TILE_WIDTH : vision.element.x,
             2.4 * TILE_WIDTH * -config.alliance.sign,
             toRadians(config.alliance.sign * -85)
         );
