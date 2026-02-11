@@ -19,6 +19,7 @@ public class KickstandSubsystem extends HardwareSubsystem {
     public ServoEx servoRight;
 
     public KickstandSubsystem() {
+        POS = DISENGAGE;
         servoLeft = getServo("kickstandLeft", s-> s.scaleRange(LEFT_MIN, LEFT_MAX));
         servoRight = getServo("kickstandRight", s -> s.scaleRange(RIGHT_MIN, RIGHT_MAX, true));
     }
