@@ -76,8 +76,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public Pipeline PIPELINE;
     public ElapsedTime timer = new ElapsedTime();
-    public Pose detection = null;
-    public int detectionCount = 0;
+    public LLResult result = null;
+    public Pose botpose = null;
     public Pose element = null;
 
     Map<Pipeline, Consumer<LLResult>> processors;
@@ -119,12 +119,12 @@ public class VisionSubsystem extends HardwareSubsystem {
             return;
         }
 
-        detection = null;
+        botpose = null;
 
         double yaw = toDegrees(config.pose.heading);
         limelight.updateRobotOrientation(yaw);
 
-        LLResult result = limelight.getLatestResult();
+        result = limelight.getLatestResult();
 
         if (POS_LAST != POS) {
             timer.reset();
@@ -213,40 +213,28 @@ public class VisionSubsystem extends HardwareSubsystem {
     private void processAprilTag(LLResult result) {
         Pose3D botpose = result.getBotpose_MT2();
 
-        detection = new Pose(
+        this.botpose = new Pose(
             botpose.getPosition().x,
             botpose.getPosition().y,
             botpose.getOrientation().getYaw(AngleUnit.RADIANS)
         );
 
-        telemetry.addData("Vision (Detection Count)", () -> String.format("%d", ++detectionCount));
-
-        Log.i(this.getClass().getSimpleName(), String.format("%d", ++detectionCount));
-
         telemetry.addData(
-            "Vision (Detection Pose)",
-            () -> String.format(
-                "%.1fx, %.1fy, %.1f°",
-                detection.x,
-                detection.y,
-                toDegrees(detection.heading)
-            )
+            "Vision (Botpose)",
+            () -> String.format("%s", this.botpose)
         );
 
         Log.i(
             this.getClass().getSimpleName(),
-            String.format(
-                "Vision (Detection Pose) | %.1fx, %.1fy, %.1f°",
-                detection.x,
-                detection.y,
-                toDegrees(detection.heading)
-            )
+            String.format("Vision (Botpose) | %s", this.botpose)
         );
 
         telemetry.addData(
-            "Vision (TxNC, TyNC)",
+            "Vision (Tx, Ty, TxNC, TyNC)",
             () -> String.format(
-                "%.1fx°, %.1fy°",
+                "%.1fTx, %.1fTy, %.1fTxNC, %.1fTyNC",
+                result.getTx(),
+                result.getTy(),
                 result.getTxNC(),
                 result.getTyNC()
             )

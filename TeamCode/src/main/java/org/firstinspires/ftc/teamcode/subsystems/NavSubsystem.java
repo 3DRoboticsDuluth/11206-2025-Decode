@@ -128,14 +128,20 @@ public class NavSubsystem {
     }
 
     public double getGoalHeadingOffset() {
-        return config.pose.x > TILE_WIDTH ?
-            config.goalAngleOffsetNorth :
-            config.goalAngleOffsetSouth;
+        return toRadians(
+            config.pose.x > TILE_WIDTH ?
+                config.goalAngleOffsetNorth :
+                config.goalAngleOffsetSouth
+        );
     }
 
     public double getGoalHeadingRemaining() {
         return normalizeHeading(
-            config.pose.heading - (this.getGoalPose().atan2(config.pose) + toRadians(this.getGoalHeadingOffset()))
+            config.pose.heading - (
+                this.getGoalPose().atan2(
+                    vision.botpose == null ? config.pose : vision.botpose
+                ) + this.getGoalHeadingOffset()
+            )
         );
     }
 
