@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Math.abs;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -26,7 +27,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@Configurable
 public class QuanomousCommands {
+    public static long TIMEOUT = 28000L;
+
     private final Map<String, Function<JSONObject, Command>> commands =
         new HashMap<String, Function<JSONObject, Command>>() {{
             put("delay", Lambda.unchecked(QuanomousCommands::delay));
@@ -153,7 +157,7 @@ public class QuanomousCommands {
     private static Command withTimeout(Supplier<Command> supplier) {
         return new DeferredCommand(
             () -> supplier.get().withTimeout(
-                28000L - (long)playTimer.milliseconds()
+                TIMEOUT - (long)playTimer.milliseconds()
             ), null
         );
     }
