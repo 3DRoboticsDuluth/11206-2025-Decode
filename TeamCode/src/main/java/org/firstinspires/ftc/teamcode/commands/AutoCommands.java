@@ -151,15 +151,17 @@ public class AutoCommands {
                 ).withTimeout(2000 + 200L * execution).andThen(
                     wait.doherty(),
                     drive.setPowerAuto(),
-                    auto.deposit(NORTH, 0, 0)
+                    auto.deposit(NORTH, 0, 0.5 * TILE_WIDTH)
                 ), cycles
             )
         );
     }
 
     public Command park(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
-        return drive.curve(
-            nav.getParkingPose(gate, axial, lateral)
+        return drive.setPowerAuto().alongWith(
+            drive.curve(
+                nav.getParkingPose(gate, axial, lateral)
+            )
         );
     }
 

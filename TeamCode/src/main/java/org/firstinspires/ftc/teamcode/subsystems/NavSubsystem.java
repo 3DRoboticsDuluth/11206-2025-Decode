@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
@@ -93,7 +94,7 @@ public class NavSubsystem {
     public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
             2.3 * TILE_WIDTH,
-            config.alliance.sign * -0.5 * TILE_WIDTH
+            config.alliance.sign * (abs(config.pose.y) < TILE_WIDTH ? -0.65 : -0.75) * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance == RED ? +181 : -181
         ).axial(axialOffset).lateral(lateralOffset).face(
@@ -181,9 +182,9 @@ public class NavSubsystem {
 
     public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
         return createPose(
-            gate ? 0 * TILE_WIDTH : (config.side == NORTH ? 1 * TILE_WIDTH: -2.5 * TILE_WIDTH),
-            gate ? 1.75 * -config.alliance.sign * TILE_WIDTH : 1 * TILE_WIDTH * -config.alliance.sign,
-            -config.alliance.sign * Math.toRadians(90),
+            gate ? 0 * TILE_WIDTH : (config.side.sign * 2.6 * TILE_WIDTH),
+            gate ? (1.75 * -config.alliance.sign * TILE_WIDTH) : ((config.side == NORTH ? -1.75 : -1) * TILE_WIDTH * config.alliance.sign),
+            Math.toRadians(90 + config.side.sign * 90),
             axial,
             lateral
         );

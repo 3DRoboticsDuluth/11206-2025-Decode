@@ -103,7 +103,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
-                nav.getSpike0().axial(TILE_WIDTH * 0.4).lateral(TILE_WIDTH * 0.1 * config.alliance.sign)
+                nav.getSpike0().axial(TILE_WIDTH * 0.4).lateral(TILE_WIDTH * 0.15 * config.alliance.sign)
             ), null
         );
     }
