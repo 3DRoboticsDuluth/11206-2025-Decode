@@ -86,9 +86,9 @@ public class NavSubsystem {
             -1 * TILE_WIDTH,
             config.alliance.sign * -0.75 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? +175 : -175
+            getGoalPose(), config.alliance == RED ? +173 : -173
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? +175 : -175
+            getGoalPose(), config.alliance == RED ? +173 : -173
         );
     }
 
@@ -97,9 +97,9 @@ public class NavSubsystem {
             (abs(config.pose.y) < TILE_WIDTH ? 2.5 : 2.3) * TILE_WIDTH,
             config.alliance.sign * (abs(config.pose.y) < TILE_WIDTH ? -0.65 : -0.75) * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -183: -180)
+            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -183 : -177)
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -183 : -180)
+            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +183 : +177) : (playTimer.seconds() < 4 ? -183 : -177)
         );
     }
 

@@ -44,7 +44,7 @@ public class AutoCommands {
     }
 
     public Command intakeStart() {
-        return auto.goalLock(false).alongWith(
+        return auto.goalLock(false).andThen(
             intake.forward(),
             conveyor.forward(),
             gate.close()
@@ -90,7 +90,7 @@ public class AutoCommands {
     }
 
     public Command depositStop() {
-        return auto.goalLock(false).alongWith(
+        return auto.goalLock(false).andThen(
             conveyor.stop(),
             flywheel.stop(),
             intake.stop()
@@ -106,14 +106,13 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(side == NORTH ? -10 : -30).andThen(
+                drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -32).andThen(
                     drive.untilHeading(20),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
-                    side == NORTH ? conveyor.waitUntilStopped() : wait.noop(),
                     side == NORTH ? flywheel.isReady() : wait.noop(),
                     auto.depositStart(),
-                    wait.doherty(side == NORTH ? 2 : 0)
+                    wait.doherty(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? 2 : 0) // TODO: Change 2 to 1?
                 )
             )
         );
@@ -155,7 +154,7 @@ public class AutoCommands {
             lights.set(TRANSPARENT),
             new RepeatCommand(
                 execution -> drive.toChase(execution).alongWith(
-                    drive.untilDistance(-TILE_WIDTH).andThen(drive.setPowerLow()),
+                    drive.untilDistance(-1.5 * TILE_WIDTH).andThen(drive.setPowerLow()), // TODO: Consider -1 vs -1.5
                     wait.milliseconds(50).andThen(vision.resetElement()),
                     auto.intakeStart()
                 ).withTimeout(2000 + 200L * execution).andThen(

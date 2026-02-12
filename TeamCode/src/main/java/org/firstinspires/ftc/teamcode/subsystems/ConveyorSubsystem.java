@@ -4,6 +4,7 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_11
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
+import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static java.lang.Math.pow;
 
@@ -49,7 +50,8 @@ public class ConveyorSubsystem extends HardwareSubsystem {
     }
 
     public void stop() {
-        VEL = STOP;
+        if (VEL == REV || !config.goalLock)
+            VEL = STOP;
     }
 
     public boolean stopped() {
