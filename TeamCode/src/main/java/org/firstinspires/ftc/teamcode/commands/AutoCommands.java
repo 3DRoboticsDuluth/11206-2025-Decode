@@ -107,12 +107,12 @@ public class AutoCommands {
                 }}, () -> side
             ).alongWith(
                 drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -32).andThen(
-                    drive.untilHeading(20),
+                    drive.untilHeading(15),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
                     side == NORTH ? flywheel.isReady() : wait.noop(),
                     auto.depositStart(),
-                    wait.doherty(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? 2 : 0) // TODO: Change 2 to 1?
+                    wait.doherty(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? 2 : 0)
                 )
             )
         );
@@ -154,7 +154,7 @@ public class AutoCommands {
             lights.set(TRANSPARENT),
             new RepeatCommand(
                 execution -> drive.toChase(execution).alongWith(
-                    drive.untilDistance(-1.5 * TILE_WIDTH).andThen(drive.setPowerLow()), // TODO: Consider -1 vs -1.5
+                    drive.untilDistance(-1 * TILE_WIDTH).andThen(drive.setPowerLow()),
                     wait.milliseconds(50).andThen(vision.resetElement()),
                     auto.intakeStart()
                 ).withTimeout(2000 + 200L * execution).andThen(
@@ -168,10 +168,12 @@ public class AutoCommands {
 
     /** @noinspection unused*/
     public Command park(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
-        return drive.setPowerAuto().alongWith(
-            drive.toParking(config.parkGate, axial, lateral)
-        ).andThen(
-            stop()
+        return wait.until(() -> !config.goalLock).withTimeout(800).andThen(
+            drive.setPowerAuto().alongWith(
+                drive.toParking(config.parkGate, axial, lateral)
+            ).andThen(
+                stop()
+            )
         );
     }
 

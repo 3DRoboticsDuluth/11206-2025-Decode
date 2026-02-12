@@ -44,7 +44,7 @@ import java.util.function.DoubleSupplier;
 
 /** @noinspection unused, UnusedReturnValue */
 public class DriveCommands {
-    public static double HEADING_END_TIME = 0.5; // TODO: Test higher deposit, lower intake?
+    public static double HEADING_END_TIME = 0.33;
     private boolean reverse = false;
     private Pose startPose = new Pose(0, 0, 0);
     private Pose endPose = new Pose(0, 0, 0);
@@ -98,11 +98,11 @@ public class DriveCommands {
             () -> curve(
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * 1).lateral(TILE_WIDTH * 0.8 * config.alliance.sign) :
-                    nav.getSpike0().axial(TILE_WIDTH * -3.5).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
+                    nav.getSpike0().axial(TILE_WIDTH * -3.25).lateral(TILE_WIDTH * 2.15 * config.alliance.sign),
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
-                nav.getSpike0().axial(TILE_WIDTH * 0.6)
+                nav.getSpike0().axial(TILE_WIDTH * 0.7)
             ), null
         );
     }
@@ -154,6 +154,10 @@ public class DriveCommands {
     public Command toDepositNorth(double axialOffset, double lateralOffset) {
         return curve(
             nav.getDepositNorthPose(axialOffset, lateralOffset)
+        ).alongWith(
+            untilDistance(-1 * TILE_WIDTH).andThen(setPowerMedium())
+        ).andThen(
+            setPowerHigh()
         );
     }
 

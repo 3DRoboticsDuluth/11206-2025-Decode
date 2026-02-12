@@ -40,11 +40,11 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
-    public static double POWER_INTAKE = 0.5;
+    public static double POWER_INTAKE = 0.50;
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;
-    public static double POWER_AUTO = 0.8;
+    public static double POWER_AUTO = 0.80;
     public static double TO_FAR = TILE_WIDTH * 3;
     public static double GOAL_LOCK_MAX_TURN = 0.4;
     public static boolean GOAL_LOCK = false;
