@@ -35,6 +35,7 @@ public class QuanomousCommands {
         new HashMap<String, Function<JSONObject, Command>>() {{
             put("delay", Lambda.unchecked(QuanomousCommands::delay));
             put("intake", Lambda.unchecked(QuanomousCommands::intake));
+            put("intake_gate", Lambda.unchecked(QuanomousCommands::intakeGate));
             put("deposit", Lambda.unchecked(QuanomousCommands::deposit));
             put("release", Lambda.unchecked(QuanomousCommands::release));
             put("chase", Lambda.unchecked(QuanomousCommands::chase));
@@ -52,6 +53,12 @@ public class QuanomousCommands {
         int spike = obj.getInt("spike");
         return withTimeout(
             () -> auto.intake(spike)
+        );
+    }
+
+    public static Command intakeGate(JSONObject obj) throws Exception {
+        return withTimeout(
+            () -> auto.gateIntake()
         );
     }
 

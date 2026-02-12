@@ -29,18 +29,11 @@ import java.util.HashMap;
 
 public class AutoCommands {
     public Command execute() {
-//        return auto.delayStart().andThen(
-//            quanomous.execute(),
-//            wait.doherty(2)
-//        ).withTimeout(29500).andThen(
-//            auto.stop()
-//        );
-//
         return auto.delayStart().andThen(
-            deposit(SOUTH, 0, 0),
-            releaseGate(),
-            gateIntake(),
-            deposit(SOUTH,0,0)
+            quanomous.execute(),
+            wait.doherty(2)
+        ).withTimeout(29500).andThen(
+            auto.stop()
         );
     }
 
@@ -145,12 +138,14 @@ public class AutoCommands {
 
     public Command gateIntake() {
         return intakeStart().alongWith(
-            drive.setPowerHigh()).andThen(
-            drive.toGateIntake(),
-            wait.doherty(1),
-            drive.setPowerLow(),
-            drive.toGateIntakeDepart().withTimeout(400),
-            drive.setPowerAuto()
+            drive.toGate().andThen(
+                drive.setPowerHigh(),
+                drive.toGateIntake(),
+                wait.doherty(1),
+                drive.setPowerLow(),
+                drive.toGateIntakeDepart().withTimeout(400),
+                drive.setPowerAuto()
+            )
         );
     }
 
