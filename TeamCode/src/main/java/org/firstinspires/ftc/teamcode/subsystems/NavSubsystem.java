@@ -157,7 +157,7 @@ public class NavSubsystem {
         return normalizeHeading(
             config.pose.heading - (
                 this.getGoalPose().atan2(
-                    vision.botpose == null ? config.pose : vision.botpose
+                    /*vision.botpose == null ? */config.pose/* : vision.botpose*/
                 ) + this.getGoalHeadingOffset()
             )
         );

@@ -69,6 +69,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
     public static double PHANTOM_ANGLE = NaN;
     public static double PHANTOM_PERIOD = 15;
+    public static double INCHES_PER_METER = 39.3701;
     public static boolean TEL = false;
 
     public final Limelight3A limelight;
@@ -214,8 +215,8 @@ public class VisionSubsystem extends HardwareSubsystem {
         Pose3D botpose = result.getBotpose_MT2();
 
         this.botpose = new Pose(
-            botpose.getPosition().x,
-            botpose.getPosition().y,
+            botpose.getPosition().x * INCHES_PER_METER,
+            botpose.getPosition().y * INCHES_PER_METER,
             botpose.getOrientation().getYaw(AngleUnit.RADIANS)
         );
 
