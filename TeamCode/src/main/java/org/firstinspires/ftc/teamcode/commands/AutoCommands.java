@@ -37,19 +37,6 @@ public class AutoCommands {
         );
     }
 
-    public Command executeChasing() {
-        return auto.delayStart().andThen(
-            /*quanomous.execute(),*/
-            auto.deposit(NORTH, 0, 0),
-            auto.chase(5),
-        /*).withTimeout(2800).andThen(*/
-            auto.park(true, NavSubsystem.Axial.CENTER, NavSubsystem.Lateral.CENTER),
-            wait.doherty(2),
-        /*).withTimeout(29500).andThen(*/
-            auto.stop()
-        );
-    }
-
     public Command delayStart() {
         return new DeferredCommand(
             () -> wait.seconds(config.delay), null
@@ -172,6 +159,7 @@ public class AutoCommands {
         );
     }
 
+    /** @noinspection unused*/
     public Command park(boolean gate, NavSubsystem.Axial axial, NavSubsystem.Lateral lateral) {
         return drive.setPowerAuto().alongWith(
             drive.curve(

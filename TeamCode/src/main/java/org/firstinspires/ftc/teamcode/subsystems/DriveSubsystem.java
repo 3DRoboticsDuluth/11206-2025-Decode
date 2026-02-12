@@ -125,11 +125,11 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public void inputs(double forward, double strafe, double turn) {
-        if (unready()) return;
+        if (unready() || !config.started) return;
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
         if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
-        if (isBusy() || (config.auto && !this.getGoalLock())) return;
+        if (isBusy() || (config.auto && !this.getChaseLock() && !this.getGoalLock())) return;
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, calculateForward(forward)),
             this.strafe += pStrafe.calculate(this.strafe, calculateStrafe(strafe)),
