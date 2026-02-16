@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
-import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
@@ -56,7 +55,7 @@ public class QuanomousCommands {
         );
     }
 
-    public static Command intakeGate(JSONObject obj) throws Exception {
+    public static Command intakeGate(JSONObject obj) {
         return withTimeout(
             () -> auto.gateIntake()
         );

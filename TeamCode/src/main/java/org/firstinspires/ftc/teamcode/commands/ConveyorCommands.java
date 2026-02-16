@@ -23,6 +23,7 @@ public class ConveyorCommands {
         return complete(conveyor::stop);
     }
 
+    /** @noinspection unused*/
     public Command waitUntilStopped() {
         return wait.doherty().andThen(
             wait.until(conveyor::stopped)

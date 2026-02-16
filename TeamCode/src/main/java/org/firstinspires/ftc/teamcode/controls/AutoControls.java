@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.A;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.B;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
-import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 

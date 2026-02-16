@@ -31,7 +31,6 @@ public class LightsSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        // TODO: Control Review
         if (!config.started) {
             if (config.alliance == Alliance.RED) set(RED);
             else if (config.alliance == Alliance.BLUE) set(BLUE);

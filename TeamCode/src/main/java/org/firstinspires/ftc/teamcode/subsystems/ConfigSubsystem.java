@@ -16,7 +16,6 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.panels.json.Change;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
