@@ -29,8 +29,10 @@ public class FlywheelSubsystemTests extends TestHarness {
     public void testPeriodic() {
         VEL = FWD;
         flywheel.periodic();
-        verify(flywheel.motorLeft.motor).setPower(VEL);
-        verify(flywheel.motorRight.motor).setPower(VEL);
+        verify(flywheel.motorLeft.motorEx).setVelocityPIDFCoefficients(FlywheelSubsystem.PIDF.p, FlywheelSubsystem.PIDF.i, FlywheelSubsystem.PIDF.d, FlywheelSubsystem.PIDF.f);
+        verify(flywheel.motorRight.motorEx).setVelocityPIDFCoefficients(FlywheelSubsystem.PIDF.p, FlywheelSubsystem.PIDF.i, FlywheelSubsystem.PIDF.d, FlywheelSubsystem.PIDF.f);
+        verify(flywheel.motorLeft.motorEx).setVelocity(0);
+        verify(flywheel.motorRight.motorEx).setVelocity(0);
     }
 
     @Test
@@ -57,11 +59,15 @@ public class FlywheelSubsystemTests extends TestHarness {
     @Test
     public void testIsReady() {
         VEL = FWD;
-        when(flywheel.motorLeft.getVelocityPercentage()).thenReturn(FWD * THRESH / 2);
-        when(flywheel.motorRight.getVelocityPercentage()).thenReturn(FWD * THRESH / 2);
+        when(flywheel.motorLeft.getMaxRPM()).thenReturn(6000.0);
+        when(flywheel.motorRight.getMaxRPM()).thenReturn(6000.0);
+        when(flywheel.motorLeft.getCPR()).thenReturn(28.0);
+        when(flywheel.motorRight.getCPR()).thenReturn(28.0);
+        when(flywheel.motorLeft.motorEx.getVelocity()).thenReturn(6000 / 60.0 * 28 * FWD * THRESH / 2);
+        when(flywheel.motorRight.motorEx.getVelocity()).thenReturn(6000 / 60.0 * 28 * FWD * THRESH / 2);
         assert !flywheel.isReady();
-        when(flywheel.motorLeft.getVelocityPercentage()).thenReturn(FWD * THRESH);
-        when(flywheel.motorRight.getVelocityPercentage()).thenReturn(FWD * THRESH);
+        when(flywheel.motorLeft.motorEx.getVelocity()).thenReturn(6000 / 60.0 * 28 * FWD * THRESH);
+        when(flywheel.motorRight.motorEx.getVelocity()).thenReturn(6000 / 60.0 * 28 * FWD * THRESH);
         assert flywheel.isReady();
     }
 }

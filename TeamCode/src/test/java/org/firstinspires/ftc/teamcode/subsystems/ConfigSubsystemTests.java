@@ -67,7 +67,7 @@ public class ConfigSubsystemTests extends TestHarness {
     public void testModifyingDelayValue() {
         config.delay = 10.0;
         Subsystems.config.setEditable(true);
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
             Subsystems.config.changeItem(Change.NEXT);
         Subsystems.config.changeValue(Change.NEXT);
         assert config.delay == 10.5;

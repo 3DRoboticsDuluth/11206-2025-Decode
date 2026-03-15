@@ -10,6 +10,9 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -34,65 +37,67 @@ public class AutoCommandsTests extends TestHarness {
     @Test
     public void testIntakeStart() {
         auto.intakeStart().initialize();
+        verify(auto).goalLock(false);
         verify(intake).forward();
         verify(conveyor).forward();
         verify(gate).close();
-        verify(flywheel).hold();
     }
 
     @Test
     public void testIntakeStop() {
         auto.intakeStop().initialize();
+        verify(auto).goalLock(true);
+        verify(flywheel).forward();
         verify(conveyor).reverse();
-        verify(wait).doherty(3);
+        verify(gate).hold();
+        verify(wait).doherty(2);
         verify(conveyor).stop();
         verify(intake).hold();
-        verify(gate).open();
-        verify(wait).doherty(2);
-        verify(flywheel).forward();
-        verify(flywheel).isReady();
-        verify(drive).rumble();
     }
 
     @Test
     public void testDepositStart() {
         auto.depositStart().initialize();
+        verify(auto).goalLock(true);
+        verify(gate).open();
+        verify(intake).forward();
         verify(flywheel).forward();
-        verify(flywheel).isReady();
         verify(conveyor).launch();
     }
 
     @Test
     public void testDepositStop() {
         auto.depositStop().initialize();
+        verify(auto).goalLock(false);
         verify(conveyor).stop();
         verify(flywheel).stop();
         verify(intake).stop();
     }
 
     @Test
-    public void testDepositNear() {
-        auto.depositSouth(0, 0).initialize();
+    public void testDepositSouth() {
+        doReturn(wait.noop()).when(auto).intakeStop();
+        doReturn(wait.noop()).when(auto).depositStart();
+        auto.deposit(SOUTH, 0, 0).initialize();
         verify(drive).toDepositSouth(0, 0);
-        verify(auto).depositStart();
-        verify(wait).doherty(3);
-        verify(auto).depositStop();
+        verify(auto).intakeStop();
+        verify(drive).setPowerAuto();
     }
 
     @Test
-    public void testDepositFar() {
-        auto.depositNorth(0, 0).initialize();
-        verify(auto).depositStart();
-        verify(wait).doherty(3);
-        verify(auto).depositStop();
+    public void testDepositNorth() {
+        doReturn(wait.noop()).when(auto).intakeStop();
+        doReturn(wait.noop()).when(auto).depositStart();
+        auto.deposit(NORTH, 0, 0).initialize();
+        verify(drive).toDepositNorth(0, 0);
+        verify(auto).intakeStop();
+        verify(drive).setPowerAuto();
     }
 
     @Test
     public void testReleaseGate() {
         auto.releaseGate().initialize();
         verify(drive).toGate();
-        verify(drive).forward(3);
-        verify(wait).seconds(1);
-        verify(drive).forward(-3);
+        verify(gate).close();
     }
 }

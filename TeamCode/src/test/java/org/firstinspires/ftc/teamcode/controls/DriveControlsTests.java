@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.controls;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
-import static org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem.RESPONSIVENESS_INCREMENT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
@@ -26,47 +25,27 @@ public class DriveControlsTests extends TestHarness {
     }
     
     @Test
-    public void testBackAndDpadDownSetPowerLow() {
-        input(() -> gamepad1.gamepad.back = true);
+    public void testDpadDownSetPowerLow() {
         input(() -> gamepad1.gamepad.dpad_down = true);
         verify(drive.setPowerLow()).schedule(true);
     }
 
     @Test
-    public void testBackAndDpadLeftOrDpadRightSetPowerMedium() {
-        input(() -> gamepad1.gamepad.back = true);
+    public void testDpadLeftSetsPowerMedium() {
         input(() -> gamepad1.gamepad.dpad_left = true);
         verify(drive.setPowerMedium()).schedule(true);
     }
 
     @Test
-    public void testBackAndDpadRightOrDpadRightSetPowerMedium() {
-        input(() -> gamepad1.gamepad.back = true);
+    public void testDpadRightSetsPowerMedium() {
         input(() -> gamepad1.gamepad.dpad_right = true);
         verify(drive.setPowerMedium()).schedule(true);
     }
 
     @Test
-    public void testBackAndDpadUpSetPowerHigh() {
-        input(() -> gamepad1.gamepad.back = true);
+    public void testDpadUpSetPowerHigh() {
         input(() -> gamepad1.gamepad.dpad_up = true);
         verify(drive.setPowerHigh()).schedule(true);
-    }
-
-    @Test
-    public void testLeftBumperResponsivenessIncrease() {
-        double responsiveness = 0.5;
-        config.responsiveness = responsiveness;
-        input(() -> gamepad1.gamepad.left_bumper = true);
-        assert config.responsiveness == responsiveness - RESPONSIVENESS_INCREMENT;
-    }
-
-    @Test
-    public void testRightBumperResponsivenessIncrease() {
-        double responsiveness = 0.5;
-        config.responsiveness = responsiveness;
-        input(() -> gamepad1.gamepad.right_bumper = true);
-        assert config.responsiveness == responsiveness + RESPONSIVENESS_INCREMENT;
     }
 
     @Test

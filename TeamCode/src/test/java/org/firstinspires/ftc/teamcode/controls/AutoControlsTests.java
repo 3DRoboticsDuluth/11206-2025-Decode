@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.controls;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
@@ -15,23 +16,40 @@ public class AutoControlsTests extends TestHarness {
     }
     
     @Test
-    public void testAAndDpadUpIntakesArtifact() {
-        input(() -> gamepad1.gamepad.a = true);
-        input(() -> gamepad1.gamepad.dpad_up = true);
+    public void testLeftTriggerStartsIntake() {
+        input(() -> gamepad1.gamepad.left_trigger = 0.3f);
         verify(auto.intakeStart()).schedule(true);
     }
 
     @Test
-    public void testBAndDpadUpDepositsNear() {
-        input(() -> gamepad1.gamepad.dpad_up = true);
-        input(() -> gamepad1.gamepad.b = true);
-        verify(auto.depositSouth(0, 0)).schedule(true);
+    public void testLeftTriggerReleaseStopsIntake() {
+        input(() -> gamepad1.gamepad.left_trigger = 0.3f);
+        input(() -> gamepad1.gamepad.left_trigger = 0.0f);
+        verify(auto.intakeStop()).schedule(true);
     }
     
     @Test
-    public void testBAndDpadDownDepositsFar() {
-        input(() -> gamepad1.gamepad.dpad_down = true);
-        input(() -> gamepad1.gamepad.b = true);
-        verify(auto.depositNorth(0, 0)).schedule(true);
+    public void testRightTriggerStartsDeposit() {
+        input(() -> gamepad1.gamepad.right_trigger = 0.3f);
+        verify(auto.depositStart()).schedule(true);
+    }
+
+    @Test
+    public void testRightTriggerReleaseStopsDeposit() {
+        input(() -> gamepad1.gamepad.right_trigger = 0.3f);
+        input(() -> gamepad1.gamepad.right_trigger = 0.0f);
+        verify(auto.depositStop()).schedule(true);
+    }
+
+    @Test
+    public void testYStopsAuto() {
+        input(() -> gamepad1.gamepad.y = true);
+        verify(auto.stop()).schedule(true);
+    }
+
+    @Test
+    public void testGamepad2ATogglesGoalLock() {
+        input(() -> gamepad2.gamepad.a = true);
+        verify(auto.goalLock(true)).schedule(true);
     }
 }

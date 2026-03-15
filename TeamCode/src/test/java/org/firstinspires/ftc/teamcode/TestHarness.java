@@ -74,7 +74,7 @@ public class TestHarness {
         gamepad1 = new GamepadEx(mock(Gamepad.class));
         gamepad2 = new GamepadEx(mock(Gamepad.class));
 
-        Config.config = mock(Config.class);
+        Config.config = new Config();
 
         Subsystems.config = mock(ConfigSubsystem.class);
         Subsystems.nav = mock(NavSubsystem.class);
@@ -82,7 +82,6 @@ public class TestHarness {
         Subsystems.drive.follower = mock(Follower.class);
         Subsystems.intake = mock(IntakeSubsystem.class);
         Subsystems.conveyor = mock(ConveyorSubsystem.class);
-        Subsystems.sorting = mock(SortingSubsystem.class);
         Subsystems.gate = mock(GateSubsystem.class);
         Subsystems.deflector = mock(DeflectorSubsystem.class);
         Subsystems.flywheel = mock(FlywheelSubsystem.class);
@@ -98,7 +97,6 @@ public class TestHarness {
         Commands.drive = mock(DriveCommands.class, RETURNS_DEEP_STUBS);
         Commands.intake = mock(IntakeCommands.class, RETURNS_DEEP_STUBS);
         Commands.conveyor = mock(ConveyorCommands.class, RETURNS_DEEP_STUBS);
-        Commands.sorting = mock(SortingCommands.class, RETURNS_DEEP_STUBS);
         Commands.gate = mock(GateCommands.class, RETURNS_DEEP_STUBS);
         Commands.deflector = mock(DeflectorCommands.class, RETURNS_DEEP_STUBS);
         Commands.flywheel = mock(FlywheelCommands.class, RETURNS_DEEP_STUBS);

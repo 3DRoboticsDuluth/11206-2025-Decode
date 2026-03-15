@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.kickstand;
-import static org.firstinspires.ftc.teamcode.commands.Commands.sorting;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 
@@ -25,7 +24,6 @@ public class CommandsTests extends TestHarness {
         assert drive != null;
         assert intake != null;
         assert conveyor != null;
-        assert sorting != null;
         assert gate != null;
         assert deflector != null;
         assert flywheel != null;
