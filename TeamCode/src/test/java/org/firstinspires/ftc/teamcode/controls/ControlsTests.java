@@ -5,6 +5,11 @@ import org.junit.Test;
 
 public class ControlsTests extends TestHarness {
     @Test
+    public void testConstructor() {
+        new Controls();
+    }
+
+    @Test
     public void testInitializeAuto() {
         Controls.initializeAuto();
     }

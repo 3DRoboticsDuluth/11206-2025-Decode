@@ -4,10 +4,14 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import java.util.function.DoubleSupplier;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class DriveControlsTests extends TestHarness {
     @Override
@@ -22,6 +26,13 @@ public class DriveControlsTests extends TestHarness {
         input(() -> gamepad1.gamepad.left_stick_x = 0.66f);
         input(() -> gamepad1.gamepad.right_stick_x = 1.00f);
         verify(drive).input(any(), any(), any());
+
+        ArgumentCaptor<DoubleSupplier> captor = ArgumentCaptor.forClass(DoubleSupplier.class);
+        verify(drive, times(1)).input(captor.capture(), captor.capture(), captor.capture());
+
+        assert Math.abs(captor.getAllValues().get(0).getAsDouble() + 0.33d) < 1e-6;
+        assert Math.abs(captor.getAllValues().get(1).getAsDouble() + 0.66d) < 1e-6;
+        assert Math.abs(captor.getAllValues().get(2).getAsDouble() + 1.0d) < 1e-6;
     }
     
     @Test
