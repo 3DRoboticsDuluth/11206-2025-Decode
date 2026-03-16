@@ -17,6 +17,11 @@ import org.junit.Test;
 
 public class SubsystemsTests extends TestHarness {
     @Test
+    public void testConstructor() {
+        new Subsystems();
+    }
+
+    @Test
     public void testInitialize() {
         Subsystems.initialize();
         assert config != null;

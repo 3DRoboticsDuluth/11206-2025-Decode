@@ -32,6 +32,12 @@ public class KickstandSubsystemTest extends TestHarness {
     }
 
     @Test
+    public void testPeriodicReturnsWhenUnready() {
+        kickstand.errors.add("disabled");
+        kickstand.periodic();
+    }
+
+    @Test
     public void testEngage() {
         POS = DISENGAGE;
         kickstand.engage();

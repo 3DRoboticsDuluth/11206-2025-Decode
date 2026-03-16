@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.subsystems.GateSubsystem.CLOSE;
+import static org.firstinspires.ftc.teamcode.subsystems.GateSubsystem.HOLD;
 import static org.firstinspires.ftc.teamcode.subsystems.GateSubsystem.OPEN;
 import static org.firstinspires.ftc.teamcode.subsystems.GateSubsystem.POS;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.gate;
@@ -30,6 +31,12 @@ public class GateSubsystemTests extends TestHarness {
     }
 
     @Test
+    public void testPeriodicReturnsWhenUnready() {
+        gate.errors.add("disabled");
+        gate.periodic();
+    }
+
+    @Test
     public void testOpen() {
         POS = CLOSE;
         gate.open();
@@ -41,5 +48,12 @@ public class GateSubsystemTests extends TestHarness {
         POS = OPEN;
         gate.close();
         assert POS == CLOSE;
+    }
+
+    @Test
+    public void testHold() {
+        POS = CLOSE;
+        gate.hold();
+        assert POS == HOLD;
     }
 }

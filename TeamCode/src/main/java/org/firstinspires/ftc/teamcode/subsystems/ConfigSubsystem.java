@@ -20,10 +20,9 @@ import com.bylazar.panels.json.Change;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.adaptations.ftc.PersistenceAdapter;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 import org.firstinspires.ftc.teamcode.game.Config;
 
@@ -47,6 +46,8 @@ public class ConfigSubsystem extends SubsystemBase {
     public static double RESPONSIVENESS_INCREMENT = 0.01;
     public static double GOAL_DISTANCE_INCREMENT = 6;
     public static double GOAL_ANGLE_INCREMENT = 1;
+
+    static PersistenceAdapter persistence = new PersistenceAdapter();
 
     private static Thread thread;
     private int index = 0;
@@ -124,11 +125,11 @@ public class ConfigSubsystem extends SubsystemBase {
 
     public ConfigSubsystem() {
         if (config == null && PERSISTENCE) {
-            File file = AppUtil.getInstance().getSettingsFile(fileName);
+            File file = persistence.getSettingsFile(fileName);
 
             if (file.exists()) {
                 try {
-                    config = gson.fromJson(ReadWriteFile.readFile(file), Config.class);
+                    config = gson.fromJson(persistence.readFile(file), Config.class);
                     Log.i(this.getClass().getSimpleName(), "Config loaded");
                 } catch (Exception e) {
                     Log.w(this.getClass().getSimpleName(), "Config failed to load", e);
@@ -158,8 +159,8 @@ public class ConfigSubsystem extends SubsystemBase {
         thread = new Thread() {
             @Override public void run() {
                 String json = gson.toJson(config);
-                File file = AppUtil.getInstance().getSettingsFile(fileName);
-                ReadWriteFile.writeFile(file, json);
+                File file = persistence.getSettingsFile(fileName);
+                persistence.writeFile(file, json);
             }
         };
 
