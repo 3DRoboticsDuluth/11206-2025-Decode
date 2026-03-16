@@ -13,13 +13,26 @@
 
 // Include common definitions from above.
 
+apply plugin: 'jacoco'
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+
+jacoco {
+    toolVersion = '0.8.12'
+}
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
     packagingOptions { jniLibs.useLegacyPackaging true }
-    testOptions { unitTests.returnDefaultValues = true }
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+                excludes = ['jdk.internal.*']
+            }
+        }
+    }
 }
 
 repositories {
@@ -58,5 +71,46 @@ tasks.withType(Test).configureEach {
         if (agent) {
             jvmArgs "-javaagent:${agent.absolutePath}"
         }
+    }
+}
+
+tasks.register('jacocoTestReport', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+
+    def excludes = [
+        '**/R.class',
+        '**/R$*.class',
+        '**/BuildConfig.*',
+        '**/Manifest*.*',
+        '**/*$Lambda$*.*',
+        '**/*$$ExternalSynthetic*.*',
+        '**/*$inlined$*.*',
+        'org/firstinspires/ftc/teamcode/adaptations/**'
+    ]
+
+    def javaClasses = fileTree(
+        dir: layout.buildDirectory.dir('intermediates/javac/debug/compileDebugJavaWithJavac/classes').get().asFile,
+        excludes: excludes
+    )
+    def kotlinClasses = fileTree(
+        dir: layout.buildDirectory.dir('tmp/kotlin-classes/debug').get().asFile,
+        excludes: excludes
+    )
+
+    classDirectories.setFrom(files(javaClasses, kotlinClasses))
+    sourceDirectories.setFrom(files('src/main/java', 'src/main/kotlin'))
+    additionalSourceDirs.setFrom(files('src/main/java', 'src/main/kotlin'))
+    executionData.setFrom(fileTree(dir: layout.buildDirectory.get().asFile, includes: [
+        'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
+        'jacoco/testDebugUnitTest.exec',
+        'jacoco/test.exec',
+        '**/*.ec',
+        '**/*.exec'
+    ]))
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
     }
 }
