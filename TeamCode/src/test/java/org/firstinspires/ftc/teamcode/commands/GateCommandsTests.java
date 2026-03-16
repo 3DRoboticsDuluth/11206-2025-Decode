@@ -26,4 +26,10 @@ public class GateCommandsTests extends TestHarness {
         gate.close().initialize();
         verify(Subsystems.gate, times(1)).close();
     }
+
+    @Test
+    public void testHold() {
+        gate.hold().initialize();
+        verify(Subsystems.gate, times(1)).hold();
+    }
 }

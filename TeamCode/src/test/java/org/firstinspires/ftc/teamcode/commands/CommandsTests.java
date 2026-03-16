@@ -17,6 +17,11 @@ import org.junit.Test;
 
 public class CommandsTests extends TestHarness {
     @Test
+    public void testConstructor() {
+        assert new Commands() != null;
+    }
+
+    @Test
     public void testForward() {
         Commands.initialize();
         assert wait != null;

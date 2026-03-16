@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.conveyor;
+import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.function.BooleanSupplier;
+
 import org.firstinspires.ftc.teamcode.TestHarness;
-import org.firstinspires.ftc.teamcode.subsystems.ConfigSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class ConveyorCommandsTests extends TestHarness {
     @Override
@@ -38,5 +41,13 @@ public class ConveyorCommandsTests extends TestHarness {
     public void testStop() {
         conveyor.stop().initialize();
         verify(Subsystems.conveyor, times(1)).stop();
+    }
+
+    @Test
+    public void testWaitUntilStopped() {
+        conveyor.waitUntilStopped();
+
+        ArgumentCaptor<BooleanSupplier> captor = ArgumentCaptor.forClass(BooleanSupplier.class);
+        verify(wait).until(captor.capture());
     }
 }

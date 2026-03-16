@@ -32,4 +32,10 @@ public class IntakeCommandsTests extends TestHarness {
         intake.stop().initialize();
         verify(Subsystems.intake, times(1)).stop();
     }
+
+    @Test
+    public void testHold() {
+        intake.hold().initialize();
+        verify(Subsystems.intake, times(1)).hold();
+    }
 }

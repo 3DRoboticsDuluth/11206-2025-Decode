@@ -36,4 +36,10 @@ public class ConfigCommandsTests extends TestHarness {
         config.changeValue(change).initialize();
         verify(Subsystems.config, times(1)).changeValue(change);
     }
+
+    @Test
+    public void testSetInterrupt() {
+        config.setInterrupt(true).initialize();
+        assert org.firstinspires.ftc.teamcode.game.Config.config.interrupt;
+    }
 }

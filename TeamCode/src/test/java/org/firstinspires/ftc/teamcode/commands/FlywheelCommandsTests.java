@@ -35,6 +35,12 @@ public class FlywheelCommandsTests extends TestHarness {
     }
 
     @Test
+    public void testHold() {
+        flywheel.hold().initialize();
+        verify(Subsystems.flywheel).hold();
+    }
+
+    @Test
     public void testIsReady() {
         flywheel.isReady();
         verify(wait).until(any());
