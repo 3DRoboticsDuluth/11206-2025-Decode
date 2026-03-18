@@ -20,7 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,11 +58,11 @@ public class AutoCommandsTests extends TestHarness {
 
     @Test
     public void testExecute() {
+        doReturn(new InstantCommand(), new InstantCommand()).when(auto).stop();
         auto.execute();
         verify(auto).delayStart();
         verify(quanomous).execute();
-        verify(wait).doherty(2);
-        verify(auto).stop();
+        verify(auto, times(2)).stop();
     }
 
     @Test
@@ -219,5 +221,16 @@ public class AutoCommandsTests extends TestHarness {
         assert captor.getValue().getAsBoolean();
 
         verify(drive).toParking(anyBoolean(), any(), any());
+    }
+
+    @Test
+    public void testStopDoesNotCallDriveStop() {
+        auto.stop().initialize();
+        verify(drive).goalLock(false);
+        verify(intake).stop();
+        verify(conveyor).stop();
+        verify(gate).close();
+        verify(flywheel).stop();
+        verify(drive, never()).stop();
     }
 }

@@ -31,7 +31,7 @@ public class AutoCommands {
     public Command execute() {
         return auto.delayStart().andThen(
             quanomous.execute(),
-            wait.doherty(2)
+            auto.stop()
         ).withTimeout(29500).andThen(
             auto.stop()
         );
@@ -180,7 +180,6 @@ public class AutoCommands {
 
     public Command stop() {
         return drive.goalLock(false).alongWith(
-            drive.stop(),
             intake.stop(),
             conveyor.stop(),
             gate.close(),

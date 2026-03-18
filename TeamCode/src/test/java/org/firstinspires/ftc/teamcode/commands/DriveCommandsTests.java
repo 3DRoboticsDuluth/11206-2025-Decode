@@ -30,13 +30,10 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
-import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.TestHarness;
@@ -45,6 +42,7 @@ import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+/** @noinspection unchecked, DataFlowIssue */
 public class DriveCommandsTests extends TestHarness {
     @Override
     public void setUp() {
@@ -387,25 +385,27 @@ public class DriveCommandsTests extends TestHarness {
     @Test
     public void testForwardStrafeAndTurn() {
         DriveCommands subject = spy(new DriveCommands());
-        doReturn(wait.noop()).when(subject).to(any(Pose.class), anyBoolean());
+        doReturn(wait.noop()).when(subject).to(any(Pose.class));
 
         subject.forward(5).initialize();
         subject.strafe(5).initialize();
         subject.turn(90).initialize();
 
-        verify(subject, times(3)).to(any(Pose.class), anyBoolean());
+        verify(subject, times(3)).to(any(Pose.class));
     }
 
     @Test
     public void testToCoordinateOverloads() {
         DriveCommands subject = spy(new DriveCommands());
-        doReturn(wait.noop()).when(subject).to(any(Pose.class), anyBoolean());
+        doReturn(wait.noop()).when(subject).to(any(Pose.class));
 
         subject.to(1, 2, 90);
-        subject.to(1, 2, 90, false);
+        subject.to(1, 2, 90, true);
 
-        verify(subject).to(any(Pose.class), org.mockito.ArgumentMatchers.eq(true));
-        verify(subject).to(any(Pose.class), org.mockito.ArgumentMatchers.eq(false));
+        ArgumentCaptor<Pose> captor = ArgumentCaptor.forClass(Pose.class);
+        verify(subject, times(2)).to(captor.capture());
+        assert captor.getAllValues().get(0).hold == Pose.HOLD_DEFAULT;
+        assert captor.getAllValues().get(1).hold;
     }
 
     @Test
@@ -432,10 +432,27 @@ public class DriveCommandsTests extends TestHarness {
         when(follower.pathBuilder()).thenReturn(builder);
         when(builder.addPath(captor.capture())).thenReturn(builder);
 
-        subject.to(new Pose(1, 1, 0), false).initialize();
+        subject.to(new Pose(1, 1, 0, false)).initialize();
         captor.getValue().initialize();
 
         assert captor.getValue().getControlPoints().size() == 3;
+    }
+
+    @Test
+    public void testToCurveCurvesAndPathsHonorHoldOnEndPose() {
+        DriveCommands subject = spy(new DriveCommands());
+        doReturn(wait.noop()).when(subject).follow(org.mockito.ArgumentMatchers.<Consumer<PathBuilder>>any(), anyBoolean());
+
+        subject.to(new Pose(1, 1, 0, true)).initialize();
+        subject.curve().initialize();
+        subject.curve(new Pose(1, 0, 0), new Pose(2, 0, 0, true)).initialize();
+        subject.curves(new Pose(1, 0, 0, true)).initialize();
+        subject.curve(new Pose(3, 0, 0, false)).initialize();
+        subject.curves(new Pose(4, 0, 0, false)).initialize();
+        subject.paths(path -> {}).initialize();
+
+        verify(subject, times(3)).follow(org.mockito.ArgumentMatchers.<Consumer<PathBuilder>>any(), org.mockito.ArgumentMatchers.eq(true));
+        verify(subject, times(4)).follow(org.mockito.ArgumentMatchers.<Consumer<PathBuilder>>any(), org.mockito.ArgumentMatchers.eq(false));
     }
 
     @Test

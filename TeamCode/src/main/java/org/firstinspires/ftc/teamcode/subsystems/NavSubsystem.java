@@ -27,7 +27,7 @@ public class NavSubsystem {
     public Pose getStartPose() {
         return (config.side == null || config.side == Side.UNKNOWN ||
             config.alliance == null || config.alliance == Alliance.UNKNOWN) ?
-                new Pose(0, 0, 0) :
+                createPose(0, 0, 0) :
                 (config.side == Side.NORTH) ?
                     getStartNorthPose() :
                     getStartSouthPose();
@@ -128,7 +128,7 @@ public class NavSubsystem {
     }
 
     public Pose getGoalPose() {
-        return new Pose(
+        return createPose(
             -2.75 * TILE_WIDTH,
             config.alliance.sign * -2.75 * TILE_WIDTH,
             toRadians(config.alliance.sign * 45)
@@ -164,7 +164,7 @@ public class NavSubsystem {
     }
 
     public Pose getChaseScanPose() {
-        return new Pose(
+        return createPose(
             2.5 * TILE_WIDTH,
             -1 * TILE_WIDTH * config.alliance.sign,
             -config.alliance.sign * Math.toRadians(85)
@@ -236,50 +236,98 @@ public class NavSubsystem {
     }
 
     public Pose createPose(double x, double y) {
-        return createPose(x, y, 0, Axial.CENTER, Lateral.CENTER);
+        return createPose(x, y, 0, Axial.CENTER, Lateral.CENTER, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, boolean hold) {
+        return createPose(x, y, 0, Axial.CENTER, Lateral.CENTER, hold);
     }
 
     public Pose createPose(Pose pose, Axial axial) {
-        return createPose(pose, axial, Lateral.CENTER);
+        return createPose(pose, axial, Lateral.CENTER, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(Pose pose, Axial axial, boolean hold) {
+        return createPose(pose, axial, Lateral.CENTER, hold);
     }
 
     public Pose createPose(Pose pose, Lateral lateral) {
-        return createPose(pose, Axial.CENTER, lateral);
+        return createPose(pose, Axial.CENTER, lateral, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(Pose pose, Lateral lateral, boolean hold) {
+        return createPose(pose, Axial.CENTER, lateral, hold);
     }
 
     public Pose createPose(Pose pose, Axial axial, Lateral lateral) {
-        return createPose(pose.x, pose.y, pose.heading, axial, lateral);
+        return createPose(pose.x, pose.y, pose.heading, axial, lateral, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(Pose pose, Axial axial, Lateral lateral, boolean hold) {
+        return createPose(pose.x, pose.y, pose.heading, axial, lateral, hold);
     }
 
     public Pose createPose(double x, double y, double heading) {
-        return createPose(x, y, heading, Axial.CENTER, Lateral.CENTER);
+        return createPose(x, y, heading, Axial.CENTER, Lateral.CENTER, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, boolean hold) {
+        return createPose(x, y, heading, Axial.CENTER, Lateral.CENTER, hold);
     }
 
     public Pose createPose(double x, double y, double heading, double axialOffset, double lateralOffset) {
-        return createPose(x, y, heading, Axial.CENTER, Lateral.CENTER, axialOffset, lateralOffset);
+        return createPose(x, y, heading, Axial.CENTER, Lateral.CENTER, axialOffset, lateralOffset, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, double axialOffset, double lateralOffset, boolean hold) {
+        return createPose(x, y, heading, Axial.CENTER, Lateral.CENTER, axialOffset, lateralOffset, hold);
     }
 
     public Pose createPose(double x, double y, double heading, Axial axial) {
-        return createPose(x, y, heading, axial, Lateral.CENTER);
+        return createPose(x, y, heading, axial, Lateral.CENTER, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, Axial axial, boolean hold) {
+        return createPose(x, y, heading, axial, Lateral.CENTER, hold);
     }
 
     public Pose createPose(double x, double y, double heading, Axial axial, double axialOffset) {
-        return createPose(x, y, heading, axial, Lateral.CENTER, axialOffset, 0);
+        return createPose(x, y, heading, axial, Lateral.CENTER, axialOffset, 0, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, Axial axial, double axialOffset, boolean hold) {
+        return createPose(x, y, heading, axial, Lateral.CENTER, axialOffset, 0, hold);
     }
 
     public Pose createPose(double x, double y, double heading, Lateral lateral) {
-        return createPose(x, y, heading, Axial.CENTER, lateral);
+        return createPose(x, y, heading, Axial.CENTER, lateral, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, Lateral lateral, boolean hold) {
+        return createPose(x, y, heading, Axial.CENTER, lateral, hold);
     }
 
     public Pose createPose(double x, double y, double heading, Lateral lateral, double lateralOffset) {
-        return createPose(x, y, heading, Axial.CENTER, lateral, 0, lateralOffset);
+        return createPose(x, y, heading, Axial.CENTER, lateral, 0, lateralOffset, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, Lateral lateral, double lateralOffset, boolean hold) {
+        return createPose(x, y, heading, Axial.CENTER, lateral, 0, lateralOffset, hold);
     }
 
     public Pose createPose(double x, double y, double heading, Axial axial, Lateral lateral) {
-        return createPose(x, y, heading, axial, lateral, 0, 0);
+        return createPose(x, y, heading, axial, lateral, 0, 0, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, Axial axial, Lateral lateral, boolean hold) {
+        return createPose(x, y, heading, axial, lateral, 0, 0, hold);
     }
 
     public Pose createPose(double x, double y, double heading, Axial axial, Lateral lateral, double axialOffset, double lateralOffset) {
+        return createPose(x, y, heading, axial, lateral, axialOffset, lateralOffset, Pose.HOLD_DEFAULT);
+    }
+
+    public Pose createPose(double x, double y, double heading, Axial axial, Lateral lateral, double axialOffset, double lateralOffset, boolean hold) {
         double axialHeading = normalizeHeading(heading);
         axialOffset -= axial.signum * ROBOT_LENGTH / 2;
         x += cos(axialHeading) * axialOffset;
@@ -290,7 +338,7 @@ public class NavSubsystem {
         x += cos(lateralHeading) * lateralOffset;
         y += sin(lateralHeading) * lateralOffset;
         
-        return new Pose(jitter(x), jitter(y), jitter(heading));
+        return new Pose(jitter(x), jitter(y), jitter(heading), hold);
     }
 
     public double normalizeHeading(double heading) {

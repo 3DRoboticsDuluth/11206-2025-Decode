@@ -93,19 +93,19 @@ public class NavSubsystemTests extends  TestHarness {
 
         config.alliance = org.firstinspires.ftc.teamcode.game.Alliance.UNKNOWN;
         config.side = side;
-        comparePose(new Pose(0, 0, 0), nav.getStartPose());
+        comparePose(new Pose(0, 0, 0, true), nav.getStartPose());
 
         config.alliance = null;
         config.side = side;
-        comparePose(new Pose(0, 0, 0), nav.getStartPose());
+        comparePose(new Pose(0, 0, 0, true), nav.getStartPose());
 
         config.alliance = alliance;
         config.side = org.firstinspires.ftc.teamcode.game.Side.UNKNOWN;
-        comparePose(new Pose(0, 0, 0), nav.getStartPose());
+        comparePose(new Pose(0, 0, 0, true), nav.getStartPose());
 
         config.alliance = alliance;
         config.side = null;
-        comparePose(new Pose(0, 0, 0), nav.getStartPose());
+        comparePose(new Pose(0, 0, 0, true), nav.getStartPose());
 
         config.side = NORTH;
         comparePose(nav.getStartNorthPose(), nav.getStartPose());
@@ -164,6 +164,19 @@ public class NavSubsystemTests extends  TestHarness {
         assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.FRONT, 1.5) != null;
         assert nav.createPose(1, 2, 0.3, NavSubsystem.Lateral.LEFT) != null;
         assert nav.createPose(1, 2, 0.3, NavSubsystem.Lateral.LEFT, 2.5) != null;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.BACK, NavSubsystem.Lateral.RIGHT, 1.5, 2.5) != null;
+        assert nav.createPose(1, 2, true).hold;
+        assert nav.createPose(pose, NavSubsystem.Axial.FRONT, true).hold;
+        assert nav.createPose(pose, NavSubsystem.Lateral.LEFT, true).hold;
+        assert nav.createPose(pose, NavSubsystem.Axial.BACK, NavSubsystem.Lateral.RIGHT, true).hold;
+        assert nav.createPose(1, 2, 0.3, true).hold;
+        assert nav.createPose(1, 2, 0.3, 1.5, 2.5, true).hold;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.FRONT, true).hold;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.FRONT, 1.5, true).hold;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Lateral.LEFT, true).hold;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Lateral.LEFT, 2.5, true).hold;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.BACK, NavSubsystem.Lateral.RIGHT, true).hold;
+        assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.BACK, NavSubsystem.Lateral.RIGHT, 1.5, 2.5, true).hold;
     }
 
     @Theory
@@ -199,5 +212,6 @@ public class NavSubsystemTests extends  TestHarness {
         assert abs(expected.x - actual.x) < 0.1;
         assert abs(expected.y - actual.y) < 0.1;
         assert abs(expected.heading - actual.heading) < 0.1;
+        assert expected.hold == actual.hold;
     }
 }

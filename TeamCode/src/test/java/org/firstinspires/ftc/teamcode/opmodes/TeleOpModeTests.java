@@ -42,7 +42,7 @@ public class TeleOpModeTests extends OpModeTestSupport {
             assertNotNull(OpMode.gamepad2);
             assertNotNull(Commands.auto);
             assert configControls.constructed().size() == 1;
-            assert driveControls.constructed().size() == 2;
+            assert driveControls.constructed().size() == 1;
             assert intakeControls.constructed().size() == 1;
             assert conveyorControls.constructed().size() == 1;
             assert gateControls.constructed().size() == 1;

@@ -102,7 +102,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
-                nav.getSpike0().axial(TILE_WIDTH * 0.7)
+                nav.getSpike0().axial(TILE_WIDTH * 0.7).hold(false)
             ), null
         );
     }
@@ -113,7 +113,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike1().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.3 * config.alliance.sign) :
                     nav.getSpike1().axial(TILE_WIDTH * -1.85).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.3 * config.alliance.sign),
-                nav.getSpike1().axial(TILE_WIDTH * 1.5)
+                nav.getSpike1().axial(TILE_WIDTH * 1.5).hold(false)
             ), null
         );
     }
@@ -124,7 +124,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -1 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -1 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
-                nav.getSpike2().axial(TILE_WIDTH * 1.5)
+                nav.getSpike2().axial(TILE_WIDTH * 1.5).hold(false)
             ), null
         );
     }
@@ -135,7 +135,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
-                nav.getSpike3().axial(TILE_WIDTH * 1.2)
+                nav.getSpike3().axial(TILE_WIDTH * 1.2).hold(false)
             ), null
         );
     }
@@ -146,7 +146,7 @@ public class DriveCommands {
                 config.pose.x > -TILE_WIDTH ?
                     new Pose(config.pose.x, config.alliance.sign * -0.5, 0) :
                     config.pose.midpoint(nav.getDepositSouthPose(axialOffset, lateralOffset)),
-                nav.getDepositSouthPose(axialOffset, lateralOffset)
+                nav.getDepositSouthPose(axialOffset, lateralOffset).hold(false)
             ), null
         );
     }
@@ -164,21 +164,21 @@ public class DriveCommands {
     public Command toGate() {
         return curve(
              nav.getGatePose().axial(TILE_WIDTH * -1.75),
-             nav.getGatePose().axial(TILE_WIDTH * 0.1)
+             nav.getGatePose().axial(TILE_WIDTH * 0.1).hold(false)
         );
     }
 
     public Command toGateIntake() {
         return curve(
             nav.getGateIntakePose().axial(TILE_WIDTH * -.1).lateral(config.alliance.sign * TILE_WIDTH * -0.3),
-            nav.getGateIntakePose()
+            nav.getGateIntakePose().hold(true) // TODO: Test
         );
     }
 
     public Command toGateIntakeDepart() {
         return curve(
             nav.getGateIntakeDepartPose().axial(TILE_WIDTH * config.side.sign * -0.05).lateral(TILE_WIDTH * -.1),
-            nav.getGateIntakeDepartPose()
+            nav.getGateIntakeDepartPose().hold(false)
         );
     }
 
@@ -195,7 +195,7 @@ public class DriveCommands {
     public Command hold() {
         return complete(
             () -> follower.holdPoint(
-                toPedroPose(config.pose)
+                toPedroPose(config.pose.hold(true))
             )
         );
     }
@@ -336,18 +336,14 @@ public class DriveCommands {
     }
 
     public Command to(double x, double y, double heading) {
-        return to(new Pose(x, y, toRadians(heading)), true);
+        return to(new Pose(x, y, toRadians(heading)));
     }
 
     public Command to(double x, double y, double heading, boolean holdEnd) {
-        return to(new Pose(x, y, toRadians(heading)), holdEnd);
+        return to(new Pose(x, y, toRadians(heading), holdEnd));
     }
 
     public Command to(Pose pose) {
-        return to(pose, true);
-    }
-
-    public Command to(Pose pose, boolean holdEnd) {
         return new DeferredCommand(
             () -> follow(builder -> {
                 startPose = getPose();
@@ -355,7 +351,7 @@ public class DriveCommands {
                     .addPath(new BezierCurve(() -> toPedroPose(startPose), toPedroPose(startPose.midpoint(pose)), toPedroPose(pose)))
                     .setLinearHeadingInterpolation(startPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
-            }, holdEnd), null
+            }, pose.hold), null
         );
     }
 
@@ -372,7 +368,7 @@ public class DriveCommands {
                     .addPath(new BezierCurve(futurePoses.toArray(new FuturePose[0])))
                     .setLinearHeadingInterpolation(startPose.heading, endPose.heading, HEADING_END_TIME);
                 if (reverse) builder.setReversed();
-            }, true), null
+            }, poses.length > 0 && poses[poses.length - 1].hold), null
         );
     }
 
@@ -386,7 +382,7 @@ public class DriveCommands {
                         .setLinearHeadingInterpolation(endPose.heading, (endPose = pose).heading, HEADING_END_TIME);
                     if (reverse) builder.setReversed();
                 }
-            }, true), null
+            }, poses.length > 0 && poses[poses.length - 1].hold), null
         );
     }
 
@@ -397,7 +393,7 @@ public class DriveCommands {
                 builder -> {
                     for (Consumer<PathBuilder> consumer : consumers)
                         consumer.accept(builder);
-                }, true
+                }, false
             ), null
         );
     }
