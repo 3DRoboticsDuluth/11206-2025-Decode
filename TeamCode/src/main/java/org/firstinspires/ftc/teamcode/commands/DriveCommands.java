@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIG
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INTAKE;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_SPIKE0;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
@@ -62,6 +63,12 @@ public class DriveCommands {
     public Command setPowerIntake() {
         return complete(
             () -> follower.setMaxPower(POWER_INTAKE)
+        );
+    }
+
+    public Command setPowerSpike0() {
+        return complete(
+             () -> follower.setMaxPower(POWER_SPIKE0)
         );
     }
 

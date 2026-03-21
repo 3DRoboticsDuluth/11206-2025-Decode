@@ -74,8 +74,8 @@ public class AutoCommands {
             wait.doherty(2).andThen(
                 auto.depositStop(),
                 auto.intakeStart(),
-                drive.untilDistance(TILE_WIDTH * -1.5),
-                drive.setPowerIntake()
+                drive.untilDistance(TILE_WIDTH * -2),
+                new DeferredCommand(() -> spike == 0 ? drive.setPowerSpike0() : drive.setPowerIntake(), null)
             )
         );
     }
@@ -107,8 +107,8 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -32).andThen(
-                    drive.untilHeading(15),
+                drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -40).andThen(
+                    drive.untilHeading(13),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
                     side == NORTH ? flywheel.isReady() : wait.noop(),

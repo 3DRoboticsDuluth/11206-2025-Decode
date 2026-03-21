@@ -59,7 +59,7 @@ public class NavSubsystem {
 
     public Pose getSpike1() {
         return createPose(
-            1.5 * TILE_WIDTH,
+            1.6 * TILE_WIDTH,
             config.alliance.sign * -1.1 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
@@ -75,7 +75,7 @@ public class NavSubsystem {
 
     public Pose getSpike3() {
         return createPose(
-            -0.5 * TILE_WIDTH,
+            -0.65 * TILE_WIDTH,
             config.alliance.sign * -1.1 * TILE_WIDTH,
             toRadians(config.alliance.sign * -90)
         );
@@ -86,9 +86,9 @@ public class NavSubsystem {
             -1 * TILE_WIDTH,
             config.alliance.sign * -0.75 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? +175 : -175
+            getGoalPose(), config.alliance.sign * -175
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? +175 : -175
+            getGoalPose(), config.alliance.sign * -175
         );
     }
 
@@ -97,9 +97,9 @@ public class NavSubsystem {
             (abs(config.pose.y) < TILE_WIDTH ? 2.5 : 2.3) * TILE_WIDTH,
             config.alliance.sign * (abs(config.pose.y) < TILE_WIDTH ? -0.65 : -0.75) * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +185 : +175) : (playTimer.seconds() < 4 ? -185 : -175)
+            getGoalPose(), config.alliance.sign * -180
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance == RED ? (playTimer.seconds() < 4 ? +185 : +175) : (playTimer.seconds() < 4 ? -185 : -175)
+            getGoalPose(), config.alliance.sign * -180
         );
     }
 
