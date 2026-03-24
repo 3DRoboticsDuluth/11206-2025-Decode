@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Configurable
 public class Constants {
     private static double tX = 1;
-    private static double hX = .5;
-    private static double dX = 1;
+    private static double hX = .75;
+    private static double dX = .85;
 
     //private static double tX = 2.0;
     //private static double hX = 1.5;
@@ -39,7 +39,7 @@ public class Constants {
         .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025 * dX, 0 * dX, 0.00001 * dX, 0.6 * dX, 0.01 * dX));
 
     // TODO: Retry breaking strength (0.80, 0.90, 0.95, 0.99)
-    public static PathConstraints pathConstraints = new PathConstraints(0.995, 100, .7, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.995, 100, .9, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
         .maxPower(1)
