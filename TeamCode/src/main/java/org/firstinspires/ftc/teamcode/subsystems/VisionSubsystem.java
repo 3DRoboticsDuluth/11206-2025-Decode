@@ -41,6 +41,8 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -293,6 +295,10 @@ public class VisionSubsystem extends HardwareSubsystem {
             abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
             abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
             element = fieldCentricPose;
+
+        //TODO pass through collected poses
+        ArtifactClusterFinder.findBestCluster()
+
     }
 
     @SuppressLint("DefaultLocale")
@@ -325,5 +331,94 @@ public class VisionSubsystem extends HardwareSubsystem {
         Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Heading) | %.1f", toDegrees(heading)));
 
         return new Pose(xOffset, yOffset, heading);
+    }
+
+    class Point {
+        double x, y;
+
+        public Point(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static class ClusterResult {
+        List<Pose> artifacts;
+        double score;
+
+        public ClusterResult(List<Pose> artifacts, double score) {
+            this.artifacts = artifacts;
+            this.score = score;
+        }
+    }
+
+    public static class ArtifactClusterFinder {
+
+        public static ClusterResult findBestCluster(List<Pose> artifacts) {
+            if (artifacts.isEmpty()) return null;
+
+            ClusterResult best = null;
+            double bestScore = Double.MAX_VALUE;
+
+            for (Pose center : artifacts) {
+
+                // Compute distances to all artifacts
+                List<PoseDistance> distances = new ArrayList<>();
+                for (Pose other : artifacts) {
+                    double d = distance(center, other);
+                    distances.add(new PoseDistance(other, d));
+                }
+
+                // Sort by distance
+                distances.sort(Comparator.comparingDouble(pd -> pd.distance));
+
+                // Take up to 3 closest artifacts
+                List<Pose> cluster = new ArrayList<>();
+                int limit = Math.min(3, distances.size());
+
+                for (int i = 0; i < limit; i++) {
+                    cluster.add(distances.get(i).pose);
+                }
+
+                // Score the cluster (pairwise distances)
+                double score = computeScore(cluster);
+
+                if (score < bestScore) {
+                    bestScore = score;
+                    best = new ClusterResult(cluster, score);
+                }
+            }
+
+            return best;
+        }
+
+        private static double computeScore(List<Pose> cluster) {
+            double total = 0;
+
+            for (int i = 0; i < cluster.size(); i++) {
+                for (int j = i + 1; j < cluster.size(); j++) {
+                    total += distance(cluster.get(i), cluster.get(j));
+                }
+            }
+
+            return total;
+        }
+
+        private static double distance(Pose a, Pose b) {
+            double dx = a.x - b.x;
+            double dy = a.y - b.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        static class PoseDistance {
+            public Pose pose;
+            Point point;
+            double distance;
+
+            PoseDistance(Pose pose, double distance) {
+                this.pose = pose;
+                this.distance = distance;
+            }
+        }
     }
 }
