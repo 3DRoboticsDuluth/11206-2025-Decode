@@ -83,6 +83,16 @@ public class VisionSubsystem extends HardwareSubsystem {
     public Pose botpose = null;
     public Pose element = null;
 
+    // Purple artifact poses
+    public List<Pose> purpleArtifacts = new ArrayList<>();
+
+    // Green artifact poses
+    public List<Pose> greenArtifacts = new ArrayList<>();
+    greenArtifacts.add("Green Pose X");
+    greenArtifacts.add("Green Pose Y");
+    greenArtifacts.add("Green Pose Z");
+
+
     Map<Pipeline, Consumer<LLResult>> processors;
 
     public VisionSubsystem() {
@@ -102,10 +112,8 @@ public class VisionSubsystem extends HardwareSubsystem {
         processors = new HashMap<Pipeline, Consumer<LLResult>>() {{
             put(QRCODE, VisionSubsystem.this::processQrCode);
             put(APRILTAG, VisionSubsystem.this::processAprilTag);
-            put(GREEN, VisionSubsystem.this::processColor);
-            put(PURPLE, VisionSubsystem.this::processColor);
-            put(PURPLE_LEFT, VisionSubsystem.this::processColor);
-            put(PURPLE_RIGHT, VisionSubsystem.this::processColor);
+            put(GREEN, result -> processColor(result, greenArtifacts, purpleArtifacts));
+            put(PURPLE, result -> processColor(result, purpleArtifacts, greenArtifacts));
         }};
     }
 
@@ -245,7 +253,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     @SuppressLint("DefaultLocale")
-    private void processColor(LLResult result) {
+    private void processColor(LLResult result, List<Pose> primaryArtifacts, List<Pose> secondaryArtifacts) {
         if (!config.started) return;
 
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
@@ -294,10 +302,11 @@ public class VisionSubsystem extends HardwareSubsystem {
             abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
             abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
             abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
-            element = fieldCentricPose;
+            primaryArtifacts.add(fieldCentricPose);
 
-        //TODO pass through collected poses
-        ArtifactClusterFinder.findBestCluster()
+        //TODO combined primary and secondary list, pass through ArtifactClusterFinder
+
+        ArtifactClusterFinder.findBestCluster(primaryArtifacts.)
 
     }
 
