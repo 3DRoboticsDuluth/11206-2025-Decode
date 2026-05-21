@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.BLUE;
+import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.ORANGE;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.RED;
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.WHITE;
@@ -8,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPr
 import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver.LayerHeight.LAYER_0;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 
 import android.annotation.SuppressLint;
@@ -30,6 +32,12 @@ public class LightsSubsystem extends HardwareSubsystem {
     @SuppressLint("DefaultLocale")
     public void periodic() {
         if (unready()) return;
+
+        if (!config.started) {
+            if (intake.robotIsFull) {
+                set(GREEN);
+            }
+        }
 
         if (!config.started) {
             if (config.alliance == Alliance.RED) set(RED);

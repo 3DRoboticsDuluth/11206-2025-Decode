@@ -21,6 +21,9 @@ public class IntakeCommands {
     public Command stop() {
         return complete(intake::stop);
     }
+    public Command reset() {
+        return complete()
+    }
 
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable);
