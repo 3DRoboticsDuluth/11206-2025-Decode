@@ -6,6 +6,8 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
+import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
+
 public class VisionCommands {
     public Command goalLock(boolean enabled) {
         return complete(
@@ -16,6 +18,12 @@ public class VisionCommands {
     public Command chaseLock(boolean enabled) {
         return complete(
             () -> vision.chaseLock(enabled)
+        );
+    }
+
+    public Command setPipeline(Pipeline pipeline) {
+        return complete(
+            () -> vision.switchPipeline(pipeline, true)
         );
     }
 

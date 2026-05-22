@@ -41,11 +41,15 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
@@ -88,10 +92,6 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     // Green artifact poses
     public List<Pose> greenArtifacts = new ArrayList<>();
-    greenArtifacts.add("Green Pose X");
-    greenArtifacts.add("Green Pose Y");
-    greenArtifacts.add("Green Pose Z");
-
 
     Map<Pipeline, Consumer<LLResult>> processors;
 
@@ -256,58 +256,63 @@ public class VisionSubsystem extends HardwareSubsystem {
     private void processColor(LLResult result, List<Pose> primaryArtifacts, List<Pose> secondaryArtifacts) {
         if (!config.started) return;
 
+        primaryArtifacts.clear();
+
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
         if (colorResults.isEmpty()) return;
 
-        LLResultTypes.ColorResult cr = colorResults.get(0);
+        for (LLResultTypes.ColorResult cr : colorResults) {
 
-        double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
-        double crx = direction * cr.getTargetXDegrees();
-        double cry = direction * cr.getTargetYDegrees();
+            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+            double crx = direction * cr.getTargetXDegrees();
+            double cry = direction * cr.getTargetYDegrees();
 
-        telemetry.addData(
-            "Vision (Color Result)",
-            () -> String.format(
-                "%.2f°tx, %.2f°ty",
-                crx, cry
-            )
-        );
+            telemetry.addData(
+                "Vision (Color Result)",
+                () -> String.format(
+                    "%.2f°tx, %.2f°ty",
+                    crx, cry
+                )
+            );
 
-        Log.i(
-            this.getClass().getSimpleName(),
-            String.format(
-                "Vision (Color Result) | %.2f°tx, %.2f°ty",
-                crx, cry
-            )
-        );
+            Log.i(
+                this.getClass().getSimpleName(),
+                String.format(
+                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
+                    crx, cry
+                )
+            );
 
-        Pose robotCentricPose = getElementPose(crx, cry);
-        Pose fieldCentricPose = config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
+            Pose robotCentricPose = getElementPose(crx, cry);
+            Pose fieldCentricPose = config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
 
-        telemetry.addData(
-            "Vision (Element Pose)",
-            fieldCentricPose::toString
-        );
+            telemetry.addData(
+                "Vision (Element Pose)",
+                fieldCentricPose::toString
+            );
 
-        Log.i(
-            this.getClass().getSimpleName(),
-            String.format(
-                "Vision (Element Pose) | %s",
-                fieldCentricPose
-            )
-        );
+            Log.i(
+                this.getClass().getSimpleName(),
+                String.format(
+                    "Vision (Element Pose) | %s",
+                    fieldCentricPose
+                )
+            );
 
-        if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
-            abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
-            abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
-            abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
-            primaryArtifacts.add(fieldCentricPose);
-
-        //TODO combined primary and secondary list, pass through ArtifactClusterFinder
-
-        ArtifactClusterFinder.findBestCluster(primaryArtifacts.)
-
+            if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
+                abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
+                abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
+                abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
+                primaryArtifacts.add(fieldCentricPose);
+        }
+        Stream<Pose> primaryStream = primaryArtifacts.stream();
+        Stream<Pose> secondaryStream = secondaryArtifacts.stream();
+        Stream<Pose> concatStream = Stream.concat(primaryStream, secondaryStream);
+        ArrayList<Pose> poses = (ArrayList<Pose>)concatStream.collect(Collectors.toList());
+        ClusterResult clusterResult = ArtifactClusterFinder.findBestCluster(poses);
+        element = clusterResult == null ? null : clusterResult.artifacts.get(0);
+        switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, true);
     }
 
     @SuppressLint("DefaultLocale")
