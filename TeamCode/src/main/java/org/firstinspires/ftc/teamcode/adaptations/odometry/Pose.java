@@ -53,7 +53,11 @@ public class Pose {
     }
 
     public Pose reverse() {
-        return turn(180);
+        return reverse(0);
+    }
+
+    public Pose reverse(double offset) {
+        return turn(180 + offset);
     }
 
     public Pose face(Pose pose) {
