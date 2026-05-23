@@ -27,6 +27,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.field.Style;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -64,7 +65,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
     public static double POS_GOAL_LOCK = 0.10;
-    public static double POS_CHASE_LOCK = 0.75;
+    public static double POS_CHASE_LOCK = 0.8;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
     public static double POS = 1;
@@ -174,7 +175,9 @@ public class VisionSubsystem extends HardwareSubsystem {
         if (element == null) return;
 
         Drawing.drawArtifact(
-            toPedroPose(element)
+            toPedroPose(element),new Style(
+                        "#FF0000", "#000000", 0.5
+                )
         );
     }
 
@@ -300,10 +303,10 @@ public class VisionSubsystem extends HardwareSubsystem {
                 )
             );
 
-            if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
-                abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
-                abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
-                abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
+//            if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
+//                abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
+//                abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
+//                abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
                 primaryArtifacts.add(fieldCentricPose);
         }
         Stream<Pose> primaryStream = primaryArtifacts.stream();
@@ -311,14 +314,21 @@ public class VisionSubsystem extends HardwareSubsystem {
         Stream<Pose> concatStream = Stream.concat(primaryStream, secondaryStream);
         ArrayList<Pose> poses = (ArrayList<Pose>)concatStream.collect(Collectors.toList());
         ClusterResult clusterResult = ArtifactClusterFinder.findBestCluster(poses);
+        if (clusterResult != null) {
+            for (Pose pose : poses) {
+                Drawing.drawArtifact(
+                        toPedroPose(pose)
+                );
+            }
+        }
         element = clusterResult == null ? null : clusterResult.artifacts.get(0);
-        switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, true);
+        //switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
     }
 
     @SuppressLint("DefaultLocale")
     private Pose getElementPose(double targetYawAngle, double targetPitchAngle) {
         double heightDiff = CAMERA_Z_INCHES - ELEMENT_RADIUS / 2;
-        double elevationAngle = toRadians(CAMERA_PITCH_DEGREES + DEG + targetPitchAngle);
+        double elevationAngle = toRadians(CAMERA_PITCH_DEGREES + DEG - targetPitchAngle);
         double bearingAngle = toRadians(CAMERA_YAW_DEGREES - targetYawAngle);
 
         telemetry.addData("Vision (Height Diff)", () -> String.format("%.1f", heightDiff));
