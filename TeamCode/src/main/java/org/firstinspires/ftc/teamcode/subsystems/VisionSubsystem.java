@@ -70,8 +70,8 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double POS_MAX = 0.85;
     public static double POS = 1;
     public static double POS_LAST = POS;
-    public static double DEG_MIN = -213.0;
-    public static double DEG_MAX = 29.0;
+    public static double DEG_MIN = -232.4;
+    public static double DEG_MAX = 12;
     public static double DEG = 0;
     public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
     public static double PHANTOM_ANGLE = NaN;
