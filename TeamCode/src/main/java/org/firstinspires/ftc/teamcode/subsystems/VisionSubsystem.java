@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.periodicCount;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
@@ -78,6 +79,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double PHANTOM_PERIOD = 15;
     public static double INCHES_PER_METER = 39.3701;
     public static boolean TEL = false;
+    public static int MOD = 7;
 
     public final Limelight3A limelight;
     public final ServoEx servo;
@@ -322,7 +324,8 @@ public class VisionSubsystem extends HardwareSubsystem {
             }
         }
         element = clusterResult == null ? null : clusterResult.artifacts.get(0);
-        //switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
+        if (periodicCount % MOD == 0)
+            switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
     }
 
     @SuppressLint("DefaultLocale")
