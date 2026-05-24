@@ -191,7 +191,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void chaseLock(boolean enabled) {
         if (!enabled) return;
-        switchPipeline(config.alliance == RED ? PURPLE_RIGHT : PURPLE_LEFT, true);
+        switchPipeline(PURPLE, true);
         POS = POS_CHASE_LOCK;
     }
 
@@ -323,6 +323,7 @@ public class VisionSubsystem extends HardwareSubsystem {
                 );
             }
         }
+
         element = clusterResult == null ? null : clusterResult.artifacts.get(0);
         if (periodicCount % MOD == 0)
             switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);

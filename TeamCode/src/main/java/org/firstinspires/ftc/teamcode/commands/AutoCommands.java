@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.RepeatCommand;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
 import java.util.HashMap;
 
@@ -162,6 +163,30 @@ public class AutoCommands {
                     wait.doherty(),
                     drive.setPowerAuto(),
                     auto.deposit(NORTH, -0.25 * TILE_WIDTH, config.alliance.sign * -0.0 * TILE_WIDTH)
+                ), cycles
+            )
+        );
+    }
+
+    public Command clusterChase(int cycles) {
+        return vision.chaseLock(true).alongWith(
+            lights.set(TRANSPARENT),
+            new RepeatCommand(
+                execution -> drive.toChaseScan().andThen(
+                    vision.waitForElement(),
+                    auto.intakeStart(),
+                    drive.chaseLock(true),
+                    intake.waitForNextElement(),
+                    new DeferredCommand(
+                        () -> Subsystems.vision.element == null ?
+                            drive.chaseLock(false).alongWith(
+                                drive.toChaseScan(),
+                                intake.waitForNextElement().andThen(
+                                    drive.stop(),
+                                    drive.chaseLock(true)
+                                )
+                            ) : wait.noop(), null
+                    )
                 ), cycles
             )
         );

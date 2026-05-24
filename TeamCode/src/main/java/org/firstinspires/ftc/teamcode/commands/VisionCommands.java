@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 
 import com.seattlesolvers.solverslib.command.Command;
@@ -30,6 +31,12 @@ public class VisionCommands {
     public Command resetElement() {
         return new DeferredCommand(
             () -> complete(vision::resetElement), null
+        );
+    }
+
+    public Command waitForElement(){
+        return wait.until(
+                () -> vision.element != null
         );
     }
 
