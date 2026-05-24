@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 
 import android.annotation.SuppressLint;
+import android.hardware.camera2.params.BlackLevelPattern;
 
 import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color;
 import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver;
@@ -33,11 +34,11 @@ public class LightsSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        if (!config.started) {
-            if (intake.robotIsFull) {
-                set(GREEN);
-            }
+        if (intake.robotIsFull) {
+            set(GREEN);
         }
+        else if (playTimer.seconds() < 80 && config.alliance == Alliance.RED) set(RED);
+        else if (playTimer.seconds() < 80 && config.alliance == Alliance.BLUE) set(BLUE);
 
         if (!config.started) {
             if (config.alliance == Alliance.RED) set(RED);

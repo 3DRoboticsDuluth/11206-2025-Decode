@@ -84,7 +84,6 @@ public class AutoCommands {
         return auto.goalLock(true).andThen(
             gate.open(),
             intake.forward(),
-            intake.reset(),
             flywheel.forward(),
             conveyor.launch()
         );
@@ -94,6 +93,7 @@ public class AutoCommands {
         return auto.goalLock(false).andThen(
             conveyor.stop(),
             flywheel.stop(),
+            intake.reset(),
             intake.stop()
         );
     }

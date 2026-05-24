@@ -35,7 +35,9 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public int count = 0;
     public boolean artifactDetected = false;
     public boolean robotIsFull = false;
-    public double artifactsInBot = 0;
+    public double artifactsInBotPrev = 0;
+    public double maxArtifacts = 3;
+    public double artifactsInBot = Math.min(artifactsInBotPrev, maxArtifacts);
     public boolean currentState1 = false;
     public boolean previousState1 = false;
     public boolean currentState2 = false;
@@ -73,6 +75,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
         motor.addTelemetry(TEL);
 
+        telemetry.addData("Intake (ArtisInBot)", () -> String.format("%.1f", artifactsInBot));
         telemetry.addData("Intake (Laser)", () -> laser.getState() ? "1" : "0");
         telemetry.addData("Intake (Laser 2)", () -> laser2.getState() ? "1" : "0");
     }
@@ -95,13 +98,13 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
     public void artifactCount() {
         if (artifactDetected) {++artifactsInBot;}
-        if (artifactsInBot == 3) {robotIsFull = true;}
+        if (artifactsInBot >= 3) {robotIsFull = true;}
     }
 
     public void detectArtifact() {
         if (currentState1 && !previousState1 || currentState2 && !previousState2) {
             artifactDetected = true;
-        }
+        } else artifactDetected = false;
     }
 
     public void reset() {
