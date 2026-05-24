@@ -328,7 +328,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     @SuppressLint("DefaultLocale")
     private Pose getElementPose(double targetYawAngle, double targetPitchAngle) {
         double heightDiff = CAMERA_Z_INCHES - ELEMENT_RADIUS / 2;
-        double elevationAngle = toRadians(CAMERA_PITCH_DEGREES + DEG - targetPitchAngle);
+        double elevationAngle = toRadians(CAMERA_PITCH_DEGREES + DEG + targetPitchAngle);
         double bearingAngle = toRadians(CAMERA_YAW_DEGREES - targetYawAngle);
 
         telemetry.addData("Vision (Height Diff)", () -> String.format("%.1f", heightDiff));
