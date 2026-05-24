@@ -104,6 +104,10 @@ public class IntakeSubsystem extends HardwareSubsystem {
         }
     }
 
+    public void reset() {
+        artifactsInBot = 0;
+    }
+
     private void configure(MotorEx motor) {
         motor.setInverted(true);
         motor.stopAndResetEncoder();

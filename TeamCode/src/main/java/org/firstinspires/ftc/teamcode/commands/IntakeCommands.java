@@ -22,7 +22,7 @@ public class IntakeCommands {
         return complete(intake::stop);
     }
     public Command reset() {
-        return complete()
+        return complete(intake::reset);
     }
 
     private Command complete(Runnable runnable) {
