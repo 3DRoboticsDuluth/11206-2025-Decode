@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
@@ -167,15 +166,15 @@ public class VisionSubsystemsTests extends TestHarness {
         try (MockedStatic<Drawing> drawing = mockStatic(Drawing.class)) {
             VisionSubsystem.PHANTOM_ANGLE = Double.NaN;
             vision.element = null;
-            vision.drawArtifact();
+            vision.drawElement();
             drawing.verifyNoInteractions();
 
             VisionSubsystem.PHANTOM_ANGLE = 0;
             when(TimingSubsystem.playTimer.seconds()).thenReturn(3.0);
-            vision.drawArtifact();
+            vision.drawElement();
             assert vision.element != null;
             VisionSubsystem.PHANTOM_ANGLE = 45;
-            vision.drawArtifact();
+            vision.drawElement();
             assert vision.element != null;
         }
     }

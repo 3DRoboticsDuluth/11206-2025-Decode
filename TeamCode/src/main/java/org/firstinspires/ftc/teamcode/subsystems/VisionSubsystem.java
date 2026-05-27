@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
-import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE_LEFT;
-import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE_RIGHT;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
-import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
@@ -40,18 +37,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
+import org.firstinspires.ftc.teamcode.adaptations.vision.Clusters;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
-import java.nio.channels.Pipe;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
@@ -81,6 +74,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static int MOD_THRESH = 3;
     public static int MOD = 6;
+    public static int MAX_CLUSTER_SIZE = 3;
+    public static double CLUSTER_SWITCH_MIN_IMPROVEMENT = 0.05;
+    public static boolean CLUSTER_DEBUG = false;
 
     public final Limelight3A limelight;
     public final ServoEx servo;
@@ -126,8 +122,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     @SuppressLint("DefaultLocale")
     public void periodic() {
         if (unready()) return;
-
-        //drawArtifact();
+        Clusters.DEBUG = CLUSTER_DEBUG;
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
@@ -156,13 +151,17 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         if (result == null || !result.isValid() || timer.seconds() < 0.6) {
             telemetry.addData("Vision (Results)", () -> "None available");
-            return;
+        } else {
+            processors.get(PIPELINE).accept(result);
         }
 
-        processors.get(PIPELINE).accept(result);
+        if ((PIPELINE == PURPLE || PIPELINE == GREEN) && periodicCount % MOD == MOD - 1)
+            switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
+
+        drawElement();
     }
 
-    public void drawArtifact() {
+    public void drawElement() {
         if (!isNaN(PHANTOM_ANGLE)) {
             double angle = PHANTOM_ANGLE == 0 ?
                 2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
@@ -179,8 +178,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         Drawing.drawArtifact(
             toPedroPose(element),new Style(
-                        "#FF0000", "#000000", 0.5
-                )
+                "#FF0000", "#000000", 0.5
+            )
         );
     }
 
@@ -265,6 +264,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
+        // NOTE: MOD_THRESH allows the skipping of the first frames after switching pipelines to avoid unstable results
         if (!colorResults.isEmpty() && periodicCount % MOD > MOD_THRESH) {
 
             primaryArtifacts.clear();
@@ -307,37 +307,28 @@ public class VisionSubsystem extends HardwareSubsystem {
                     )
                 );
 
-//                if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
-//                    abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
-//                    abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
-//                    abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
-                primaryArtifacts.add(fieldCentricPose);
+                if (abs(fieldCentricPose.x) < TILE_WIDTH * 3.25 &&
+                    abs(fieldCentricPose.y) < TILE_WIDTH * 3.25 &&
+                    abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
+                    abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
+                    primaryArtifacts.add(fieldCentricPose);
             }
         }
 
-        Stream<Pose> primaryStream = primaryArtifacts.stream();
-        Stream<Pose> secondaryStream = secondaryArtifacts.stream();
-        Stream<Pose> concatStream = Stream.concat(primaryStream, secondaryStream);
-        ArrayList<Pose> poses = (ArrayList<Pose>)concatStream.collect(Collectors.toList());
+        List<Pose> poses = new ArrayList<>(primaryArtifacts);
+        poses.addAll(secondaryArtifacts);
 
-        for (Pose pose : poses) {
-            Drawing.drawArtifact(
-                toPedroPose(pose)
-            );
-        }
+        for (Pose pose : poses)
+            Drawing.drawArtifact(toPedroPose(pose));
 
-        ClusterResult clusterResult = ArtifactClusterFinder.findBestCluster(poses);
+        element = Clusters.findBest(
+            poses,
+            element,
+            MAX_CLUSTER_SIZE,
+            CLUSTER_SWITCH_MIN_IMPROVEMENT
+        );
 
-        element = clusterResult == null ? element : clusterResult.artifacts.get(0);
-
-        drawArtifact();
-
-        if (periodicCount % MOD == MOD - 1)
-            switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
-
-        telemetry.addData("Vision (Purple Artifacts)", () -> String.format("%d", purpleArtifacts.size()));
-        telemetry.addData("Vision (Green Artifacts)", () -> String.format("%d", greenArtifacts.size()));
-        telemetry.addData("Vision (Pipeline)", () -> String.format("%d", PIPELINE.index));
+        drawElement();
     }
 
     @SuppressLint("DefaultLocale")
@@ -370,94 +361,5 @@ public class VisionSubsystem extends HardwareSubsystem {
         Log.i(this.getClass().getSimpleName(), String.format("Vision (Element Heading) | %.1f", toDegrees(heading)));
 
         return new Pose(xOffset, yOffset, heading);
-    }
-
-    class Point {
-        double x, y;
-
-        public Point(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    static class ClusterResult {
-        List<Pose> artifacts;
-        double score;
-
-        public ClusterResult(List<Pose> artifacts, double score) {
-            this.artifacts = artifacts;
-            this.score = score;
-        }
-    }
-
-    public static class ArtifactClusterFinder {
-
-        public static ClusterResult findBestCluster(List<Pose> artifacts) {
-            if (artifacts.isEmpty()) return null;
-
-            ClusterResult best = null;
-            double bestScore = Double.MAX_VALUE;
-
-            for (Pose center : artifacts) {
-
-                // Compute distances to all artifacts
-                List<PoseDistance> distances = new ArrayList<>();
-                for (Pose other : artifacts) {
-                    double d = distance(center, other);
-                    distances.add(new PoseDistance(other, d));
-                }
-
-                // Sort by distance
-                distances.sort(Comparator.comparingDouble(pd -> pd.distance));
-
-                // Take up to 3 closest artifacts
-                List<Pose> cluster = new ArrayList<>();
-                int limit = Math.min(3, distances.size());
-
-                for (int i = 0; i < limit; i++) {
-                    cluster.add(distances.get(i).pose);
-                }
-
-                // Score the cluster (pairwise distances)
-                double score = computeScore(cluster);
-
-                if (score < bestScore) {
-                    bestScore = score;
-                    best = new ClusterResult(cluster, score);
-                }
-            }
-
-            return best;
-        }
-
-        private static double computeScore(List<Pose> cluster) {
-            double total = 0;
-
-            for (int i = 0; i < cluster.size(); i++) {
-                for (int j = i + 1; j < cluster.size(); j++) {
-                    total += distance(cluster.get(i), cluster.get(j));
-                }
-            }
-
-            return total;
-        }
-
-        private static double distance(Pose a, Pose b) {
-            double dx = a.x - b.x;
-            double dy = a.y - b.y;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-
-        static class PoseDistance {
-            public Pose pose;
-            Point point;
-            double distance;
-
-            PoseDistance(Pose pose, double distance) {
-                this.pose = pose;
-                this.distance = distance;
-            }
-        }
     }
 }
