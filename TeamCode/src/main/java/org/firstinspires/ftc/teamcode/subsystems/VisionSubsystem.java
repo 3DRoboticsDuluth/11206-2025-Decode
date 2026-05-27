@@ -66,20 +66,21 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
     public static double POS_GOAL_LOCK = 0.10;
-    public static double POS_CHASE_LOCK = 0.8;
+    public static double POS_CHASE_LOCK = 0.85;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
     public static double POS = 1;
     public static double POS_LAST = POS;
-    public static double DEG_MIN = -232.4;
-    public static double DEG_MAX = 12;
+    public static double DEG_MIN = -230;
+    public static double DEG_MAX = 10;
     public static double DEG = 0;
     public static double PHANTOM_RADIUS = 2 * TILE_WIDTH;
     public static double PHANTOM_ANGLE = NaN;
     public static double PHANTOM_PERIOD = 15;
     public static double INCHES_PER_METER = 39.3701;
     public static boolean TEL = false;
-    public static int MOD = 7;
+    public static int MOD_THRESH = 3;
+    public static int MOD = 6;
 
     public final Limelight3A limelight;
     public final ServoEx servo;
@@ -126,7 +127,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        drawArtifact();
+        //drawArtifact();
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
@@ -199,6 +200,7 @@ public class VisionSubsystem extends HardwareSubsystem {
         if (limelight == null) return;
         if (elementReset) resetElement();
         limelight.pipelineSwitch((PIPELINE = pipeline).index);
+        if (PIPELINE == GREEN || PIPELINE == PURPLE) POS = POS_CHASE_LOCK;
     }
 
     public void resetElement() {
@@ -261,72 +263,81 @@ public class VisionSubsystem extends HardwareSubsystem {
     private void processColor(LLResult result, List<Pose> primaryArtifacts, List<Pose> secondaryArtifacts) {
         if (!config.started) return;
 
-        primaryArtifacts.clear();
-
         List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
 
-        if (colorResults.isEmpty()) return;
+        if (!colorResults.isEmpty() && periodicCount % MOD > MOD_THRESH) {
 
-        for (LLResultTypes.ColorResult cr : colorResults) {
+            primaryArtifacts.clear();
 
-            double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
-            double crx = direction * cr.getTargetXDegrees();
-            double cry = direction * cr.getTargetYDegrees();
+            for (LLResultTypes.ColorResult cr : colorResults) {
 
-            telemetry.addData(
-                "Vision (Color Result)",
-                () -> String.format(
-                    "%.2f°tx, %.2f°ty",
-                    crx, cry
-                )
-            );
+                double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
+                double crx = direction * cr.getTargetXDegrees();
+                double cry = direction * cr.getTargetYDegrees();
 
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Color Result) | %.2f°tx, %.2f°ty",
-                    crx, cry
-                )
-            );
+                telemetry.addData(
+                    "Vision (Color Result)",
+                    () -> String.format(
+                        "%.2f°tx, %.2f°ty",
+                        crx, cry
+                    )
+                );
 
-            Pose robotCentricPose = getElementPose(crx, cry);
-            Pose fieldCentricPose = config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
+                Log.i(
+                    this.getClass().getSimpleName(),
+                    String.format(
+                        "Vision (Color Result) | %.2f°tx, %.2f°ty",
+                        crx, cry
+                    )
+                );
 
-            telemetry.addData(
-                "Vision (Element Pose)",
-                fieldCentricPose::toString
-            );
+                Pose robotCentricPose = getElementPose(crx, cry);
+                Pose fieldCentricPose = config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
 
-            Log.i(
-                this.getClass().getSimpleName(),
-                String.format(
-                    "Vision (Element Pose) | %s",
-                    fieldCentricPose
-                )
-            );
+                telemetry.addData(
+                    "Vision (Element Pose)",
+                    fieldCentricPose::toString
+                );
 
-//            if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
-//                abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
-//                abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
-//                abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
+                Log.i(
+                    this.getClass().getSimpleName(),
+                    String.format(
+                        "Vision (Element Pose) | %s",
+                        fieldCentricPose
+                    )
+                );
+
+//                if (abs(fieldCentricPose.x) < TILE_WIDTH * 2.9 &&
+//                    abs(fieldCentricPose.y) < TILE_WIDTH * 3.1 &&
+//                    abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
+//                    abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
                 primaryArtifacts.add(fieldCentricPose);
+            }
         }
+
         Stream<Pose> primaryStream = primaryArtifacts.stream();
         Stream<Pose> secondaryStream = secondaryArtifacts.stream();
         Stream<Pose> concatStream = Stream.concat(primaryStream, secondaryStream);
         ArrayList<Pose> poses = (ArrayList<Pose>)concatStream.collect(Collectors.toList());
-        ClusterResult clusterResult = ArtifactClusterFinder.findBestCluster(poses);
-        if (clusterResult != null) {
-            for (Pose pose : poses) {
-                Drawing.drawArtifact(
-                        toPedroPose(pose)
-                );
-            }
+
+        for (Pose pose : poses) {
+            Drawing.drawArtifact(
+                toPedroPose(pose)
+            );
         }
 
-        element = clusterResult == null ? null : clusterResult.artifacts.get(0);
-        if (periodicCount % MOD == 0)
+        ClusterResult clusterResult = ArtifactClusterFinder.findBestCluster(poses);
+
+        element = clusterResult == null ? element : clusterResult.artifacts.get(0);
+
+        drawArtifact();
+
+        if (periodicCount % MOD == MOD - 1)
             switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
+
+        telemetry.addData("Vision (Purple Artifacts)", () -> String.format("%d", purpleArtifacts.size()));
+        telemetry.addData("Vision (Green Artifacts)", () -> String.format("%d", greenArtifacts.size()));
+        telemetry.addData("Vision (Pipeline)", () -> String.format("%d", PIPELINE.index));
     }
 
     @SuppressLint("DefaultLocale")
