@@ -76,7 +76,6 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static int MOD = 6;
     public static int MAX_CLUSTER_SIZE = 3;
     public static double CLUSTER_SWITCH_MIN_IMPROVEMENT = 0.05;
-    public static boolean CLUSTER_DEBUG = false;
 
     public final Limelight3A limelight;
     public final ServoEx servo;
@@ -122,7 +121,6 @@ public class VisionSubsystem extends HardwareSubsystem {
     @SuppressLint("DefaultLocale")
     public void periodic() {
         if (unready()) return;
-        Clusters.DEBUG = CLUSTER_DEBUG;
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");

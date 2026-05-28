@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.adaptations.vision;
 
-import android.util.Log;
-
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 
 import java.util.ArrayList;
@@ -9,8 +7,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public final class Clusters {
-    private static final double EPS = 1e-9;
-    public static boolean DEBUG = false;
+    private static final double POSE_EPS = 1e-9;
+    private static final double SCORE_EPS = 1e-6;
 
     private Clusters() {}
 
@@ -27,7 +25,7 @@ public final class Clusters {
 
             for (Pose center : poses) {
                 double score = score(poses, center, clusterSize);
-                if (score < bestScore || (approximatelyEqual(score, bestScore)
+                if (score < bestScore - SCORE_EPS || (approximatelyEqualScore(score, bestScore)
                     && isPreferredCenter(center, candidate))) {
                     bestScore = score;
                     candidate = center;
@@ -36,18 +34,7 @@ public final class Clusters {
         }
 
         if (candidate == null) return currentBest;
-        if (currentBest == null) {
-            if (DEBUG) {
-                Log.i("Clusters", String.format(
-                    "size=%d k=%d curr=null cand=(%.2f,%.2f) -> switch=true (init)",
-                    poses == null ? 0 : poses.size(),
-                    maxClusterSize,
-                    candidate.x,
-                    candidate.y
-                ));
-            }
-            return candidate;
-        }
+        if (currentBest == null) return candidate;
 
         double candidateScore = score(poses, candidate, maxClusterSize);
         double currentScore = score(poses, currentBest, maxClusterSize);
@@ -55,28 +42,9 @@ public final class Clusters {
         if (Double.isNaN(currentScore)) return candidate;
 
         // minImprovement is a relative threshold (ratio), e.g. 0.05 => 5% better required.
-        double required = Math.max(0, minImprovement) * Math.max(currentScore, EPS);
+        double required = Math.max(0, minImprovement) * Math.max(currentScore, SCORE_EPS);
         double actual = currentScore - candidateScore;
-        double percent = currentScore <= EPS ? 0 : (actual / currentScore) * 100.0;
-        boolean shouldSwitch = candidateScore < currentScore - required;
-
-        if (DEBUG) {
-            Log.i("Clusters", String.format(
-                "size=%d k=%d curr=%.4f cand=%.4f req=%.4f imp=%.4f (%.2f%%) switch=%s currXY=(%.2f,%.2f) candXY=(%.2f,%.2f)",
-                poses == null ? 0 : poses.size(),
-                maxClusterSize,
-                currentScore,
-                candidateScore,
-                required,
-                actual,
-                percent,
-                shouldSwitch,
-                currentBest.x,
-                currentBest.y,
-                candidate.x,
-                candidate.y
-            ));
-        }
+        boolean shouldSwitch = actual > required + SCORE_EPS;
 
         return shouldSwitch ? candidate : currentBest;
     }
@@ -85,7 +53,7 @@ public final class Clusters {
         if (poses == null || poses.isEmpty() || center == null) return Double.NaN;
         int clusterSize = Math.max(1, maxClusterSize);
         List<Pose> cluster = nearestCluster(poses, center, clusterSize);
-        return computeScore(cluster);
+        return computeScore(center, cluster);
     }
 
     private static List<Pose> nearestCluster(List<Pose> poses, Pose center, int clusterSize) {
@@ -96,7 +64,11 @@ public final class Clusters {
     }
 
     private static boolean approximatelyEqual(double a, double b) {
-        return Math.abs(a - b) < EPS;
+        return Math.abs(a - b) < POSE_EPS;
+    }
+
+    private static boolean approximatelyEqualScore(double a, double b) {
+        return Math.abs(a - b) < SCORE_EPS;
     }
 
     private static boolean isPreferredCenter(Pose candidate, Pose current) {
@@ -107,11 +79,10 @@ public final class Clusters {
         return candidate.heading < current.heading;
     }
 
-    private static double computeScore(List<Pose> cluster) {
+    private static double computeScore(Pose center, List<Pose> cluster) {
         double total = 0;
-        for (int i = 0; i < cluster.size(); i++)
-            for (int j = i + 1; j < cluster.size(); j++)
-                total += distance(cluster.get(i), cluster.get(j));
+        for (Pose pose : cluster)
+            total += distance(center, pose);
         return total;
     }
 
