@@ -169,25 +169,23 @@ public class AutoCommands {
     }
 
     public Command clusterChase(int cycles) {
-        return vision.chaseLock(true).alongWith(
-            new RepeatCommand(
-                execution -> drive.toChaseScan().andThen(
-                    vision.waitForElement(),
-                    auto.intakeStart(),
+        return new RepeatCommand(
+            execution -> drive.toChaseScan().alongWith(
+                    vision.resetElement(),
+                    vision.chaseLock(true),
+                    vision.waitForElement().andThen(
+                auto.intakeStart(),
+                    drive.stop(),
                     drive.chaseLock(true),
-                    intake.waitForElement(),
-                    new DeferredCommand(
-                        () -> Subsystems.vision.element == null ?
-                            drive.chaseLock(false).alongWith(
-                                drive.toChaseScan(),
-                                intake.waitForElement().andThen(
-                                    drive.stop(),
-                                    drive.chaseLock(true)
-                                )
-                            ) : wait.noop(), null
-                    )
-                ), cycles
-            )
+                    intake.waitForElement().withTimeout(3000),
+                    vision.chaseLock(false)
+                )
+            ), cycles
+        ).andThen(
+            vision.chaseLock(false),
+            drive.chaseLock(false),
+            auto.intakeStop(),
+            auto.deposit(config.side, 0, 0)
         );
     }
 

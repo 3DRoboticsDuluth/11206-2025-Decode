@@ -32,7 +32,7 @@ public class AutoControls {
 
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(A))
-            .whenActive(auto.clusterChase(1));
+            .whenActive(auto.clusterChase(3));
 
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))

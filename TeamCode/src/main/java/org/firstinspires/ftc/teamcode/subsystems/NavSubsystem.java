@@ -166,8 +166,8 @@ public class NavSubsystem {
     public Pose getChaseScanPose() {
         return createPose(
             2.5 * TILE_WIDTH,
-            -1 * TILE_WIDTH * -config.alliance.sign,
-            -config.alliance.sign * Math.toRadians(85)
+            -0.5 * TILE_WIDTH * config.alliance.sign,
+            -config.alliance.sign * Math.toRadians(104.7)
         );
     }
 

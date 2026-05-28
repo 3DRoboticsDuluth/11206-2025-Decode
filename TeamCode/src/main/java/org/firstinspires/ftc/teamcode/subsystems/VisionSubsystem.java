@@ -204,6 +204,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     public void resetElement() {
         element = null;
+        purpleArtifacts.clear();
+        greenArtifacts.clear();
     }
 
     @SuppressLint("DefaultLocale")
