@@ -4,8 +4,10 @@ import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.t
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
+import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
+import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.periodicCount;
@@ -305,10 +307,11 @@ public class VisionSubsystem extends HardwareSubsystem {
                     )
                 );
 
-                if (abs(fieldCentricPose.x) < TILE_WIDTH * 3.25 &&
-                    abs(fieldCentricPose.y) < TILE_WIDTH * 3.25 &&
-                    abs(fieldCentricPose.x) > 0.25 * TILE_WIDTH &&
-                    abs(fieldCentricPose.y) > 0.25 * TILE_WIDTH)
+                if (config.side == NORTH &&
+                    fieldCentricPose.x < TILE_WIDTH * 3.25 &&
+                    fieldCentricPose.x > TILE_WIDTH * 0.25 &&
+                    fieldCentricPose.y < TILE_WIDTH * (config.alliance == RED ? 3.25 : -0.25) &&
+                    fieldCentricPose.y > TILE_WIDTH * (config.alliance == RED ? 0.25 : -3.25))
                     primaryArtifacts.add(fieldCentricPose);
             }
         }

@@ -170,18 +170,17 @@ public class AutoCommands {
 
     public Command clusterChase(int cycles) {
         return vision.chaseLock(true).alongWith(
-            lights.set(TRANSPARENT),
             new RepeatCommand(
                 execution -> drive.toChaseScan().andThen(
                     vision.waitForElement(),
                     auto.intakeStart(),
                     drive.chaseLock(true),
-                    intake.waitForNextElement(),
+                    intake.waitForElement(),
                     new DeferredCommand(
                         () -> Subsystems.vision.element == null ?
                             drive.chaseLock(false).alongWith(
                                 drive.toChaseScan(),
-                                intake.waitForNextElement().andThen(
+                                intake.waitForElement().andThen(
                                     drive.stop(),
                                     drive.chaseLock(true)
                                 )

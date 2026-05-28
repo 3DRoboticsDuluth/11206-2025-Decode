@@ -28,13 +28,7 @@ public class DriveControls {
                 () -> -gamepad1.gamepad.right_stick_x
             )
         );
-
-        gamepad2.getGamepadButton(RIGHT_STICK_BUTTON)
-            .whenActive(vision.setPipeline(Pipeline.PURPLE));
-
-        gamepad2.getGamepadButton(LEFT_STICK_BUTTON)
-            .whenActive(vision.setPipeline(Pipeline.GREEN));
-
+        
         gamepad1.getGamepadButton(DPAD_DOWN)
             .whenActive(drive.setPowerLow());
 

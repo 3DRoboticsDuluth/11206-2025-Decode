@@ -30,6 +30,10 @@ public class AutoControls {
             .and(gamepad1.getGamepadButton(Y))
             .whenActive(auto.stop());
 
+        gamepad1.getGamepadButton(START).negate()
+            .and(gamepad1.getGamepadButton(A))
+            .whenActive(auto.clusterChase(1));
+
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));

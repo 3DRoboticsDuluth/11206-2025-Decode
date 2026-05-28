@@ -28,16 +28,15 @@ public class IntakeCommands {
         return complete(intake::reset);
     }
 
-    public Command waitForNextElement() {
-        return wait.noop();
-//        return new DeferredCommand(
-//            () -> {
-//                int artifactsInBot = intake.artifactsInBot;
-//                return wait.until(
-//                    () -> intake.artifactsInBot == artifactsInBot + 1 || artifactsInBot == 3
-//                );
-//            }
-//        );
+    public Command waitForElement() {
+        return new DeferredCommand(
+            () -> {
+                int target = intake.artifacts + 1;
+                return wait.until(
+                    () -> intake.artifacts == target || intake.full
+                );
+            }, null
+        );
     }
 
     private Command complete(Runnable runnable) {
