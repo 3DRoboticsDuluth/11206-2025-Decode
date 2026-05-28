@@ -13,7 +13,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 
 import android.annotation.SuppressLint;
-import android.hardware.camera2.params.BlackLevelPattern;
 
 import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color;
 import org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.GoBildaPrismDriver;
@@ -34,20 +33,12 @@ public class LightsSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-        if (intake.robotIsFull) {
-            set(GREEN);
-        }
-        else if (playTimer.seconds() < 80 && config.alliance == Alliance.RED) set(RED);
-        else if (playTimer.seconds() < 80 && config.alliance == Alliance.BLUE) set(BLUE);
-
-        if (!config.started) {
-            if (config.alliance == Alliance.RED) set(RED);
-            else if (config.alliance == Alliance.BLUE) set(BLUE);
-        } else if (!config.auto) {
-            if (playTimer.seconds() > 110) set(RED);
-            else if (playTimer.seconds() > 100) set(ORANGE);
-            else if (playTimer.seconds() > 80) set(WHITE);
-        }
+//        if (config.started && config.teleop && playTimer.seconds() > 110) set(RED);
+//        else if (config.started && config.teleop && playTimer.seconds() > 100) set(ORANGE);
+//        else if (config.started && config.teleop && playTimer.seconds() > 80) set(WHITE);
+        /*else*/ if (intake.full) set(GREEN);
+        else if (config.alliance == Alliance.RED) set(RED);
+        else if (config.alliance == Alliance.BLUE) set(BLUE);
 
         telemetry.addData("Lights", () -> String.format("%d leds %d fps", prism.getNumberOfLEDs(), prism.getCurrentFPS()));
     }
