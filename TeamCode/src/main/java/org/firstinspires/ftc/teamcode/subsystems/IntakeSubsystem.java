@@ -11,8 +11,8 @@ import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.adaptations.util.Debounce;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
 @Configurable
@@ -30,9 +30,7 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public DigitalChannel laser;
     public boolean full = false;
     public int artifacts = 0;
-    public boolean laserCurrent = false;
-    public boolean laserPrevious = false;
-    public ElapsedTime laserTimer = new ElapsedTime();
+    public Debounce laserDebounce = new Debounce();
 
     public IntakeSubsystem() {
         motor = getMotor("intake", RPM_1150, this::configure);
@@ -47,12 +45,9 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
         motor.setVelocityPercentage(VEL);
 
-        laserPrevious = laserCurrent;
-        laserCurrent = laser.getState();
-        boolean tripped = laserCurrent && !laserPrevious;
-        if (tripped && laserTimer.seconds() >= LASER_THRESH && artifacts < MAX_ARTIFACTS)
+        boolean laserCurrent = laser.getState();
+        if (laserDebounce.triggered(laserCurrent, LASER_THRESH) && artifacts < MAX_ARTIFACTS)
             full = ++artifacts >= MAX_ARTIFACTS;
-        if (laserCurrent) laserTimer.reset();
 
         motor.addTelemetry(TEL);
 

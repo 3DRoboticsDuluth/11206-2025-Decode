@@ -13,19 +13,23 @@ import static org.mockito.Mockito.when;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
+import org.firstinspires.ftc.teamcode.adaptations.util.Debounce;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class IntakeSubsystemTests extends TestHarness {
+    private ElapsedTime laserTimer;
+
     @Override
     public void setUp() {
         super.setUp();
+        laserTimer = mock(ElapsedTime.class);
         intake = new IntakeSubsystem() {{
             errors = new ArrayList<>();
             motor = mockMotor();
-            laserTimer = mock(ElapsedTime.class);
+            laserDebounce = new Debounce(laserTimer);
         }};
     }
 
@@ -72,7 +76,7 @@ public class IntakeSubsystemTests extends TestHarness {
 
     @Test
     public void testDetectArtifactUsesLaser2RisingEdge() {
-        when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
+        when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
         setLaser2State(false);
         intake.periodic();
 
@@ -85,7 +89,7 @@ public class IntakeSubsystemTests extends TestHarness {
 
     @Test
     public void testHeldLaser2OnlyCountsOnce() {
-        when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
+        when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
         setLaser2State(false);
         intake.periodic();
 
@@ -98,7 +102,7 @@ public class IntakeSubsystemTests extends TestHarness {
 
     @Test
     public void testShortLaserGapDoesNotCountSecondArtifact() {
-        when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
+        when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
         setLaser2State(false);
         intake.periodic();
 
@@ -106,7 +110,7 @@ public class IntakeSubsystemTests extends TestHarness {
         intake.periodic();
 
         setLaser2State(false);
-        when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH / 2);
+        when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH / 2);
         intake.periodic();
 
         setLaser2State(true);
@@ -117,7 +121,7 @@ public class IntakeSubsystemTests extends TestHarness {
 
     @Test
     public void testLaserClearThresholdRearmsCounter() {
-        when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
+        when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
         setLaser2State(false);
         intake.periodic();
 
@@ -125,7 +129,7 @@ public class IntakeSubsystemTests extends TestHarness {
         intake.periodic();
 
         setLaser2State(false);
-        when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
+        when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
         intake.periodic();
 
         setLaser2State(true);
@@ -142,7 +146,7 @@ public class IntakeSubsystemTests extends TestHarness {
             intake.artifacts = 1;
 
             setLaser2State(false);
-            when(intake.laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
+            when(laserTimer.seconds()).thenReturn(IntakeSubsystem.LASER_THRESH);
             intake.periodic();
 
             setLaser2State(true);
