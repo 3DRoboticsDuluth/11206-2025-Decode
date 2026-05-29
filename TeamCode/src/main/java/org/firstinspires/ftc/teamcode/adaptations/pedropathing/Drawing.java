@@ -98,6 +98,27 @@ public class Drawing {
         panelsField.circle(ARTIFACT_RADIUS);
     }
 
+    public static void drawPolygon(Pose[] poses, Style style) {
+        if (poses == null || poses.length < 2) {
+            return;
+        }
+
+        panelsField.setStyle(style);
+        for (int i = 0; i < poses.length; i++) {
+            Pose start = poses[i];
+            Pose end = poses[(i + 1) % poses.length];
+
+            if (start == null || end == null ||
+                !Double.isFinite(start.getX()) || !Double.isFinite(start.getY()) ||
+                !Double.isFinite(end.getX()) || !Double.isFinite(end.getY())) {
+                return;
+            }
+
+            panelsField.moveCursor(start.getX(), start.getY());
+            panelsField.line(end.getX(), end.getY());
+        }
+    }
+
     /**
      * This draws a robot at a specified Pose. The heading is represented as a line.
      *

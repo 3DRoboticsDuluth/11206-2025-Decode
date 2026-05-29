@@ -56,6 +56,10 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double CAMERA_Z_INCHES = 16.14173;   // 0.42 meters
     public static double CAMERA_PITCH_DEGREES = -0.75;
     public static double CAMERA_YAW_DEGREES = 1.15;
+    public static double CAMERA_VIEW_MIN_X_DEGREES = -30;
+    public static double CAMERA_VIEW_MAX_X_DEGREES = 30;
+    public static double CAMERA_VIEW_MIN_Y_DEGREES = -25;
+    public static double CAMERA_VIEW_MAX_Y_DEGREES = 25;
     public static double ELEMENT_RADIUS = 2.5;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
@@ -78,6 +82,10 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static int MOD = 6;
     public static int MAX_CLUSTER_SIZE = 3;
     public static double CLUSTER_SWITCH_MIN_IMPROVEMENT = 0.05;
+
+    private static final Style VIEWABLE_AREA_LOOK = new Style(
+        "#0057FF", "#0057FF", 2.0
+    );
 
     public final Limelight3A limelight;
     public final ServoEx servo;
@@ -158,6 +166,9 @@ public class VisionSubsystem extends HardwareSubsystem {
         if ((PIPELINE == PURPLE || PIPELINE == GREEN) && periodicCount % MOD == MOD - 1)
             switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
 
+        //if (PIPELINE == GREEN || PIPELINE == PURPLE)
+            drawViewableArea();
+
         drawElement();
     }
 
@@ -181,6 +192,22 @@ public class VisionSubsystem extends HardwareSubsystem {
                 "#FF0000", "#000000", 0.5
             )
         );
+    }
+
+    public void drawViewableArea() {
+        Pose[] corners = new Pose[] {
+            getViewableAreaCorner(CAMERA_VIEW_MIN_X_DEGREES, CAMERA_VIEW_MIN_Y_DEGREES),
+            getViewableAreaCorner(CAMERA_VIEW_MAX_X_DEGREES, CAMERA_VIEW_MIN_Y_DEGREES),
+            getViewableAreaCorner(CAMERA_VIEW_MAX_X_DEGREES, CAMERA_VIEW_MAX_Y_DEGREES),
+            getViewableAreaCorner(CAMERA_VIEW_MIN_X_DEGREES, CAMERA_VIEW_MAX_Y_DEGREES)
+        };
+
+        Drawing.drawPolygon(new com.pedropathing.geometry.Pose[] {
+            toPedroPose(corners[0]),
+            toPedroPose(corners[1]),
+            toPedroPose(corners[2]),
+            toPedroPose(corners[3])
+        }, VIEWABLE_AREA_LOOK);
     }
 
     public void goalLock(boolean enabled) {
@@ -332,6 +359,16 @@ public class VisionSubsystem extends HardwareSubsystem {
         );
 
         drawElement();
+    }
+
+    private Pose getViewableAreaCorner(double targetYawAngle, double targetPitchAngle) {
+        double elevationAngle = toRadians(CAMERA_PITCH_DEGREES + DEG + targetPitchAngle);
+        double bearingAngle = toRadians(CAMERA_YAW_DEGREES - targetYawAngle);
+        double distance = abs(CAMERA_Z_INCHES / tan(elevationAngle * ELEVATION_SCALAR));
+        double xOffset = CAMERA_X_INCHES + distance * cos(bearingAngle * BEARING_X_SCALAR);
+        double yOffset = CAMERA_Y_INCHES + distance * sin(bearingAngle * BEARING_Y_SCALAR);
+        Pose robotCentricPose = new Pose(xOffset, yOffset, atan2(yOffset, xOffset));
+        return config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
     }
 
     @SuppressLint("DefaultLocale")
