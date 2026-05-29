@@ -61,7 +61,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double BEARING_X_SCALAR = 1;
     public static double BEARING_Y_SCALAR = 1;
     public static double POS_GOAL_LOCK = 0.10;
-    public static double POS_CHASE_LOCK = 0.85;
+    public static double POS_CHASE_LOCK = 0.83;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
     public static double POS = 1;
