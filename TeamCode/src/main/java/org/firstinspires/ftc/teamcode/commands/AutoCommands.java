@@ -114,7 +114,7 @@ public class AutoCommands {
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
                     side == NORTH ? flywheel.isReady() : wait.noop(),
                     auto.depositStart(),
-                    wait.doherty(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? 2 : 0)
+                    wait.doherty(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? 2 : 2)
                 )
             )
         );
