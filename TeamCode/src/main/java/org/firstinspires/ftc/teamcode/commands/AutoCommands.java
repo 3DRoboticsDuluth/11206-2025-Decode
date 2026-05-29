@@ -170,22 +170,25 @@ public class AutoCommands {
 
     public Command clusterChase(int cycles) {
         return new RepeatCommand(
-            execution -> drive.toChaseScan().alongWith(
+            e1 -> new RepeatCommand(
+                e2 -> drive.toChaseScan().alongWith(
+                    intake.reset(),
                     vision.resetElement(),
                     vision.chaseLock(true),
                     vision.waitForElement().andThen(
-                auto.intakeStart(),
-                    drive.stop(),
-                    drive.chaseLock(true),
-                    intake.waitForElement().withTimeout(3000),
-                    vision.chaseLock(false)
-                )
-            ), cycles
-        ).andThen(
-            vision.chaseLock(false),
-            drive.chaseLock(false),
-            auto.intakeStop(),
-            auto.deposit(config.side, 0, 0)
+                        auto.intakeStart(),
+                        drive.stop(),
+                        drive.chaseLock(true),
+                        intake.waitForElement().withTimeout(3000),
+                        vision.chaseLock(false)
+                    )
+                ), cycles
+            ).andThen(
+                vision.chaseLock(false),
+                drive.chaseLock(false),
+                auto.intakeStop(),
+                auto.deposit(config.side, 0, 0)
+            ), Integer.MAX_VALUE
         );
     }
 
