@@ -109,7 +109,7 @@ public class DriveCommands {
                 config.pose.x > TILE_WIDTH ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
-                nav.getSpike0().axial(TILE_WIDTH * 0.7).hold(false)
+                nav.getSpike0().axial(TILE_WIDTH * 0.8).hold(false)
             ), null
         );
     }
@@ -128,9 +128,9 @@ public class DriveCommands {
     public Command toSpike2() {
         return new DeferredCommand(
             () -> curve(
-                config.pose.x > TILE_WIDTH || abs(config.pose.y) > TILE_WIDTH * 1.5 ?
-                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -1 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.25 * config.alliance.sign) :
-                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -1 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.25 * config.alliance.sign),
+                config.pose.x > TILE_WIDTH ?
+                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -1.0 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign).lateral(abs(config.pose.y) > 1.75 * TILE_WIDTH ? 0.75 * config.alliance.sign * TILE_WIDTH : 0) :
+                    nav.getSpike2().axial(TILE_WIDTH * -1.1).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -1.0 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign).lateral(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * config.alliance.sign * TILE_WIDTH : 0).turn(-10 * config.alliance.sign),
                 nav.getSpike2().axial(TILE_WIDTH * 1.5).hold(false)
             ), null
         );
@@ -142,7 +142,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
-                nav.getSpike3().axial(TILE_WIDTH * 1.2).hold(false)
+                nav.getSpike3().axial(TILE_WIDTH * .7).hold(false)
             ), null
         );
     }
