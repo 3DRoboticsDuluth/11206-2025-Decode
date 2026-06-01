@@ -7,11 +7,14 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehav
 
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
+import static java.lang.Double.NaN;
+
 import android.annotation.SuppressLint;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.util.Debounce;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 
@@ -24,10 +27,20 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public static double VEL = STOP;
     public static int MAX_ARTIFACTS = 3;
     public static double LASER_THRESH = 0.125;
+    public static double BUMPER_LEFT_POS = 0.0;
+    public static double BUMPER_LEFT_MIN = 0.5;
+    public static double BUMPER_LEFT_MAX = 1.0;
+    public static boolean BUMPER_LEFT_REVERSED = false;
+    public static double BUMPER_RIGHT_POS = 1.0;
+    public static double BUMPER_RIGHT_MIN = 0.0;
+    public static double BUMPER_RIGHT_MAX = 0.5;
+    public static boolean BUMPER_RIGHT_REVERSED = false;
     public static boolean TEL = false;
 
     public MotorEx motor;
     public DigitalChannel laser;
+    public ServoEx bumperLeft;
+    public ServoEx bumperRight;
     public boolean full = false;
     public int artifacts = 0;
     public Debounce laserDebounce = new Debounce();
@@ -35,6 +48,8 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public IntakeSubsystem() {
         motor = getMotor("intake", RPM_1150, this::configure);
         laser = getDevice(DigitalChannel.class, "laser2", l -> l.setMode(INPUT));
+        bumperLeft = getServo("bumperLeft", s -> s.scaleRange(BUMPER_LEFT_MIN, BUMPER_LEFT_MAX, BUMPER_LEFT_REVERSED));
+        bumperRight = getServo("bumperRight", s -> s.scaleRange(BUMPER_RIGHT_MIN, BUMPER_RIGHT_MAX, BUMPER_RIGHT_REVERSED));
         VEL = STOP;
     }
 
@@ -44,12 +59,16 @@ public class IntakeSubsystem extends HardwareSubsystem {
         if (unready()) return;
 
         motor.setVelocityPercentage(VEL);
+        bumperLeft.set(BUMPER_LEFT_POS);
+        bumperRight.set(BUMPER_RIGHT_POS);
 
         boolean laserCurrent = laser.getState();
         if (laserDebounce.triggered(laserCurrent, LASER_THRESH) && artifacts < MAX_ARTIFACTS)
             full = ++artifacts >= MAX_ARTIFACTS;
 
         motor.addTelemetry(TEL);
+        bumperLeft.addTelemetry(TEL);
+        bumperRight.addTelemetry(TEL);
 
         telemetry.addData("Intake (Artifacts)", () -> String.format("%d", artifacts));
         telemetry.addData("Intake (Laser)", () -> laserCurrent ? "1" : "0");
@@ -74,6 +93,14 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public void reset() {
         artifacts = 0;
         full = false;
+    }
+
+    public void bumperLeft() {
+        BUMPER_LEFT_POS = BUMPER_RIGHT_POS = 1;
+    }
+
+    public void bumperRight() {
+        BUMPER_LEFT_POS = BUMPER_RIGHT_POS = 0;
     }
 
     private void configure(MotorEx motor) {

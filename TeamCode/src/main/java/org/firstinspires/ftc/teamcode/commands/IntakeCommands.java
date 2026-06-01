@@ -21,8 +21,17 @@ public class IntakeCommands {
     public Command stop() {
         return complete(intake::stop);
     }
+
     public Command reset() {
         return complete(intake::reset);
+    }
+
+    public Command bumperLeft() {
+        return complete(intake::bumperLeft);
+    }
+
+    public Command bumperRight() {
+        return complete(intake::bumperRight);
     }
 
     private Command complete(Runnable runnable) {

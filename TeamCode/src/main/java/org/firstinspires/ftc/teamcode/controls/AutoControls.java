@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.A;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
+import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
+import static org.firstinspires.ftc.teamcode.commands.Commands.kickstand;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 
@@ -26,8 +30,17 @@ public class AutoControls {
             .and(gamepad1.getGamepadButton(Y))
             .whenActive(auto.stop());
 
+        gamepad1.getGamepadButton(START).negate()
+            .and(gamepad1.getGamepadButton(LEFT_BUMPER))
+            .whenActive(intake.bumperLeft());
+
+        gamepad1.getGamepadButton(START).negate()
+            .and(gamepad1.getGamepadButton(RIGHT_BUMPER))
+            .whenActive(intake.bumperRight());
+
         gamepad2.getGamepadButton(START).negate()
             .and(gamepad2.getGamepadButton(A))
             .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
+
     }
 }
