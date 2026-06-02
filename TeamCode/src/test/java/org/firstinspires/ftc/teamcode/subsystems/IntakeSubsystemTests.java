@@ -13,7 +13,9 @@ import static org.mockito.Mockito.when;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
+import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.util.Debounce;
+import org.firstinspires.ftc.teamcode.game.Config;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -72,6 +74,42 @@ public class IntakeSubsystemTests extends TestHarness {
         VEL = STOP;
         intake.hold();
         assert VEL == HOLD;
+    }
+
+    @Test
+    public void testPeriodicUpdatesBumperPositionAcrossBothDiagonals() {
+        Config.config.pose = new Pose(2, 1, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
+
+        Config.config.pose = new Pose(1, 2, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
+
+        Config.config.pose = new Pose(1, -2, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
+
+        Config.config.pose = new Pose(2, -1, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
+    }
+
+    @Test
+    public void testPeriodicKeepsDiagonalsAtZero() {
+        Config.config.pose = new Pose(2, 2, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
+
+        Config.config.pose = new Pose(2, -2, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
     }
 
     @Test

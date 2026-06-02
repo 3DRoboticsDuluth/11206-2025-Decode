@@ -5,9 +5,12 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_11
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
+import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 
-import static java.lang.Double.NaN;
+import static java.lang.Double.max;
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
 
 import android.annotation.SuppressLint;
 
@@ -59,6 +62,9 @@ public class IntakeSubsystem extends HardwareSubsystem {
         if (unready()) return;
 
         motor.setVelocityPercentage(VEL);
+
+        BUMPER_LEFT_POS = BUMPER_RIGHT_POS =
+            max(0.0, signum(config.pose.y) * signum(abs(config.pose.y) - abs(config.pose.x)));
         bumperLeft.set(BUMPER_LEFT_POS);
         bumperRight.set(BUMPER_RIGHT_POS);
 
@@ -93,14 +99,6 @@ public class IntakeSubsystem extends HardwareSubsystem {
     public void reset() {
         artifacts = 0;
         full = false;
-    }
-
-    public void bumperLeft() {
-        BUMPER_LEFT_POS = BUMPER_RIGHT_POS = 1;
-    }
-
-    public void bumperRight() {
-        BUMPER_LEFT_POS = BUMPER_RIGHT_POS = 0;
     }
 
     private void configure(MotorEx motor) {

@@ -26,14 +26,6 @@ public class IntakeCommands {
         return complete(intake::reset);
     }
 
-    public Command bumperLeft() {
-        return complete(intake::bumperLeft);
-    }
-
-    public Command bumperRight() {
-        return complete(intake::bumperRight);
-    }
-
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable);
     }

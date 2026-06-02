@@ -5,8 +5,11 @@ import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_DOWN
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_LEFT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.DPAD_UP;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 
 public class IntakeControls {
