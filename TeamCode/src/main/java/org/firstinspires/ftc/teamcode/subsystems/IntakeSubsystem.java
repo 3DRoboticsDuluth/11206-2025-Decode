@@ -63,10 +63,12 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
         motor.setVelocityPercentage(VEL);
 
-        BUMPER_LEFT_POS = BUMPER_RIGHT_POS =
-            max(0.0, signum(config.pose.y) * signum(abs(config.pose.y) - abs(config.pose.x)));
-        bumperLeft.set(BUMPER_LEFT_POS);
-        bumperRight.set(BUMPER_RIGHT_POS);
+        //BUMPER_LEFT_POS = BUMPER_RIGHT_POS =
+        //    1 - max(0.0, signum(config.pose.y) * signum(abs(config.pose.y) - abs(config.pose.x)));
+        //bumperLeft.set(config.started ? BUMPER_LEFT_POS : 1);
+        //bumperRight.set(config.started ? BUMPER_RIGHT_POS : 0);
+        bumperLeft.set(1);
+        bumperRight.set(0);
 
         boolean laserCurrent = laser.getState();
         if (laserDebounce.triggered(laserCurrent, LASER_THRESH) && artifacts < MAX_ARTIFACTS)
