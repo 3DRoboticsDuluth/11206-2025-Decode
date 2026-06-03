@@ -108,8 +108,8 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -60).andThen(
-                    drive.untilHeading(13),
+                drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -54).andThen(
+                    drive.untilHeading(5),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
                     side == NORTH ? flywheel.isReady() : wait.noop(),

@@ -40,7 +40,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
     public static double POWER_INTAKE = 0.50;
-    public static double POWER_SPIKE0 = 0.25;
+    public static double POWER_SPIKE0 = 0.40;
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;

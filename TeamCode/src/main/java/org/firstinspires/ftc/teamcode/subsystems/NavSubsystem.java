@@ -86,9 +86,9 @@ public class NavSubsystem {
             -1 * TILE_WIDTH,
             config.alliance.sign * -0.75 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance.sign * -175
+            getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -181 : -175)
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance.sign * -175
+            getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -181 : -175)
         );
     }
 
