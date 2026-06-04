@@ -76,6 +76,7 @@ public class AutoCommands {
                 auto.depositStop(),
                 auto.intakeStart(),
                 drive.untilDistance(TILE_WIDTH * -2),
+                // TODO: Try to find one standardish intake power, 0.3-0.6.
                 new DeferredCommand(() -> spike == 0 ? drive.setPowerSpike0() : drive.setPowerIntake(), null)
             )
         );
@@ -108,7 +109,8 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                drive.untilDistance(side == NORTH || config.pose.x < -2 * TILE_WIDTH ? -9 : -54).andThen(
+                // TODO: Maybe trying shooting earlier than -9 for first shot, but note it also affects north at present.
+                drive.untilDistance(side == NORTH || config.pose.x < TILE_WIDTH * -2 ? -9 : -54).andThen(
                     drive.untilHeading(5),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
@@ -162,6 +164,7 @@ public class AutoCommands {
                 ).withTimeout(2000 + 200L * execution).andThen(
                     wait.doherty(),
                     drive.setPowerAuto(),
+                    // TODO: Clean-up now with hold-end?
                     auto.deposit(NORTH, -0.25 * TILE_WIDTH, config.alliance.sign * -0.0 * TILE_WIDTH)
                 ), cycles
             )
@@ -188,7 +191,7 @@ public class AutoCommands {
                 drive.chaseLock(false),
                 auto.intakeStop(),
                 auto.deposit(config.side, 0, 0)
-            ), Integer.MAX_VALUE
+            ), Integer.MAX_VALUE // TODO: Find a different way to continuously loop.
         );
     }
 
@@ -198,7 +201,7 @@ public class AutoCommands {
             drive.setPowerAuto().alongWith(
                 drive.toParking(config.parkGate, axial, lateral)
             ).andThen(
-                stop()
+                auto.stop()
             )
         );
     }

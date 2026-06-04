@@ -24,8 +24,6 @@ import org.firstinspires.ftc.teamcode.adaptations.solverslib.MotorEx;
 @Configurable
 public class FlywheelSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients PIDF = new PIDFCoefficients(64, 0, 0, 8);
-    //public static PIDFCoefficients PIDF = new PIDFCoefficients(128, 0, 0, 8); // TODO: Test!
-    //public static PIDFCoefficients PIDF = new PIDFCoefficients(256, 0, 0, 16); // TODO: Test!
     public static FFCoefficients AXIAL_FF = new FFCoefficients(0, 0.0008, 0);
     public static double FWD = 0.4;
     public static double REV = -0.5;

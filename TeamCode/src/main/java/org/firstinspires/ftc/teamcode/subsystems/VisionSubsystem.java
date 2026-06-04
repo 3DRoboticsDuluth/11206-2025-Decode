@@ -295,11 +295,10 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         // NOTE: MOD_THRESH allows the skipping of the first frames after switching pipelines to avoid unstable results
         if (!colorResults.isEmpty() && periodicCount % MOD > MOD_THRESH) {
-
+            // TODO: Only clear items in the current viewable area.
             primaryArtifacts.clear();
 
             for (LLResultTypes.ColorResult cr : colorResults) {
-
                 double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
                 double crx = direction * cr.getTargetXDegrees();
                 double cry = direction * cr.getTargetYDegrees();

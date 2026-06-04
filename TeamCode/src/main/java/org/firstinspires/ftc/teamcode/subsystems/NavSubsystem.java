@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
-import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -50,6 +48,7 @@ public class NavSubsystem {
     }
 
     public Pose getSpike0() {
+        // TODO: Tune spike-0 pose.
         return createPose(
             2.1 * TILE_WIDTH,
             config.alliance.sign * -2.75 * TILE_WIDTH,
@@ -86,6 +85,7 @@ public class NavSubsystem {
             -1 * TILE_WIDTH,
             config.alliance.sign * -0.75 * TILE_WIDTH
         ).face(
+            // TODO: Tune deposit south angles RED and BLUE.
             getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -181 : -175)
         ).axial(axialOffset).lateral(lateralOffset).face(
             getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -181 : -175)
@@ -157,6 +157,7 @@ public class NavSubsystem {
         return normalizeHeading(
             config.pose.heading - (
                 this.getGoalPose().atan2(
+                    // TODO: Test, ensure that vision.botpose is calculating correctly.
                     /*vision.botpose == null ? */config.pose/* : vision.botpose*/
                 ) + this.getGoalHeadingOffset()
             )

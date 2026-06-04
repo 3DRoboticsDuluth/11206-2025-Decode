@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 
 @Configurable
 public class QuanomousCommands {
+    // TODO: Consider changing to 30s for non-qualification because movement points are no longer strategic.
     public static long TIMEOUT = 28000L;
 
     private final Map<String, Function<JSONObject, Command>> commands =
@@ -125,7 +126,6 @@ public class QuanomousCommands {
             default: return NavSubsystem.Lateral.CENTER;
         }
     }
-
 
     /** @noinspection DataFlowIssue*/
     public Command execute() {

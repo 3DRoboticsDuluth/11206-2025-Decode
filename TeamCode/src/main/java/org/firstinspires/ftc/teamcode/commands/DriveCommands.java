@@ -110,11 +110,13 @@ public class DriveCommands {
                 config.pose.x > TILE_WIDTH ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
+                // TODO: Tune for RED vs BLUE.
                 nav.getSpike0().axial(TILE_WIDTH * 0.7).hold(false)
             ), null
         );
     }
 
+    // TODO: Breakout spike-1 from-deposit and from-gate.
     public Command toSpike1() {
         return new DeferredCommand(
             () -> curve(
@@ -150,6 +152,7 @@ public class DriveCommands {
         );
     }
 
+    // TODO: Breakout spike-3 from-deposit and from-gate.
     public Command toSpike3() {
         return new DeferredCommand(
             () -> curve(
