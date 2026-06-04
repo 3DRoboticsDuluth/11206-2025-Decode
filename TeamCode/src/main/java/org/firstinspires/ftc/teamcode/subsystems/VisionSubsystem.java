@@ -9,7 +9,9 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_LENGTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.periodicCount;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Double.NaN;
@@ -48,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** @noinspection UnclearExpression*/
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean CAMERA_UPSIDE_DOWN = true;
@@ -56,10 +59,10 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double CAMERA_Z_INCHES = 16.14173;   // 0.42 meters
     public static double CAMERA_PITCH_DEGREES = -0.75;
     public static double CAMERA_YAW_DEGREES = 1.15;
-    public static double CAMERA_VIEW_MIN_X_DEGREES = -30;
-    public static double CAMERA_VIEW_MAX_X_DEGREES = 30;
-    public static double CAMERA_VIEW_MIN_Y_DEGREES = -25;
-    public static double CAMERA_VIEW_MAX_Y_DEGREES = 25;
+    public static double CAMERA_VIEW_MIN_X_DEGREES = -25;
+    public static double CAMERA_VIEW_MAX_X_DEGREES = 25;
+    public static double CAMERA_VIEW_MIN_Y_DEGREES = -18;
+    public static double CAMERA_VIEW_MAX_Y_DEGREES = 20;
     public static double ELEMENT_RADIUS = 2.5;
     public static double ELEVATION_SCALAR = 1;
     public static double BEARING_X_SCALAR = 1;
@@ -82,6 +85,9 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static int MOD = 6;
     public static int MAX_CLUSTER_SIZE = 3;
     public static double CLUSTER_SWITCH_MIN_IMPROVEMENT = 0.05;
+    public static double CLUSTER_DISTANCE_WEIGHT = 0.10;
+    public static double CLUSTER_TURN_WEIGHT = 8.0;
+    public static double CLUSTER_SCAN_POSE_DISTANCE = TILE_WIDTH;
 
     private static final Style VIEWABLE_AREA_LOOK = new Style(
         "#0057FF", "#0057FF", 2.0
@@ -166,13 +172,17 @@ public class VisionSubsystem extends HardwareSubsystem {
         if ((PIPELINE == PURPLE || PIPELINE == GREEN) && periodicCount % MOD == MOD - 1)
             switchPipeline(PIPELINE == PURPLE ? GREEN : PURPLE, false);
 
-        //if (PIPELINE == GREEN || PIPELINE == PURPLE)
-            drawViewableArea();
-
-        drawElement();
+        drawViewableArea();
+        drawElements();
     }
 
-    public void drawElement() {
+    public void drawElements() {
+        List<Pose> poses = new ArrayList<>(purpleArtifacts);
+        poses.addAll(greenArtifacts);
+
+        for (Pose pose : poses)
+            Drawing.drawArtifact(toPedroPose(pose));
+
         if (!isNaN(PHANTOM_ANGLE)) {
             double angle = PHANTOM_ANGLE == 0 ?
                 2 * PI * playTimer.seconds() / PHANTOM_PERIOD :
@@ -195,12 +205,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     public void drawViewableArea() {
-        Pose[] corners = new Pose[] {
-            getViewableAreaCorner(CAMERA_VIEW_MIN_X_DEGREES, CAMERA_VIEW_MIN_Y_DEGREES),
-            getViewableAreaCorner(CAMERA_VIEW_MAX_X_DEGREES, CAMERA_VIEW_MIN_Y_DEGREES),
-            getViewableAreaCorner(CAMERA_VIEW_MAX_X_DEGREES, CAMERA_VIEW_MAX_Y_DEGREES),
-            getViewableAreaCorner(CAMERA_VIEW_MIN_X_DEGREES, CAMERA_VIEW_MAX_Y_DEGREES)
-        };
+        Pose[] corners = getViewableAreaCorners();
 
         Drawing.drawPolygon(new com.pedropathing.geometry.Pose[] {
             toPedroPose(corners[0]),
@@ -230,9 +235,10 @@ public class VisionSubsystem extends HardwareSubsystem {
     }
 
     public void resetElement() {
-        element = null;
-        purpleArtifacts.clear();
-        greenArtifacts.clear();
+        if (this.element == null) return;
+        removeArtifactsNear(purpleArtifacts, this.element);
+        removeArtifactsNear(greenArtifacts, this.element);
+        this.element = null;
     }
 
     @SuppressLint("DefaultLocale")
@@ -300,8 +306,7 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         // NOTE: MOD_THRESH allows the skipping of the first frames after switching pipelines to avoid unstable results
         if (!colorResults.isEmpty() && periodicCount % MOD > MOD_THRESH) {
-            // TODO: Only clear items in the current viewable area.
-            primaryArtifacts.clear();
+            primaryArtifacts.removeIf(this::isInCurrentViewableArea);
 
             for (LLResultTypes.ColorResult cr : colorResults) {
                 double direction = CAMERA_UPSIDE_DOWN ? -1 : 1;
@@ -341,28 +346,28 @@ public class VisionSubsystem extends HardwareSubsystem {
                 );
 
                 if (config.side == NORTH &&
-                    fieldCentricPose.x < TILE_WIDTH * 3.25 &&
-                    fieldCentricPose.x > TILE_WIDTH * 0.25 &&
-                    fieldCentricPose.y < TILE_WIDTH * (config.alliance == RED ? 3.25 : -0.25) &&
-                    fieldCentricPose.y > TILE_WIDTH * (config.alliance == RED ? 0.25 : -3.25))
+                    fieldCentricPose.x < TILE_WIDTH * +3.2 &&
+                    fieldCentricPose.x > TILE_WIDTH * +0.5 &&
+                    fieldCentricPose.y < TILE_WIDTH * (config.alliance == RED ? +3.2 : -0.5) &&
+                    fieldCentricPose.y > TILE_WIDTH * (config.alliance == RED ? +0.5 : -3.2)) {
+                    removeArtifactsNear(primaryArtifacts, fieldCentricPose);
                     primaryArtifacts.add(fieldCentricPose);
+                }
             }
         }
 
         List<Pose> poses = new ArrayList<>(primaryArtifacts);
         poses.addAll(secondaryArtifacts);
 
-        for (Pose pose : poses)
-            Drawing.drawArtifact(toPedroPose(pose));
+        element = element != null ? element :
+            (isNearChaseScanPose() ?
+                Clusters.findBest(config.pose, poses, element, MAX_CLUSTER_SIZE, CLUSTER_SWITCH_MIN_IMPROVEMENT, CLUSTER_DISTANCE_WEIGHT, CLUSTER_TURN_WEIGHT, ROBOT_LENGTH) :
+                Clusters.findClosest(config.pose, poses, element)
+            );
+    }
 
-        element = Clusters.findBest(
-            poses,
-            element,
-            MAX_CLUSTER_SIZE,
-            CLUSTER_SWITCH_MIN_IMPROVEMENT
-        );
-
-        drawElement();
+    private boolean isNearChaseScanPose() {
+        return config.pose.hypot(nav.getChaseScanPose()) <= CLUSTER_SCAN_POSE_DISTANCE;
     }
 
     private Pose getViewableAreaCorner(double targetYawAngle, double targetPitchAngle) {
@@ -373,6 +378,36 @@ public class VisionSubsystem extends HardwareSubsystem {
         double yOffset = CAMERA_Y_INCHES + distance * sin(bearingAngle * BEARING_Y_SCALAR);
         Pose robotCentricPose = new Pose(xOffset, yOffset, atan2(yOffset, xOffset));
         return config.pose.axial(robotCentricPose.x).lateral(robotCentricPose.y);
+    }
+
+    private Pose[] getViewableAreaCorners() {
+        return new Pose[] {
+            getViewableAreaCorner(CAMERA_VIEW_MIN_X_DEGREES, CAMERA_VIEW_MIN_Y_DEGREES),
+            getViewableAreaCorner(CAMERA_VIEW_MAX_X_DEGREES, CAMERA_VIEW_MIN_Y_DEGREES),
+            getViewableAreaCorner(CAMERA_VIEW_MAX_X_DEGREES, CAMERA_VIEW_MAX_Y_DEGREES),
+            getViewableAreaCorner(CAMERA_VIEW_MIN_X_DEGREES, CAMERA_VIEW_MAX_Y_DEGREES)
+        };
+    }
+
+    private boolean isInCurrentViewableArea(Pose pose) {
+        Pose[] corners = getViewableAreaCorners();
+        boolean hasPositive = false;
+        boolean hasNegative = false;
+
+        for (int i = 0; i < corners.length; i++) {
+            Pose a = corners[i];
+            Pose b = corners[(i + 1) % corners.length];
+            double cross = (b.x - a.x) * (pose.y - a.y) - (b.y - a.y) * (pose.x - a.x);
+            if (cross > 0) hasPositive = true;
+            if (cross < 0) hasNegative = true;
+            if (hasPositive && hasNegative) return false;
+        }
+
+        return true;
+    }
+
+    private void removeArtifactsNear(List<Pose> artifacts, Pose pose) {
+        artifacts.removeIf(artifact -> artifact.hypot(pose) <= ELEMENT_RADIUS);
     }
 
     @SuppressLint("DefaultLocale")

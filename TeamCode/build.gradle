@@ -49,11 +49,11 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     // SolversLib
-    implementation 'org.solverslib:core:0.3.3'
-    implementation 'org.solverslib:pedroPathing:0.3.3'
+    implementation 'org.solverslib:core:0.3.4'
+    implementation 'org.solverslib:pedroPathing:0.3.4'
 
     // Pedro Pathing
-    implementation 'com.pedropathing:ftc:2.0.6'
+    implementation 'com.pedropathing:ftc:2.1.2'
     implementation 'com.pedropathing:telemetry:1.0.0'
 
     // Panels Dashboard
@@ -61,8 +61,8 @@ dependencies {
 
     // Unit Testing
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.21.0'
-    testRuntimeOnly 'org.mockito:mockito-core:5.21.0'
+    testImplementation 'org.mockito:mockito-core:5.23.0'
+    testRuntimeOnly 'org.mockito:mockito-core:5.23.0'
 }
 
 tasks.withType(Test).configureEach {

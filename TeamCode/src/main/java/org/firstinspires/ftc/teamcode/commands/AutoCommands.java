@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import static org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.TRANSPARENT;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.commands.Commands.conveyor;
 import static org.firstinspires.ftc.teamcode.commands.Commands.drive;
 import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
-import static org.firstinspires.ftc.teamcode.commands.Commands.lights;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
@@ -24,6 +22,7 @@ import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.RepeatCommand;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
 import java.util.HashMap;
 
@@ -153,45 +152,37 @@ public class AutoCommands {
     }
 
     public Command chase(int cycles) {
-        return vision.chaseLock(true).alongWith(
-            lights.set(TRANSPARENT),
+        return intake.reset().andThen(
             new RepeatCommand(
-                execution -> drive.toChase(execution).alongWith(
-                    drive.untilDistance(-1 * TILE_WIDTH).andThen(drive.setPowerLow()),
-                    wait.milliseconds(50).andThen(vision.resetElement()),
-                    auto.intakeStart()
-                ).withTimeout(2000 + 200L * execution).andThen(
-                    wait.doherty(),
-                    drive.setPowerAuto(),
-                    // TODO: Clean-up now with hold-end?
-                    auto.deposit(NORTH, -0.25 * TILE_WIDTH, config.alliance.sign * -0.0 * TILE_WIDTH)
+                e1 -> new RepeatCommand(
+                    e2 -> drive.toChaseScan().alongWith(
+                        vision.chaseLock(true),
+                        vision.waitForElement().withTimeout(3000).andThen(
+                            auto.intakeStart(),
+                            drive.chaseLock(true),
+                            intake.waitForElement().raceWith(
+                                drive.untilStill(0.4)
+                            ), vision.resetElement()
+                        )
+                    ), attempts -> Subsystems.intake.full || attempts >= 4 || (
+                        Subsystems.intake.artifacts >= 2 &&
+                        Subsystems.nav.getDepositNorthPoseDistance() <= TILE_WIDTH * 2
+                    ) || (
+                        Subsystems.intake.artifacts >= 1 &&
+                        Subsystems.nav.getDepositNorthPoseDistance() <= TILE_WIDTH * 1
+                    )
+                ).andThen(
+                    drive.chaseLock(false),
+                    auto.deposit(config.side, 0, 0),
+                    wait.doherty(1),
+                    auto.depositStop()
                 ), cycles
             )
         );
     }
 
-    public Command clusterChase(int cycles) {
-        return new RepeatCommand(
-            e1 -> new RepeatCommand(
-                e2 -> drive.toChaseScan().alongWith(
-                    intake.reset(),
-                    vision.resetElement(),
-                    vision.chaseLock(true),
-                    vision.waitForElement().andThen(
-                        auto.intakeStart(),
-                        drive.stop(),
-                        drive.chaseLock(true),
-                        intake.waitForElement().withTimeout(3000),
-                        vision.chaseLock(false)
-                    )
-                ), cycles
-            ).andThen(
-                vision.chaseLock(false),
-                drive.chaseLock(false),
-                auto.intakeStop(),
-                auto.deposit(config.side, 0, 0)
-            ), Integer.MAX_VALUE // TODO: Find a different way to continuously loop.
-        );
+    public Command clusterChase() {
+        return chase(Integer.MAX_VALUE);
     }
 
     /** @noinspection unused*/
@@ -207,6 +198,8 @@ public class AutoCommands {
 
     public Command stop() {
         return drive.goalLock(false).alongWith(
+            drive.chaseLock(false),
+            drive.stop(),
             intake.stop(),
             conveyor.stop(),
             gate.close(),

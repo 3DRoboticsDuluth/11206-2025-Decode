@@ -22,6 +22,7 @@ import android.annotation.SuppressLint;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.controller.PController;
 
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
@@ -38,7 +39,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.35, 0.0015, 0.05, 0.05);
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
-    public static double ALLOWABLE_STILL = 1;
+    public static double ALLOWABLE_STILL = 2;
     public static double POWER_INTAKE = 0.5;
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
@@ -69,6 +70,8 @@ public class DriveSubsystem extends HardwareSubsystem {
     private double forward = 0;
     private double strafe = 0;
     private double turn = 0;
+
+    private final ElapsedTime stillTimer = new ElapsedTime();
 
     public DriveSubsystem() {
         this.setGoalLock(false);
@@ -110,7 +113,9 @@ public class DriveSubsystem extends HardwareSubsystem {
         telemetry.addData("Drive (Power)", () -> String.format("%.2f", follower.getMaxPowerScaling()));
         telemetry.addData("Drive (Controls)", () -> String.format("%.2ff, %.2fs, %.2ft", forward, strafe, turn));
         telemetry.addData("Drive (Pose)", () -> String.format("%.1fx, %.1fy, %.1f°", config.pose.x, config.pose.y, toDegrees(config.pose.heading)));
-        telemetry.addData("Drive (Still)", () -> String.format("%s", isStill()));
+        telemetry.addData("Drive (Still)", () -> String.format("%b", isStill()));
+        telemetry.addData("Drive (Still(0.4))", () -> String.format("%s", isStill(0.4) ? "1" : "0"));
+        telemetry.addData("Drive (Still Timer)", () -> String.format("%.1f", stillTimer.milliseconds()));
         telemetry.addData("Drive (Busy)", () -> String.format("%s", isBusy()));
         telemetry.addData("Drive (Goal Remain)", () -> String.format("%.1f", toDegrees(nav.getGoalHeadingRemaining())));
         telemetry.addData("Drive (Goal Dist)", () -> String.format("%.1f", nav.getGoalDistance()));
@@ -127,13 +132,11 @@ public class DriveSubsystem extends HardwareSubsystem {
         if (unready() || !config.started) return;
         if (isBusy() && !isControlled() && !controlsReset) controlsReset = true;
         if (isBusy() && isControlled() && controlsReset) follower.startTeleopDrive();
-        if (!isBusy() && !follower.isTeleopDrive()) follower.startTeleopDrive();
-        if (isBusy() || (config.auto && !this.getChaseLock() && !this.getGoalLock())) return;
         follower.setTeleOpDrive(
             this.forward += pForward.calculate(this.forward, calculateForward(forward)),
             this.strafe += pStrafe.calculate(this.strafe, calculateStrafe(strafe)),
             this.turn += pTurn.calculate(this.turn, calculateTurn(turn)),
-            config.robotCentric  && !this.getChaseLock(),
+            config.robotCentric && !this.getChaseLock(),
             config.robotCentric || config.chaseLock || isNaN(config.alliance.sign) ? 0 : config.alliance.sign *  -90
         );
     }
@@ -170,7 +173,13 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public boolean isStill() {
-        return follower.getAcceleration().getMagnitude() < ALLOWABLE_STILL;
+        boolean isStill = follower.getAcceleration().getMagnitude() < ALLOWABLE_STILL;
+        if (!isStill) stillTimer.reset();
+        return isStill;
+    }
+
+    public boolean isStill(double seconds) {
+        return stillTimer.seconds() > seconds;
     }
 
     public boolean isBusy() {
@@ -202,6 +211,7 @@ public class DriveSubsystem extends HardwareSubsystem {
 
     public void setChaseLock(boolean enabled) {
         config.chaseLock = CHASE_LOCK = enabled;
+        if (config.chaseLock) follower.startTeleopDrive();
     }
 
     public void configureFollower(Pose pose) {

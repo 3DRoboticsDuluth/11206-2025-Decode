@@ -29,14 +29,12 @@ public class VisionCommands {
     }
 
     public Command resetElement() {
-        return new DeferredCommand(
-            () -> complete(vision::resetElement), null
-        );
+        return complete(vision::resetElement);
     }
 
     public Command waitForElement(){
         return wait.until(
-                () -> vision.element != null
+            () -> vision.element != null
         );
     }
 

@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
+import static org.firstinspires.ftc.teamcode.subsystems.VisionSubsystem.ELEMENT_RADIUS;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -92,13 +94,17 @@ public class NavSubsystem {
 
     public Pose getDepositNorthPose(double axialOffset, double lateralOffset) {
         return createPose(
-            (abs(config.pose.y) < TILE_WIDTH ? 2.5 : 2.3) * TILE_WIDTH,
-            config.alliance.sign * (abs(config.pose.y) < TILE_WIDTH ? -0.65 : -0.75) * TILE_WIDTH
+            2.3 * TILE_WIDTH,
+            config.alliance.sign * -0.6 * TILE_WIDTH
         ).face(
             getGoalPose(), config.alliance.sign * -180
         ).axial(axialOffset).lateral(lateralOffset).face(
             getGoalPose(), config.alliance.sign * -180
         );
+    }
+
+    public double getDepositNorthPoseDistance() {
+        return config.pose.hypot(Subsystems.nav.getDepositNorthPose(0, 0));
     }
 
     public Pose getGatePose() {
@@ -165,9 +171,9 @@ public class NavSubsystem {
 
     public Pose getChaseScanPose() {
         return createPose(
-            2.5 * TILE_WIDTH,
-            -0.5 * TILE_WIDTH * config.alliance.sign,
-            -config.alliance.sign * Math.toRadians(104.7)
+            2.25 * TILE_WIDTH,
+            -0.75 * TILE_WIDTH * config.alliance.sign,
+            toRadians(config.alliance.sign * -85)
         );
     }
 
@@ -175,12 +181,16 @@ public class NavSubsystem {
         return createPose(
             vision.element == null ? (2.75 - (execution % 3) * 0.75) * TILE_WIDTH : vision.element.x,
             2.4 * TILE_WIDTH * -config.alliance.sign,
-            toRadians(config.alliance.sign * -85)
+            toRadians(config.alliance.sign * -90)
         );
     }
 
     public Pose getArtifactPose() {
-        return vision.element.face(config.pose).axial(ROBOT_LENGTH / 2).reverse();
+        return new Pose(
+            clamp(vision.element.x, TILE_WIDTH * -3 + ROBOT_WIDTH / 2, TILE_WIDTH * 3 - ROBOT_WIDTH / 2),
+            (TILE_WIDTH * 2.7 - ELEMENT_RADIUS) * -config.alliance.sign,
+            getArtifactHeading()
+        );
     }
 
     public double getArtifactForwardRemaining() {
@@ -188,13 +198,23 @@ public class NavSubsystem {
     }
 
     public double getArtifactStrafeRemaining() {
-        return config.pose.y - getArtifactPose().y;
+        Pose artifactPose = getArtifactPose();
+
+        if (abs(getArtifactForwardRemaining()) > ELEMENT_RADIUS) {
+            double stagedY = artifactPose.y + ELEMENT_RADIUS * 4 * config.alliance.sign;
+            boolean tooCloseToWall = config.pose.y * -config.alliance.sign > stagedY * -config.alliance.sign;
+            return tooCloseToWall ? config.pose.y - stagedY : 0.5 * -config.alliance.sign;
+        }
+
+        return config.pose.y - artifactPose.y;
     }
 
     public double getArtifactHeadingRemaining() {
-        return normalizeHeading(
-             config.pose.heading - getArtifactPose().heading
-        );
+        return normalizeHeading(config.pose.heading - getArtifactPose().heading);
+    }
+
+    protected double getArtifactHeading() {
+        return PI / 2 * -config.alliance.sign;
     }
 
     public Pose getParkingPose(boolean gate, Axial axial, Lateral lateral) {
@@ -202,8 +222,7 @@ public class NavSubsystem {
             gate ? 0 * TILE_WIDTH : (config.side.sign * (config.side == NORTH ? 2.6 : 2.4) * TILE_WIDTH),
             gate ? (1.75 * -config.alliance.sign * TILE_WIDTH) : ((config.side == NORTH ? -1.75 : -1) * TILE_WIDTH * config.alliance.sign),
             gate ? toRadians(config.alliance.sign * -90) : toRadians(90 + config.side.sign * 90),
-            axial,
-            lateral
+            axial, lateral
         );
     }
 

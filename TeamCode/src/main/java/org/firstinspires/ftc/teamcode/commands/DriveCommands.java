@@ -53,9 +53,9 @@ public class DriveCommands {
     public Command input(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier turn) {
         return new RunCommand(
             () -> drive.inputs(
-                forward.getAsDouble(),
-                strafe.getAsDouble(),
-                turn.getAsDouble()
+                config.teleop ? forward.getAsDouble() : 0,
+                config.teleop ? strafe.getAsDouble() : 0,
+                config.teleop ? turn.getAsDouble() : 0
             ), drive
         );
     }
@@ -113,7 +113,7 @@ public class DriveCommands {
         return new DeferredCommand(
             () -> curve(
                 config.pose.x > TILE_WIDTH ?
-                    nav.getSpike1().axial(TILE_WIDTH * -1.10).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.3 * config.alliance.sign) :
+                    nav.getSpike1().axial(TILE_WIDTH * -0.90).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.0 * config.alliance.sign) :
                     nav.getSpike1().axial(TILE_WIDTH * -1.85).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * +0.3 * config.alliance.sign),
                 nav.getSpike1().axial(TILE_WIDTH * 1.4).hold(false)
             ), null
@@ -148,9 +148,9 @@ public class DriveCommands {
     public Command toSpike3() {
         return new DeferredCommand(
             () -> curve(
-                config.pose.x > 1 ?
-                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
-                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
+                config.pose.x > TILE_WIDTH ?
+                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
+                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
                 nav.getSpike3().axial(TILE_WIDTH * 1).hold(false)
             ), null
         );
@@ -218,10 +218,7 @@ public class DriveCommands {
 
     public Command stop() {
         return complete(
-            () -> {
-                follower.startTeleOpDrive();
-                follower.setTeleOpDrive(0,0,0,0);
-            }
+            () -> follower.setTeleOpDrive(0,0,0,0)
         );
     }
 
@@ -285,9 +282,11 @@ public class DriveCommands {
     }
 
     public Command untilNotBusy() {
-        return complete(
-            () -> wait.until(() -> !drive.isBusy())
-        );
+        return wait.until(() -> !drive.isBusy());
+    }
+
+    public Command untilStill(double seconds) {
+        return wait.until(() -> drive.isStill(seconds));
     }
 
     public boolean isToFar(Pose pose) {

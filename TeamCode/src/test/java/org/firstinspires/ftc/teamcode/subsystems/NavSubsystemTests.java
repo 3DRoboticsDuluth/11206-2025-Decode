@@ -5,10 +5,13 @@ import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.game.Side.SOUTH;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_LENGTH;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
@@ -152,7 +155,7 @@ public class NavSubsystemTests extends  TestHarness {
         vision.element = new Pose(20, 24, 1.0);
         assert nav.getArtifactPose() != null;
         assert nav.getArtifactForwardRemaining() != 0;
-        assert nav.getArtifactStrafeRemaining() != 0;
+        assert !Double.isNaN(nav.getArtifactStrafeRemaining());
         assert nav.getArtifactHeadingRemaining() != 0;
 
         Pose pose = new Pose(1, 2, 0.3);
@@ -177,6 +180,75 @@ public class NavSubsystemTests extends  TestHarness {
         assert nav.createPose(1, 2, 0.3, NavSubsystem.Lateral.LEFT, 2.5, true).hold;
         assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.BACK, NavSubsystem.Lateral.RIGHT, true).hold;
         assert nav.createPose(1, 2, 0.3, NavSubsystem.Axial.BACK, NavSubsystem.Lateral.RIGHT, 1.5, 2.5, true).hold;
+    }
+
+    @Theory
+    public void testArtifactPoseLocksToAllianceHeading(Alliance alliance, Side side) {
+        Assume.assumeTrue(alliance != null && side != null);
+        config.alliance = alliance;
+        config.side = side;
+        config.pose = new Pose(2 * TILE_WIDTH, 0, toRadians(12));
+        vision.element = new Pose(0, 3 * TILE_WIDTH * -config.alliance.sign, 0);
+
+        Pose artifactPose = nav.getArtifactPose();
+
+        assert abs(artifactPose.heading - PI / 2 * -config.alliance.sign) < 0.001;
+        assert abs(artifactPose.y - ((3 * TILE_WIDTH - VisionSubsystem.ELEMENT_RADIUS) * -config.alliance.sign)) < 0.001;
+        assert abs(artifactPose.x) <= 3 * TILE_WIDTH - ROBOT_WIDTH / 2;
+    }
+
+    @Theory
+    public void testArtifactPoseUsesRobotWidthForXClamp(Alliance alliance, Side side) {
+        Assume.assumeTrue(alliance != null && side != null);
+        config.alliance = alliance;
+        config.side = side;
+        config.pose = new Pose(TILE_WIDTH, 0, 0);
+        vision.element = new Pose(3 * TILE_WIDTH, 3 * TILE_WIDTH * -config.alliance.sign, 0);
+
+        Pose artifactPose = nav.getArtifactPose();
+
+        assert abs(artifactPose.x - (3 * TILE_WIDTH - ROBOT_WIDTH / 2)) < 0.001;
+    }
+
+    @Theory
+    public void testArtifactPoseUsesFieldAxisResiduals(Alliance alliance, Side side) {
+        Assume.assumeTrue(alliance != null && side != null);
+        config.alliance = alliance;
+        config.side = side;
+        config.pose = new Pose(2, 2 * TILE_WIDTH * -config.alliance.sign, toRadians(80 * -config.alliance.sign));
+        vision.element = new Pose(0, 3 * TILE_WIDTH * -config.alliance.sign, 0);
+
+        Pose artifactPose = nav.getArtifactPose();
+
+        assert abs(nav.getArtifactForwardRemaining() - (config.pose.x - artifactPose.x)) < 0.001;
+        assert abs(nav.getArtifactStrafeRemaining() - (config.pose.y - artifactPose.y)) < 0.001;
+    }
+
+    @Theory
+    public void testArtifactStrafeWaitsUntilXAligned(Alliance alliance, Side side) {
+        Assume.assumeTrue(alliance != null && side != null);
+        config.alliance = alliance;
+        config.side = side;
+        config.pose = new Pose(3, 2 * TILE_WIDTH * -config.alliance.sign, toRadians(80 * -config.alliance.sign));
+        vision.element = new Pose(0, 3 * TILE_WIDTH * -config.alliance.sign, 0);
+
+        assert abs(nav.getArtifactForwardRemaining()) > VisionSubsystem.ELEMENT_RADIUS;
+        assert abs(nav.getArtifactStrafeRemaining()) < 0.001;
+    }
+
+    @Theory
+    public void testArtifactStrafeBacksOutWhenTooCloseBeforeXAligned(Alliance alliance, Side side) {
+        Assume.assumeTrue(alliance != null && side != null);
+        config.alliance = alliance;
+        config.side = side;
+        config.pose = new Pose(3, (3 * TILE_WIDTH - VisionSubsystem.ELEMENT_RADIUS * 2) * -config.alliance.sign, toRadians(80 * -config.alliance.sign));
+        vision.element = new Pose(0, 3 * TILE_WIDTH * -config.alliance.sign, 0);
+
+        Pose artifactPose = nav.getArtifactPose();
+        double stagedY = artifactPose.y + VisionSubsystem.ELEMENT_RADIUS * 3 * config.alliance.sign;
+
+        assert abs(nav.getArtifactForwardRemaining()) > VisionSubsystem.ELEMENT_RADIUS;
+        assert abs(nav.getArtifactStrafeRemaining() - (config.pose.y - stagedY)) < 0.001;
     }
 
     @Theory
