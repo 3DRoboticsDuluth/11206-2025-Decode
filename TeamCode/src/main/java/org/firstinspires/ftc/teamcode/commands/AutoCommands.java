@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.RepeatCommand;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
 import java.util.HashMap;
 
@@ -76,9 +75,10 @@ public class AutoCommands {
                 auto.depositStop(),
                 auto.intakeStart(),
                 drive.untilDistance(TILE_WIDTH * -2),
-                // TODO: Try to find one standardish intake power, 0.3-0.6.
-                new DeferredCommand(() -> spike == 0 ? drive.setPowerSpike0() : drive.setPowerIntake(), null)
+                drive.setPowerIntake()
             )
+        ).andThen(
+            wait.doherty(0.5)
         );
     }
 
@@ -109,14 +109,13 @@ public class AutoCommands {
                     put(SOUTH, drive.toDepositSouth(axialOffset, lateralOffset));
                 }}, () -> side
             ).alongWith(
-                // TODO: Maybe trying shooting earlier than -9 for first shot, but note it also affects north at present.
-                drive.untilDistance(side == NORTH || config.pose.x < TILE_WIDTH * -2 ? -9 : -54).andThen(
-                    drive.untilHeading(5),
+                drive.untilDistance(side == NORTH ? -9 : (config.pose.x < TILE_WIDTH * -2 ? -24 : -48)).andThen(
+                    drive.untilHeading(config.pose.x > TILE_WIDTH * 2 ? 22 : 15),
                     side == NORTH ? drive.untilNotBusy() : wait.noop(),
                     side == NORTH ? drive.untilHeading(4).withTimeout(1000) : wait.noop(),
                     side == NORTH ? flywheel.isReady() : wait.noop(),
                     auto.depositStart(),
-                    wait.doherty(2)
+                    wait.doherty(1)
                 )
             )
         );

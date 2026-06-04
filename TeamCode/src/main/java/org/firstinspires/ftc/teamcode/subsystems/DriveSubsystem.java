@@ -35,12 +35,11 @@ import org.firstinspires.ftc.teamcode.game.Side;
 public class DriveSubsystem extends HardwareSubsystem {
     public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
     public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
-    public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.5, 0.005, 0.05, 0.05);
+    public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.35, 0.0015, 0.05, 0.05);
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
     public static boolean TEL = false;
     public static double ALLOWABLE_STILL = 1;
-    public static double POWER_INTAKE = 0.50;
-    public static double POWER_SPIKE0 = 0.40;
+    public static double POWER_INTAKE = 0.5;
     public static double POWER_LOW = 0.50;
     public static double POWER_MEDIUM = 0.75;
     public static double POWER_HIGH = 1.00;

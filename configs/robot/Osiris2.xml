@@ -6,19 +6,24 @@
             <goBILDA5202SeriesMotor name="intake" port="1" />
             <goBILDA5202SeriesMotor name="flywheelLeft" port="2" />
             <goBILDA5202SeriesMotor name="flywheelRight" port="3" />
-            <ServoFullRange name="kickstandRight" port="0" />
+            <Servo name="kickstandRight" port="0" />
+            <Servo name="bumperLeft" port="1" />
+            <Servo name="bumperRight" port="2" />
+            <DigitalDevice name="laser" port="0" />
+            <DigitalDevice name="laser2" port="2" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="driveFrontLeft" port="0" />
             <goBILDA5202SeriesMotor name="driveBackLeft" port="1" />
             <goBILDA5202SeriesMotor name="driveFrontRight" port="2" />
             <goBILDA5202SeriesMotor name="driveBackRight" port="3" />
-            <ServoFullRange name="kickstandLeft" port="0" />
-            <ServoFullRange name="turret" port="2" />
-            <ServoFullRange name="gate" port="3" />
-            <ServoFullRange name="deflector" port="5" />
+            <Servo name="kickstandLeft" port="0" />
+            <Servo name="turret" port="2" />
+            <Servo name="gate" port="3" />
+            <Servo name="deflector" port="5" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpoint name="pinpoint" port="0" bus="1" />
+            <goBILDAPrism name="prism" port="0" bus="2" />
         </LynxModule>
     </LynxUsbDevice>
     <EthernetDevice name="limelight" serialNumber="EthernetOverUsb:eth0:172.29.0.25" name="limelight" port="-1" ipAddress="172.29.0.1" />

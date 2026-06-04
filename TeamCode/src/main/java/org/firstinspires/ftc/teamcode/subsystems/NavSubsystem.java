@@ -48,7 +48,6 @@ public class NavSubsystem {
     }
 
     public Pose getSpike0() {
-        // TODO: Tune spike-0 pose.
         return createPose(
             2.1 * TILE_WIDTH,
             config.alliance.sign * -2.75 * TILE_WIDTH,
@@ -85,10 +84,9 @@ public class NavSubsystem {
             -1 * TILE_WIDTH,
             config.alliance.sign * -0.75 * TILE_WIDTH
         ).face(
-            // TODO: Tune deposit south angles RED and BLUE.
-            getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -181 : -175)
+            getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -182 : (config.pose.x > TILE_WIDTH * 2 ? -170 :  -175))
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -181 : -175)
+            getGoalPose(), config.alliance.sign * (config.pose.x < TILE_WIDTH * -2 ? -182 : (config.pose.x > TILE_WIDTH * 2 ? -170 :  -175))
         );
     }
 
@@ -142,7 +140,9 @@ public class NavSubsystem {
     }
 
     public double getGoalDistance() {
-        return config.pose.hypot(this.getGoalPose()) + this.getGoalDistanceOffset();
+        return (
+            vision.botpose == null ? config.pose : vision.botpose
+        ).hypot(this.getGoalPose()) + this.getGoalDistanceOffset();
     }
 
     public double getGoalHeadingOffset() {
@@ -157,8 +157,7 @@ public class NavSubsystem {
         return normalizeHeading(
             config.pose.heading - (
                 this.getGoalPose().atan2(
-                    // TODO: Test, ensure that vision.botpose is calculating correctly.
-                    /*vision.botpose == null ? */config.pose/* : vision.botpose*/
+                    vision.botpose == null ? config.pose : vision.botpose
                 ) + this.getGoalHeadingOffset()
             )
         );

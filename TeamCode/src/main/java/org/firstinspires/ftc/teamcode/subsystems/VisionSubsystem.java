@@ -188,7 +188,7 @@ public class VisionSubsystem extends HardwareSubsystem {
         if (element == null) return;
 
         Drawing.drawArtifact(
-            toPedroPose(element),new Style(
+            toPedroPose(element), new Style(
                 "#FF0000", "#000000", 0.5
             )
         );
@@ -263,6 +263,11 @@ public class VisionSubsystem extends HardwareSubsystem {
             botpose.getPosition().x * INCHES_PER_METER,
             botpose.getPosition().y * INCHES_PER_METER,
             botpose.getOrientation().getYaw(AngleUnit.RADIANS)
+        );
+
+        Drawing.drawRobot(
+            toPedroPose(this.botpose),
+            new Style("#000000", "#ED9D13", 0.5)
         );
 
         telemetry.addData(

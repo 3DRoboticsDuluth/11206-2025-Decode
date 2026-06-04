@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_HIG
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_INTAKE;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_LOW;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_MEDIUM;
-import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.POWER_SPIKE0;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
@@ -67,12 +66,6 @@ public class DriveCommands {
         );
     }
 
-    public Command setPowerSpike0() {
-        return complete(
-             () -> follower.setMaxPower(POWER_SPIKE0)
-        );
-    }
-
     public Command setPowerLow() {
         return complete(
             () -> follower.setMaxPower(POWER_LOW)
@@ -110,8 +103,7 @@ public class DriveCommands {
                 config.pose.x > TILE_WIDTH ?
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
-                // TODO: Tune for RED vs BLUE.
-                nav.getSpike0().axial(TILE_WIDTH * 0.7).hold(false)
+                nav.getSpike0().axial(TILE_WIDTH * 0.45).hold(true)
             ), null
         );
     }
@@ -123,7 +115,7 @@ public class DriveCommands {
                 config.pose.x > TILE_WIDTH ?
                     nav.getSpike1().axial(TILE_WIDTH * -1.10).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.3 * config.alliance.sign) :
                     nav.getSpike1().axial(TILE_WIDTH * -1.85).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * +0.3 * config.alliance.sign),
-                nav.getSpike1().axial(TILE_WIDTH * 1.5).hold(false)
+                nav.getSpike1().axial(TILE_WIDTH * 1.4).hold(false)
             ), null
         );
     }
@@ -140,7 +132,7 @@ public class DriveCommands {
     protected Command toSpike2FromDeposit() {
         return curve(
             nav.getSpike2().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.3 * config.alliance.sign * signum(config.pose.x)),
-            nav.getSpike2().axial(TILE_WIDTH * 1.5).hold(false)
+            nav.getSpike2().axial(TILE_WIDTH * 1.3).hold(false)
         );
     }
 
@@ -148,7 +140,7 @@ public class DriveCommands {
         return curve(
             nav.getSpike2().axial(TILE_WIDTH * -0.4).lateral(TILE_WIDTH * -0.7 * config.alliance.sign),
             nav.getSpike2().axial(TILE_WIDTH * -0.4).lateral(TILE_WIDTH * +0.2 * config.alliance.sign),
-            nav.getSpike2().axial(TILE_WIDTH * 1.5).hold(false)
+            nav.getSpike2().axial(TILE_WIDTH * 1.3).hold(false)
         );
     }
 
@@ -159,7 +151,7 @@ public class DriveCommands {
                 config.pose.x > 1 ?
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
                     nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 2 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
-                nav.getSpike3().axial(TILE_WIDTH * 1.2).hold(false)
+                nav.getSpike3().axial(TILE_WIDTH * 1).hold(false)
             ), null
         );
     }
@@ -170,7 +162,7 @@ public class DriveCommands {
                 config.pose.x > -TILE_WIDTH ?
                     new Pose(config.pose.x, config.alliance.sign * -0.5, 0) :
                     config.pose.midpoint(nav.getDepositSouthPose(axialOffset, lateralOffset)),
-                nav.getDepositSouthPose(axialOffset, lateralOffset).hold(false)
+                nav.getDepositSouthPose(axialOffset, lateralOffset).hold(config.pose.x < TILE_WIDTH * -2)
             ), null
         );
     }
@@ -188,7 +180,7 @@ public class DriveCommands {
     public Command toGate() {
         return curve(
              nav.getGatePose().axial(TILE_WIDTH * -1.75),
-             nav.getGatePose().axial(TILE_WIDTH * 0.1).hold(false)
+             nav.getGatePose().axial(TILE_WIDTH * 0).hold(false)
         );
     }
 
