@@ -127,11 +127,12 @@ public class AutoCommands {
     }
 
     public Command gateIntake() {
-        return intakeStart().alongWith(
+        return auto.intakeStart().alongWith(
             drive.toGate().andThen(
                 drive.setPowerHigh(),
-                drive.toGateIntake(),
-                wait.doherty(1),
+                drive.toGateIntake().withTimeout(1500),
+                wait.seconds(1.5),
+                wait.until (() -> Subsystems.intake.full).withTimeout(2000),
                 drive.setPowerLow(),
                 drive.toGateIntakeDepart().withTimeout(400),
                 drive.setPowerAuto()
@@ -174,7 +175,7 @@ public class AutoCommands {
                 ).andThen(
                     drive.chaseLock(false),
                     auto.deposit(config.side, 0, 0),
-                    wait.doherty(1),
+                    wait.doherty(2),
                     auto.depositStop()
                 ), cycles
             )

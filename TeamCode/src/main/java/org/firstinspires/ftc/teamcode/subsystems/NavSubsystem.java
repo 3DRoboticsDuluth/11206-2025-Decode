@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
+import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
@@ -52,7 +53,7 @@ public class NavSubsystem {
     public Pose getSpike0() {
         return createPose(
             2.1 * TILE_WIDTH,
-            config.alliance.sign * -2.75 * TILE_WIDTH,
+            config.alliance.sign * (config.alliance == RED ? -2.75 : -2.65) * TILE_WIDTH,
             toRadians(config.alliance.sign * -15)
         );
     }
@@ -97,9 +98,9 @@ public class NavSubsystem {
             2.3 * TILE_WIDTH,
             config.alliance.sign * -0.6 * TILE_WIDTH
         ).face(
-            getGoalPose(), config.alliance.sign * -180
+            getGoalPose(), config.alliance.sign * (config.alliance == RED ? -177 : -179)
         ).axial(axialOffset).lateral(lateralOffset).face(
-            getGoalPose(), config.alliance.sign * -180
+            getGoalPose(), config.alliance.sign * (config.alliance == RED ? -177 : -179)
         );
     }
 
@@ -118,7 +119,7 @@ public class NavSubsystem {
     public Pose getGateIntakePose() {
         return createPose(
             .65 * TILE_WIDTH,
-            config.alliance.sign * -2.75 * TILE_WIDTH,
+            config.alliance.sign * -2.65 * TILE_WIDTH,
             toRadians(config.alliance.sign * -135)
         );
     }
