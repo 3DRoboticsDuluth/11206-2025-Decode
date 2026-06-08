@@ -43,6 +43,12 @@ public class IntakeCommands {
         return wait.until(() -> intake.full);
     }
 
+    public Command untilArtifacts(int artifacts) {
+        return wait.until(
+            () -> intake.artifacts >= artifacts
+        );
+    }
+
     private Command complete(Runnable runnable) {
         return new InstantCommand(runnable);
     }

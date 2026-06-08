@@ -36,7 +36,6 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.robotcore.external.Consumer;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
-import org.firstinspires.ftc.teamcode.adaptations.pedropathing.ChaseCommand;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
 
 import java.util.ArrayList;
@@ -249,8 +248,12 @@ public class DriveCommands {
         );
     }
 
-    public Command chase() {
-        return new ChaseCommand(() -> vision.element);
+    public Command untilDepositNorthDistance(double distance) {
+        return wait.until(
+            () -> distance < 0 ?
+                (config.pose.hypot(nav.getDepositNorthPose(0, 0)) < -distance) :
+                (config.pose.hypot(nav.getDepositNorthPose(0, 0)) > +distance)
+        );
     }
 
     public Command untilDistance(double distance) {

@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.commands.Commands.flywheel;
 import static org.firstinspires.ftc.teamcode.commands.Commands.gate;
 import static org.firstinspires.ftc.teamcode.commands.Commands.intake;
 import static org.firstinspires.ftc.teamcode.commands.Commands.quanomous;
+import static org.firstinspires.ftc.teamcode.commands.Commands.repeat;
 import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
@@ -19,10 +20,8 @@ import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.SelectCommand;
 
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
-import org.firstinspires.ftc.teamcode.adaptations.pedropathing.RepeatCommand;
 import org.firstinspires.ftc.teamcode.game.Side;
 import org.firstinspires.ftc.teamcode.subsystems.NavSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Subsystems;
 
 import java.util.HashMap;
 
@@ -154,31 +153,43 @@ public class AutoCommands {
 
     public Command chase(int cycles) {
         return intake.reset().andThen(
-            new RepeatCommand(
-                e1 -> new RepeatCommand(
-                    e2 -> drive.toChaseScan().alongWith(
-                        vision.chaseLock(true),
-                        vision.waitForElement().withTimeout(3000).andThen(
-                            auto.intakeStart(),
-                            drive.chaseLock(true),
-                            intake.untilElement().raceWith(
-                                drive.untilStill(0.4)
-                            ), vision.resetElement()
-                        )
-                    ), attempts -> Subsystems.intake.full || attempts >= 4 || (
-                        Subsystems.intake.artifacts >= 2 &&
-                        Subsystems.nav.getDepositNorthPoseDistance() <= TILE_WIDTH * 2
-                    ) || (
-                        Subsystems.intake.artifacts >= 1 &&
-                        Subsystems.nav.getDepositNorthPoseDistance() <= TILE_WIDTH * 1
-                    )
+            repeat.times(
+                repeat.times(
+                    auto.chaseIntake(), 4
+                ).raceWith(
+                    auto.chaseComplete()
                 ).andThen(
-                    drive.chaseLock(false),
-                    auto.deposit(config.side, 0, 0),
-                    wait.doherty(2),
-                    auto.depositStop()
+                    auto.chaseDeposit()
                 ), cycles
             )
+        );
+    }
+
+    public Command chaseIntake() {
+        return drive.toChaseScan().alongWith(
+            vision.chaseLock(true),
+            vision.waitForElement().withTimeout(3000).andThen(
+                auto.intakeStart(),
+                drive.chaseLock(true),
+                intake.untilElement().raceWith(
+                    drive.untilStill(0.4)
+                ), vision.resetElement()
+            )
+        );
+    }
+
+    public Command chaseComplete() {
+        return intake.untilFull().raceWith(
+            intake.untilArtifacts(2).andThen(drive.untilDepositNorthDistance(-1.50 * TILE_WIDTH)),
+            intake.untilArtifacts(1).andThen(drive.untilDepositNorthDistance(-0.75 * TILE_WIDTH))
+        );
+    }
+
+    public Command chaseDeposit() {
+        return drive.chaseLock(false).andThen(
+            auto.deposit(config.side, 0, 0),
+            wait.doherty(2),
+            auto.depositStop()
         );
     }
 

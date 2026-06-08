@@ -166,15 +166,15 @@ public class VisionSubsystemsTests extends TestHarness {
         try (MockedStatic<Drawing> drawing = mockStatic(Drawing.class)) {
             VisionSubsystem.PHANTOM_ANGLE = Double.NaN;
             vision.element = null;
-            vision.drawElement();
+            vision.drawElements();
             drawing.verifyNoInteractions();
 
             VisionSubsystem.PHANTOM_ANGLE = 0;
             when(TimingSubsystem.playTimer.seconds()).thenReturn(3.0);
-            vision.drawElement();
+            vision.drawElements();
             assert vision.element != null;
             VisionSubsystem.PHANTOM_ANGLE = 45;
-            vision.drawElement();
+            vision.drawElements();
             assert vision.element != null;
         }
     }

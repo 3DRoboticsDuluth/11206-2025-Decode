@@ -14,7 +14,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.TO_FAR;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.follower;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -260,14 +259,6 @@ public class DriveCommandsTests extends TestHarness {
     public void testToChase() {
         drive.toChase(2).initialize();
         verify(nav, times(2)).getChasePose(2);
-    }
-
-    @Test
-    public void testChase() {
-        config.pose = new Pose(100, 100, 0);
-        vision.element = new Pose(1, 1, 0);
-
-        assert !drive.chase().isFinished();
     }
 
     @Test

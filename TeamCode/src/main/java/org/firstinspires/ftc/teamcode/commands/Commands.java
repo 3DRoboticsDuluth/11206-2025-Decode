@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 public class Commands {
     public static WaitCommands wait;
+    public static RepeatCommands repeat;
     public static ConfigCommands config;
     public static DriveCommands drive;
     public static IntakeCommands intake;
@@ -17,6 +18,7 @@ public class Commands {
 
     public static void initialize() {
         wait = new WaitCommands();
+        repeat = new RepeatCommands();
         config = new ConfigCommands();
         drive = new DriveCommands();
         intake = new IntakeCommands();
