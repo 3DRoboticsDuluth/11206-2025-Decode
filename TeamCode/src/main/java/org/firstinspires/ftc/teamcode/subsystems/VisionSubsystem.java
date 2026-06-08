@@ -9,9 +9,7 @@ import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
-import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.ROBOT_LENGTH;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
-import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.periodicCount;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Double.NaN;
@@ -41,11 +39,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
-import org.firstinspires.ftc.teamcode.adaptations.vision.Clusters;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,11 +81,6 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static boolean TEL = false;
     public static int MOD_THRESH = 3;
     public static int MOD = 6;
-    public static int MAX_CLUSTER_SIZE = 3;
-    public static double CLUSTER_SWITCH_MIN_IMPROVEMENT = 0.05;
-    public static double CLUSTER_DISTANCE_WEIGHT = 0.10;
-    public static double CLUSTER_TURN_WEIGHT = 8.0;
-    public static double CLUSTER_SCAN_POSE_DISTANCE = TILE_WIDTH;
 
     private static final Style VIEWABLE_AREA_LOOK = new Style(
         "#0057FF", "#0057FF", 2.0
@@ -359,15 +352,9 @@ public class VisionSubsystem extends HardwareSubsystem {
         List<Pose> poses = new ArrayList<>(primaryArtifacts);
         poses.addAll(secondaryArtifacts);
 
-        element = element != null ? element :
-            (isNearChaseScanPose() ?
-                Clusters.findBest(config.pose, poses, element, MAX_CLUSTER_SIZE, CLUSTER_SWITCH_MIN_IMPROVEMENT, CLUSTER_DISTANCE_WEIGHT, CLUSTER_TURN_WEIGHT, ROBOT_LENGTH) :
-                Clusters.findClosest(config.pose, poses, element)
-            );
-    }
-
-    private boolean isNearChaseScanPose() {
-        return config.pose.hypot(nav.getChaseScanPose()) <= CLUSTER_SCAN_POSE_DISTANCE;
+        element = poses.stream()
+            .min(Comparator.comparingDouble(config.pose::hypot))
+            .orElse(element);
     }
 
     private Pose getViewableAreaCorner(double targetYawAngle, double targetPitchAngle) {
