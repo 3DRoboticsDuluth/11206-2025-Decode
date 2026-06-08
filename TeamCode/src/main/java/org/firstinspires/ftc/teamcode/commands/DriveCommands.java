@@ -103,7 +103,7 @@ public class DriveCommands {
                     nav.getSpike0().axial(TILE_WIDTH * -1).lateral(TILE_WIDTH * -0.2 * config.alliance.sign) :
                     nav.getSpike0().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.5 * config.alliance.sign),
                 nav.getSpike0().axial(TILE_WIDTH * 0.45).hold(true)
-            ), null
+            ).withTimeout(3000), null
         );
     }
 
