@@ -34,7 +34,7 @@ import org.firstinspires.ftc.teamcode.game.Alliance;
 import org.firstinspires.ftc.teamcode.game.Side;
 @Configurable
 public class DriveSubsystem extends HardwareSubsystem {
-    public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
+    public static PIDFCoefficients FORWARD_PIDF = new PIDFCoefficients(0.035, 0.005, 0.005, 0.05);
     public static PIDFCoefficients STRAFE_PIDF = new PIDFCoefficients(0.025, 0.005, 0.005, 0.05);
     public static PIDFCoefficients HEADING_PIDF = new PIDFCoefficients(0.35, 0.0015, 0.05, 0.05);
     public static FFCoefficients HEADING_FF = new FFCoefficients(0, 0, 0);
