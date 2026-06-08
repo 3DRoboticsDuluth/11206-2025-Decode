@@ -132,7 +132,7 @@ public class AutoCommands {
                 drive.setPowerHigh(),
                 drive.toGateIntake().withTimeout(1500),
                 wait.seconds(1.5),
-                wait.until (() -> Subsystems.intake.full).withTimeout(2000),
+                intake.untilFull().withTimeout(2000),
                 drive.setPowerLow(),
                 drive.toGateIntakeDepart().withTimeout(400),
                 drive.setPowerAuto()
@@ -161,7 +161,7 @@ public class AutoCommands {
                         vision.waitForElement().withTimeout(3000).andThen(
                             auto.intakeStart(),
                             drive.chaseLock(true),
-                            intake.waitForElement().raceWith(
+                            intake.untilElement().raceWith(
                                 drive.untilStill(0.4)
                             ), vision.resetElement()
                         )
@@ -180,10 +180,6 @@ public class AutoCommands {
                 ), cycles
             )
         );
-    }
-
-    public Command clusterChase() {
-        return chase(Integer.MAX_VALUE);
     }
 
     /** @noinspection unused*/

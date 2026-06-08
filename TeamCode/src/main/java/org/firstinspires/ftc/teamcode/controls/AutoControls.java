@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.controls;
 
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.A;
-import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.B;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.START;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Button.Y;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 import static com.seattlesolvers.solverslib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
-import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
-import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 
 import com.seattlesolvers.solverslib.command.button.Trigger;
 
 public class AutoControls {
     private static final double TRIGGER_THRESHOLD = 0.2;
+
     public AutoControls() {
         new Trigger(() -> gamepad1.getTrigger(LEFT_TRIGGER) > TRIGGER_THRESHOLD)
             .whenActive(auto.intakeStart())
@@ -27,17 +24,5 @@ public class AutoControls {
         gamepad1.getGamepadButton(START).negate()
             .and(gamepad1.getGamepadButton(Y))
             .whenActive(auto.stop());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(A))
-            .whenActive(auto.clusterChase());
-
-        gamepad1.getGamepadButton(START).negate()
-            .and(gamepad1.getGamepadButton(B))
-            .whenActive(vision.chaseLock(true));
-
-        gamepad2.getGamepadButton(START).negate()
-            .and(gamepad2.getGamepadButton(A))
-            .toggleWhenActive(auto.goalLock(true), auto.goalLock(false));
     }
 }

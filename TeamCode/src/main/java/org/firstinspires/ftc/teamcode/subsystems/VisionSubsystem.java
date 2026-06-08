@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** @noinspection UnclearExpression*/
+/** @noinspection UnclearExpression, UnaryPlus */
 @Configurable
 public class VisionSubsystem extends HardwareSubsystem {
     public static boolean CAMERA_UPSIDE_DOWN = true;

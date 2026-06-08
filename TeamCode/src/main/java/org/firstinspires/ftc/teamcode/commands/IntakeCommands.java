@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import static org.firstinspires.ftc.teamcode.commands.Commands.vision;
 import static org.firstinspires.ftc.teamcode.commands.Commands.wait;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
 
@@ -29,7 +28,7 @@ public class IntakeCommands {
         return complete(intake::reset);
     }
 
-    public Command waitForElement() {
+    public Command untilElement() {
         return new DeferredCommand(
             () -> {
                 int target = intake.artifacts + 1;
@@ -38,6 +37,10 @@ public class IntakeCommands {
                 );
             }, null
         );
+    }
+
+    public Command untilFull() {
+        return wait.until(() -> intake.full);
     }
 
     private Command complete(Runnable runnable) {
