@@ -5,8 +5,11 @@ import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_11
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.RunMode.VelocityControl;
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.ZeroPowerBehavior.FLOAT;
 
+import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 
 import static java.lang.Double.max;
 import static java.lang.Math.abs;
@@ -63,12 +66,13 @@ public class IntakeSubsystem extends HardwareSubsystem {
 
         motor.setVelocityPercentage(VEL);
 
-        //BUMPER_LEFT_POS = BUMPER_RIGHT_POS =
-        //    1 - max(0.0, signum(config.pose.y) * signum(abs(config.pose.y) - abs(config.pose.x)));
-        //bumperLeft.set(config.started ? BUMPER_LEFT_POS : 1);
-        //bumperRight.set(config.started ? BUMPER_RIGHT_POS : 0);
-        bumperLeft.set(1);
-        bumperRight.set(0);
+        BUMPER_LEFT_POS = BUMPER_RIGHT_POS =
+            config.pose.hypot(nav.getGateIntakePose()) < TILE_WIDTH ?
+                (config.alliance == RED ? 1 : 0) :
+                (1 - max(0.0, signum(config.pose.y) * signum(abs(config.pose.y) - abs(config.pose.x))));
+
+        bumperLeft.set(config.started ? BUMPER_LEFT_POS : 1);
+        bumperRight.set(config.started ? BUMPER_RIGHT_POS : 0);
 
         boolean laserCurrent = laser.getState();
         if (laserDebounce.triggered(laserCurrent, LASER_THRESH) && artifacts < MAX_ARTIFACTS)
