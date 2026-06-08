@@ -71,8 +71,8 @@ public class IntakeSubsystem extends HardwareSubsystem {
                 (config.alliance == RED ? 1 : 0) :
                 (1 - max(0.0, signum(config.pose.y) * signum(abs(config.pose.y) - abs(config.pose.x))));
 
-        bumperLeft.set(config.started ? BUMPER_LEFT_POS : 1);
-        bumperRight.set(config.started ? BUMPER_RIGHT_POS : 0);
+        bumperLeft.set(config.started && VEL != 0 ? BUMPER_LEFT_POS : 1);
+        bumperRight.set(config.started && VEL != 0 ? BUMPER_RIGHT_POS : 0);
 
         boolean laserCurrent = laser.getState();
         if (laserDebounce.triggered(laserCurrent, LASER_THRESH) && artifacts < MAX_ARTIFACTS)
