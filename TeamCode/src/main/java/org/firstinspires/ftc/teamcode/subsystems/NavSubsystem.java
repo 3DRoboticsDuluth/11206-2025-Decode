@@ -189,7 +189,7 @@ public class NavSubsystem {
     public Pose getArtifactPose() {
         return new Pose(
             clamp(vision.element.x, TILE_WIDTH * -3 + ROBOT_WIDTH / 2, TILE_WIDTH * 3 - ROBOT_WIDTH / 2),
-            (TILE_WIDTH * 2.7 - ELEMENT_RADIUS) * -config.alliance.sign,
+            (TILE_WIDTH * 3 - ELEMENT_RADIUS) * -config.alliance.sign,
             getArtifactHeading()
         );
     }
@@ -199,15 +199,38 @@ public class NavSubsystem {
     }
 
     public double getArtifactStrafeRemaining() {
-        Pose artifactPose = getArtifactPose();
+        return config.pose.y - getArtifactApproachY(getArtifactPose());
+    }
 
-        if (abs(getArtifactForwardRemaining()) > ELEMENT_RADIUS) {
-            double stagedY = artifactPose.y + ELEMENT_RADIUS * 4 * config.alliance.sign;
-            boolean tooCloseToWall = config.pose.y * -config.alliance.sign > stagedY * -config.alliance.sign;
-            return tooCloseToWall ? config.pose.y - stagedY : 0.5 * -config.alliance.sign;
-        }
+    protected double getArtifactApproachY(Pose artifactPose) {
+        if (isArtifactXAligned()) return artifactPose.y;
+        double stagingY = getArtifactStagingY(artifactPose);
+        if (!isRobotClearOfCenterline()) return getArtifactCenterlineClearY();
+        return isPastArtifactStagingY(stagingY) ? stagingY : config.pose.y;
+    }
 
-        return config.pose.y - artifactPose.y;
+    protected boolean isArtifactXAligned() {
+        return abs(getArtifactForwardRemaining()) <= ELEMENT_RADIUS;
+    }
+
+    protected double getArtifactStagingY(Pose artifactPose) {
+        return artifactPose.y + ELEMENT_RADIUS * 3 * config.alliance.sign;
+    }
+
+    protected boolean isPastArtifactStagingY(double stagingY) {
+        return allianceSideY(config.pose.y) > allianceSideY(stagingY);
+    }
+
+    protected boolean isRobotClearOfCenterline() {
+        return allianceSideY(config.pose.y) >= ROBOT_LENGTH / 2;
+    }
+
+    protected double getArtifactCenterlineClearY() {
+        return ROBOT_LENGTH / 2 * -config.alliance.sign;
+    }
+
+    protected double allianceSideY(double y) {
+        return y * -config.alliance.sign;
     }
 
     public double getArtifactHeadingRemaining() {

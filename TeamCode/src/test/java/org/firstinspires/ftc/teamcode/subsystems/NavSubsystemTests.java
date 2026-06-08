@@ -225,7 +225,7 @@ public class NavSubsystemTests extends  TestHarness {
     }
 
     @Theory
-    public void testArtifactStrafeWaitsUntilXAligned(Alliance alliance, Side side) {
+    public void testArtifactStrafeHoldsYUntilXAligned(Alliance alliance, Side side) {
         Assume.assumeTrue(alliance != null && side != null);
         config.alliance = alliance;
         config.side = side;
@@ -237,7 +237,7 @@ public class NavSubsystemTests extends  TestHarness {
     }
 
     @Theory
-    public void testArtifactStrafeBacksOutWhenTooCloseBeforeXAligned(Alliance alliance, Side side) {
+    public void testArtifactStrafeUsesStagingYWhenPastItBeforeXAligned(Alliance alliance, Side side) {
         Assume.assumeTrue(alliance != null && side != null);
         config.alliance = alliance;
         config.side = side;
@@ -249,6 +249,20 @@ public class NavSubsystemTests extends  TestHarness {
 
         assert abs(nav.getArtifactForwardRemaining()) > VisionSubsystem.ELEMENT_RADIUS;
         assert abs(nav.getArtifactStrafeRemaining() - (config.pose.y - stagedY)) < 0.001;
+    }
+
+    @Theory
+    public void testArtifactStrafeKeepsRobotOnAllianceSideBeforeXAligned(Alliance alliance, Side side) {
+        Assume.assumeTrue(alliance != null && side != null);
+        config.alliance = alliance;
+        config.side = side;
+        config.pose = new Pose(3, 0, toRadians(80 * -config.alliance.sign));
+        vision.element = new Pose(0, 3 * TILE_WIDTH * -config.alliance.sign, 0);
+
+        double centerlineClearY = ROBOT_LENGTH / 2 * -config.alliance.sign;
+
+        assert abs(nav.getArtifactForwardRemaining()) > VisionSubsystem.ELEMENT_RADIUS;
+        assert abs(nav.getArtifactStrafeRemaining() - (config.pose.y - centerlineClearY)) < 0.001;
     }
 
     @Theory
