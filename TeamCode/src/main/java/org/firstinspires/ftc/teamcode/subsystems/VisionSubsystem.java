@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.t
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.GREEN;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.PURPLE;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.QRCODE;
+import static org.firstinspires.ftc.teamcode.game.Alliance.BLUE;
 import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
@@ -41,6 +42,7 @@ import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
+import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -256,6 +258,10 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     @SuppressLint("DefaultLocale")
     private void processAprilTag(LLResult result) {
+        int id = result.getFiducialResults().get(0).getFiducialId();
+        if ((config.alliance == BLUE && id != 20) || (config.alliance == RED && id != 24))
+            return;
+
         Pose3D botpose = result.getBotpose_MT2();
 
         this.botpose = new Pose(
