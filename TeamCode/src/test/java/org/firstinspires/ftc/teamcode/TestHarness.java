@@ -35,6 +35,8 @@ import org.firstinspires.ftc.teamcode.commands.FlywheelCommands;
 import org.firstinspires.ftc.teamcode.commands.GateCommands;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommands;
 import org.firstinspires.ftc.teamcode.commands.KickstandCommands;
+import org.firstinspires.ftc.teamcode.commands.LightsCommands;
+import org.firstinspires.ftc.teamcode.commands.RepeatCommands;
 import org.firstinspires.ftc.teamcode.commands.VisionCommands;
 import org.firstinspires.ftc.teamcode.commands.WaitCommands;
 import org.firstinspires.ftc.teamcode.game.Config;
@@ -58,6 +60,9 @@ import org.junit.Before;
 public class TestHarness {
     @Before
     public void setUp() {
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().reset();
+
         hardwareMap = mock(HardwareMap.class);
 
         when(hardwareMap.get(any(Class.class), anyString()))
@@ -93,6 +98,7 @@ public class TestHarness {
         playTimer = mock(ElapsedTime.class);
 
         Commands.wait = mock(WaitCommands.class, invocation -> new InstantCommand());
+        Commands.repeat = new RepeatCommands();
         Commands.config = mock(ConfigCommands.class, RETURNS_DEEP_STUBS);
         Commands.drive = mock(DriveCommands.class, RETURNS_DEEP_STUBS);
         Commands.intake = mock(IntakeCommands.class, RETURNS_DEEP_STUBS);
@@ -102,6 +108,7 @@ public class TestHarness {
         Commands.flywheel = mock(FlywheelCommands.class, RETURNS_DEEP_STUBS);
         Commands.kickstand = mock(KickstandCommands.class, RETURNS_DEEP_STUBS);
         Commands.vision = mock(VisionCommands.class, RETURNS_DEEP_STUBS);
+        Commands.lights = mock(LightsCommands.class, RETURNS_DEEP_STUBS);
         Commands.auto = mock(AutoCommands.class, RETURNS_DEEP_STUBS);
     }
 

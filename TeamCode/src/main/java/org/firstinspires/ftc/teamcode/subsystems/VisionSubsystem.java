@@ -257,6 +257,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
     @SuppressLint("DefaultLocale")
     private void processAprilTag(LLResult result) {
+        if (result.getFiducialResults().isEmpty()) return;
+
         int id = result.getFiducialResults().get(0).getFiducialId();
         if ((config.alliance == BLUE && id != 20) || (config.alliance == RED && id != 24))
             return;
@@ -294,6 +296,10 @@ public class VisionSubsystem extends HardwareSubsystem {
                 result.getTyNC()
             )
         );
+    }
+
+    private void processColor(LLResult result) {
+        processColor(result, purpleArtifacts, greenArtifacts);
     }
 
     @SuppressLint("DefaultLocale")

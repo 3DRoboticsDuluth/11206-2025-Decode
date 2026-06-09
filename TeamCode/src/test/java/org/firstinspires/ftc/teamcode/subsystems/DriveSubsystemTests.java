@@ -210,7 +210,7 @@ public class DriveSubsystemTests extends TestHarness {
 
         drive.inputs(1, 2, 3);
 
-        verify(subsystem.followerMock).startTeleopDrive();
+        verify(subsystem.followerMock, never()).startTeleopDrive();
         verify(subsystem.followerMock).setTeleOpDrive(anyDouble(), anyDouble(), anyDouble(), eq(false), eq(90.0));
 
         clearInvocations(subsystem.followerMock);
@@ -239,7 +239,7 @@ public class DriveSubsystemTests extends TestHarness {
 
         drive.inputs(1, 2, 3);
 
-        verify(subsystem.followerMock, never()).setTeleOpDrive(anyDouble(), anyDouble(), anyDouble(), eq(false), anyDouble());
+        verify(subsystem.followerMock).setTeleOpDrive(anyDouble(), anyDouble(), anyDouble(), eq(false), anyDouble());
     }
 
     @Test

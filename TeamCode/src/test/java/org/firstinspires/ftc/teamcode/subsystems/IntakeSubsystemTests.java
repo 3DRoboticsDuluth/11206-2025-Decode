@@ -6,14 +6,17 @@ import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.REV;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.STOP;
 import static org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem.VEL;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.intake;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
 import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
+import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.util.Debounce;
 import org.firstinspires.ftc.teamcode.game.Config;
 import org.junit.Test;
@@ -31,8 +34,12 @@ public class IntakeSubsystemTests extends TestHarness {
         intake = new IntakeSubsystem() {{
             errors = new ArrayList<>();
             motor = mockMotor();
+            laser = mock(DigitalChannel.class);
+            bumperLeft = mock(ServoEx.class);
+            bumperRight = mock(ServoEx.class);
             laserDebounce = new Debounce(laserTimer);
         }};
+        when(nav.getGateIntakePose()).thenReturn(new Pose(100, 0, 0));
     }
 
     @Test
@@ -80,36 +87,36 @@ public class IntakeSubsystemTests extends TestHarness {
     public void testPeriodicUpdatesBumperPositionAcrossBothDiagonals() {
         Config.config.pose = new Pose(2, 1, 0);
         intake.periodic();
-        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
-        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
 
         Config.config.pose = new Pose(1, 2, 0);
         intake.periodic();
-        assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
-        assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
-
-        Config.config.pose = new Pose(1, -2, 0);
-        intake.periodic();
         assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
         assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
 
-        Config.config.pose = new Pose(2, -1, 0);
+        Config.config.pose = new Pose(1, -2, 0);
         intake.periodic();
         assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
         assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
+
+        Config.config.pose = new Pose(2, -1, 0);
+        intake.periodic();
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
     }
 
     @Test
     public void testPeriodicKeepsDiagonalsAtZero() {
         Config.config.pose = new Pose(2, 2, 0);
         intake.periodic();
-        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
-        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
 
         Config.config.pose = new Pose(2, -2, 0);
         intake.periodic();
-        assert IntakeSubsystem.BUMPER_LEFT_POS == 0.0;
-        assert IntakeSubsystem.BUMPER_RIGHT_POS == 0.0;
+        assert IntakeSubsystem.BUMPER_LEFT_POS == 1.0;
+        assert IntakeSubsystem.BUMPER_RIGHT_POS == 1.0;
     }
 
     @Test

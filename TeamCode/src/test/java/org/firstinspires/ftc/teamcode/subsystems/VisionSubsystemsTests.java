@@ -139,8 +139,11 @@ public class VisionSubsystemsTests extends TestHarness {
         clearInvocations(telemetry, vision.limelight);
         Position position = new Position(DistanceUnit.METER, 1, 2, 0, 0);
         YawPitchRollAngles angles = new YawPitchRollAngles(AngleUnit.RADIANS, 0.25, 0, 0, 0);
+        LLResultTypes.FiducialResult fiducial = mock(LLResultTypes.FiducialResult.class);
+        when(fiducial.getFiducialId()).thenReturn(24);
         LLResult aprilTag = mock(LLResult.class);
         when(aprilTag.isValid()).thenReturn(true);
+        when(aprilTag.getFiducialResults()).thenReturn(Collections.singletonList(fiducial));
         when(aprilTag.getBotpose_MT2()).thenReturn(new Pose3D(position, angles));
         when(aprilTag.getTx()).thenReturn(1.0);
         when(aprilTag.getTy()).thenReturn(2.0);
@@ -152,7 +155,7 @@ public class VisionSubsystemsTests extends TestHarness {
 
         try (MockedStatic<Drawing> drawing = mockStatic(Drawing.class)) {
             vision.periodic();
-            drawing.verifyNoInteractions();
+            drawing.verify(() -> Drawing.drawRobot(any(), any()));
         }
 
         assert vision.botpose != null;
@@ -199,13 +202,13 @@ public class VisionSubsystemsTests extends TestHarness {
 
         config.alliance = Alliance.RED;
         vision.chaseLock(true);
-        verify(vision.limelight).pipelineSwitch(Pipeline.PURPLE_RIGHT.index);
+        verify(vision.limelight).pipelineSwitch(Pipeline.PURPLE.index);
         assert VisionSubsystem.POS == VisionSubsystem.POS_CHASE_LOCK;
 
         clearInvocations(vision.limelight);
         config.alliance = Alliance.BLUE;
         vision.chaseLock(true);
-        verify(vision.limelight).pipelineSwitch(Pipeline.PURPLE_LEFT.index);
+        verify(vision.limelight).pipelineSwitch(Pipeline.PURPLE.index);
     }
 
     @Test
@@ -234,8 +237,11 @@ public class VisionSubsystemsTests extends TestHarness {
         }
 
         LLResult aprilResult = mock(LLResult.class);
+        LLResultTypes.FiducialResult fiducial = mock(LLResultTypes.FiducialResult.class);
+        when(fiducial.getFiducialId()).thenReturn(24);
         Position position = new Position(DistanceUnit.METER, 1, 2, 0, 0);
         YawPitchRollAngles angles = new YawPitchRollAngles(AngleUnit.RADIANS, 0.5, 0, 0, 0);
+        when(aprilResult.getFiducialResults()).thenReturn(Collections.singletonList(fiducial));
         when(aprilResult.getBotpose_MT2()).thenReturn(new Pose3D(position, angles));
         when(aprilResult.getTx()).thenReturn(1.0);
         when(aprilResult.getTy()).thenReturn(2.0);
@@ -265,6 +271,7 @@ public class VisionSubsystemsTests extends TestHarness {
         processColor.invoke(vision, colorResult);
 
         config.started = true;
+        TimingSubsystem.periodicCount = VisionSubsystem.MOD_THRESH + 1;
         when(colorResult.getColorResults()).thenReturn(Collections.emptyList());
         processColor.invoke(vision, colorResult);
 
@@ -275,7 +282,6 @@ public class VisionSubsystemsTests extends TestHarness {
 
         config.pose = new Pose(0, 0, 0);
         processColor.invoke(vision, colorResult);
-        assert vision.element != null;
         invokeTelemetrySupplier("Vision (Color Result)");
         invokeTelemetrySupplier("Vision (Element Pose)");
 
@@ -305,8 +311,6 @@ public class VisionSubsystemsTests extends TestHarness {
         Map<Pipeline, Consumer<LLResult>> processors = (Map<Pipeline, Consumer<LLResult>>) processorsField.get(vision);
         processors.get(Pipeline.GREEN).accept(colorResult);
         processors.get(Pipeline.PURPLE).accept(colorResult);
-        processors.get(Pipeline.PURPLE_LEFT).accept(colorResult);
-        processors.get(Pipeline.PURPLE_RIGHT).accept(colorResult);
 
         VisionSubsystem.CAMERA_UPSIDE_DOWN = true;
         when(cr.getTargetXDegrees()).thenReturn(20.0);

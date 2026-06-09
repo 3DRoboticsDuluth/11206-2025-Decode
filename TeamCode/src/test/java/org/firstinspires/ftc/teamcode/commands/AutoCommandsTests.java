@@ -133,8 +133,8 @@ public class AutoCommandsTests extends TestHarness {
 
         auto.deposit(SOUTH, 0, 0).initialize();
 
-        verify(drive).untilDistance(-9);
-        verify(wait).doherty(2);
+        verify(drive).untilDistance(-24);
+        verify(wait).doherty(1);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class AutoCommandsTests extends TestHarness {
         verify(drive).toSpike3();
         verify(auto).depositStop();
         verify(auto).intakeStart();
-        verify(drive).untilDistance(TILE_WIDTH * -1.5);
+        verify(drive).untilDistance(TILE_WIDTH * -2);
         verify(drive).setPowerIntake();
     }
 
@@ -164,7 +164,7 @@ public class AutoCommandsTests extends TestHarness {
         verify(drive).toGate();
         verify(drive).setPowerHigh();
         verify(drive).toGateIntake();
-        verify(wait).doherty(1);
+        verify(wait).seconds(1.5);
         verify(drive).setPowerLow();
         verify(drive).toGateIntakeDepart();
         verify(drive).setPowerAuto();
@@ -195,16 +195,10 @@ public class AutoCommandsTests extends TestHarness {
         auto.chase(2).initialize();
 
         verify(vision).chaseLock(true);
-        verify(lights).set(org.firstinspires.ftc.teamcode.adaptations.gobilda.prism.Color.TRANSPARENT);
-        verify(drive).toChase(0);
-        verify(drive).untilDistance(TILE_WIDTH * -1);
-        verify(drive).setPowerLow();
-        verify(wait).milliseconds(50);
+        verify(drive).toChaseScan();
         verify(vision).resetElement();
         verify(auto).intakeStart();
-        verify(wait).doherty();
-        verify(drive).setPowerAuto();
-        verify(auto).deposit(NORTH, -0.25 * TILE_WIDTH, config.alliance.sign * -0.0 * TILE_WIDTH);
+        verify(auto).deposit(NORTH, 0, 0);
     }
 
     @Test
@@ -224,13 +218,14 @@ public class AutoCommandsTests extends TestHarness {
     }
 
     @Test
-    public void testStopDoesNotCallDriveStop() {
+    public void testStopCallsDriveStop() {
         auto.stop().initialize();
         verify(drive).goalLock(false);
+        verify(drive).chaseLock(false);
+        verify(drive).stop();
         verify(intake).stop();
         verify(conveyor).stop();
         verify(gate).close();
         verify(flywheel).stop();
-        verify(drive, never()).stop();
     }
 }

@@ -91,6 +91,7 @@ public class DriveCommandsTests extends TestHarness {
 
     @Test
     public void testInput() {
+        config.teleop = true;
         drive.input(() -> 1.0, () -> 2.0, () -> 3.0).execute();
         verify(org.firstinspires.ftc.teamcode.subsystems.Subsystems.drive).inputs(1.0, 2.0, 3.0);
     }
@@ -151,7 +152,7 @@ public class DriveCommandsTests extends TestHarness {
         config.pose.y = 0;
         drive.toSpike2().initialize();
 
-        verify(nav, times(8)).getSpike2();
+        verify(nav, times(10)).getSpike2();
     }
 
     @Test
@@ -233,7 +234,6 @@ public class DriveCommandsTests extends TestHarness {
     @Test
     public void testStop() {
         drive.stop().initialize();
-        verify(follower).startTeleOpDrive();
         verify(follower).setTeleOpDrive(0, 0, 0, 0);
     }
 

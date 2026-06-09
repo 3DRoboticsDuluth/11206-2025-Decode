@@ -35,7 +35,7 @@ public class AutoOpModeTests extends OpModeTestSupport {
             opMode.initialize();
 
             assert configControls.constructed().size() == 1;
-            assert driveControls.constructed().isEmpty();
+            assert driveControls.constructed().size() == 1;
             assert opMode.waitForStartCalls == 1;
             assertSame(autoCommand, opMode.scheduledCommand);
             verify(dependencies.autoCommandsMock.constructed().get(0)).execute();
@@ -55,7 +55,7 @@ public class AutoOpModeTests extends OpModeTestSupport {
             //noinspection DataFlowIssue
             assert exception.getMessage().contains("Alliance and/or Side is null");
             assert configControls.constructed().size() == 1;
-            assert driveControls.constructed().isEmpty();
+            assert driveControls.constructed().size() == 1;
             assert opMode.waitForStartCalls == 1;
         }
     }
@@ -74,7 +74,7 @@ public class AutoOpModeTests extends OpModeTestSupport {
             opMode.initialize();
 
             assert configControls.constructed().size() == 1;
-            assert driveControls.constructed().isEmpty();
+            assert driveControls.constructed().size() == 1;
             assert opMode.waitForStartCalls == 1;
             assert opMode.scheduledCommand == null;
             verify(dependencies.autoCommandsMock.constructed().get(0), never()).execute();
@@ -95,7 +95,7 @@ public class AutoOpModeTests extends OpModeTestSupport {
             //noinspection DataFlowIssue
             assert exception.getMessage().contains("Alliance and/or Side is null");
             assert configControls.constructed().size() == 1;
-            assert driveControls.constructed().isEmpty();
+            assert driveControls.constructed().size() == 1;
             assert opMode.waitForStartCalls == 1;
         }
     }

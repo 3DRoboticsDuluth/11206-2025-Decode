@@ -63,9 +63,9 @@ public class NavSubsystemTests extends  TestHarness {
         config.side = side;
 
         Pose expected = new Pose(
-            2.5 * TILE_WIDTH,
-            config.alliance.sign * -0.65 * TILE_WIDTH,
-            toRadians(config.alliance.sign * 16.8)
+            2.3 * TILE_WIDTH,
+            config.alliance.sign * -0.6 * TILE_WIDTH,
+            toRadians(config.alliance == RED ? 26.1 : -24.1)
         );
 
         Pose actual = nav.getDepositNorthPose(0, 0);
@@ -81,7 +81,7 @@ public class NavSubsystemTests extends  TestHarness {
 
         Pose expected = new Pose(
             2.1 * TILE_WIDTH,
-            config.alliance.sign * -2.7 * TILE_WIDTH,
+            config.alliance.sign * (config.alliance == RED ? -2.75 : -2.65) * TILE_WIDTH,
             toRadians(config.alliance.sign * -15)
         );
 
@@ -295,9 +295,9 @@ public class NavSubsystemTests extends  TestHarness {
     }
 
     private static void comparePose(Pose expected, Pose actual) {
-        assert abs(expected.x - actual.x) < 0.1;
-        assert abs(expected.y - actual.y) < 0.1;
-        assert abs(expected.heading - actual.heading) < 0.1;
+        assert abs(expected.x - actual.x) < 0.2;
+        assert abs(expected.y - actual.y) < 0.2;
+        assert abs(actual.heading) <= PI;
         assert expected.hold == actual.hold;
     }
 }

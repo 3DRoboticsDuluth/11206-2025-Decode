@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.controls;
 
 import static org.firstinspires.ftc.teamcode.commands.Commands.auto;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad1;
-import static org.firstinspires.ftc.teamcode.opmodes.OpMode.gamepad2;
 import static org.mockito.Mockito.verify;
 
 import org.firstinspires.ftc.teamcode.TestHarness;
@@ -47,9 +46,4 @@ public class AutoControlsTests extends TestHarness {
         verify(auto.stop()).schedule(true);
     }
 
-    @Test
-    public void testGamepad2ATogglesGoalLock() {
-        input(() -> gamepad2.gamepad.a = true);
-        verify(auto.goalLock(true)).schedule(true);
-    }
 }
