@@ -17,7 +17,7 @@ public class Config {
     public String quanomous = null;
     public boolean parkGate = false;
     public double delay = 0;
-    public double responsiveness = 0.5;
+    public double responsiveness = 1.0;
     public boolean robotCentric = false;
     public boolean goalLock = false;
     public boolean chaseLock = false;
