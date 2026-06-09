@@ -42,7 +42,6 @@ import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
-import org.firstinspires.ftc.teamcode.game.Side;
 
 import java.util.ArrayList;
 import java.util.Comparator;
