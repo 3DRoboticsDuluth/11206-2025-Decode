@@ -146,12 +146,25 @@ public class DriveCommands {
     // TODO: Breakout spike-3 from-deposit and from-gate.
     public Command toSpike3() {
         return new DeferredCommand(
-            () -> curve(
-                config.pose.x > TILE_WIDTH ?
-                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * -0.5 * config.alliance.sign) :
-                    nav.getSpike3().axial(TILE_WIDTH * -1.5).axial(abs(config.pose.y) > 1.75 * TILE_WIDTH ? -0.75 * TILE_WIDTH : 0).lateral(TILE_WIDTH * 0.5 * config.alliance.sign),
-                nav.getSpike3().axial(TILE_WIDTH * 1).hold(false)
-            ), null
+            () -> abs(config.pose.y) < TILE_WIDTH * 1.75 ?
+                toSpike3FromDeposit() :
+                toSpike3FromGate(),
+            null
+        );
+    }
+
+    protected Command toSpike3FromDeposit() {
+        return curve(
+            nav.getSpike3().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.3 * config.alliance.sign * signum(config.pose.x)),
+            nav.getSpike3().axial(TILE_WIDTH * 1).hold(false)
+        );
+    }
+
+    protected Command toSpike3FromGate() {
+        return curve(
+            nav.getSpike3().axial(TILE_WIDTH * -0.4).lateral(TILE_WIDTH * +0.7 * config.alliance.sign),
+            nav.getSpike3().axial(TILE_WIDTH * -0.4).lateral(TILE_WIDTH * -0.2 * config.alliance.sign),
+            nav.getSpike3().axial(TILE_WIDTH * 1).hold(false)
         );
     }
 
