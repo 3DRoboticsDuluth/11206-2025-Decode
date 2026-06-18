@@ -33,10 +33,10 @@ public class LightsSubsystem extends HardwareSubsystem {
     public void periodic() {
         if (unready()) return;
 
-//        if (config.started && config.teleop && playTimer.seconds() > 110) set(RED);
-//        else if (config.started && config.teleop && playTimer.seconds() > 100) set(ORANGE);
-//        else if (config.started && config.teleop && playTimer.seconds() > 80) set(WHITE);
-        /*else*/ if (intake.full) set(GREEN);
+        if (intake.full) set(GREEN);
+        else if (config.started && config.teleop && playTimer.seconds() > 110) set(RED);
+        else if (config.started && config.teleop && playTimer.seconds() > 100) set(ORANGE);
+        else if (config.started && config.teleop && playTimer.seconds() > 80) set(WHITE);
         else if (config.alliance == Alliance.RED) set(RED);
         else if (config.alliance == Alliance.BLUE) set(BLUE);
 
