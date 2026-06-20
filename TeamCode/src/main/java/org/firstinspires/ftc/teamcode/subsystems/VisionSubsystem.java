@@ -11,6 +11,8 @@ import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTA
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
+import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.vision;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.periodicCount;
 import static org.firstinspires.ftc.teamcode.subsystems.TimingSubsystem.playTimer;
 import static java.lang.Double.NaN;
@@ -233,6 +235,11 @@ public class VisionSubsystem extends HardwareSubsystem {
         removeArtifactsNear(purpleArtifacts, this.element);
         removeArtifactsNear(greenArtifacts, this.element);
         this.element = null;
+    }
+
+    public void setBackupElement() {
+        if (vision.element == null)
+            vision.element = nav.getBackupArtifactPose();
     }
 
     @SuppressLint("DefaultLocale")

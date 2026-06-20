@@ -168,11 +168,13 @@ public class AutoCommands {
     public Command chaseIntake() {
         return drive.toChaseScan().alongWith(
             vision.chaseLock(true),
-            vision.waitForElement().withTimeout(3000).andThen(
+            vision.waitForElement().withTimeout(800).andThen(
+                vision.setDefaultElement(),
                 auto.intakeStart(),
                 drive.chaseLock(true),
                 intake.untilElement().raceWith(
-                    drive.untilStill(0.4)
+                    drive.untilStill(0.4),
+                    drive.untilAtElement()
                 ), vision.resetElement()
             )
         );

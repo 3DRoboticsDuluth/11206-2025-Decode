@@ -305,6 +305,12 @@ public class DriveCommands {
         return wait.until(() -> drive.isStill(seconds));
     }
 
+    public Command untilAtElement() {
+        return wait.until(() -> drive.isAtElement()).andThen(
+            wait.doherty(1.5)
+        );
+    }
+
     public boolean isToFar(Pose pose) {
         return config.teleop &&
             config.pose != null &&

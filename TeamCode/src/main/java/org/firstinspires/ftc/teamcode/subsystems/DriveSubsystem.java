@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.hardware.motors.Motor.GoBILDA.RPM_1150;
 import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
+import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.ARTIFACT_RADIUS;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing.drawDebug;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.fromPedroPose;
 import static org.firstinspires.ftc.teamcode.adaptations.pedropathing.PoseUtil.toPedroPose;
@@ -181,6 +182,10 @@ public class DriveSubsystem extends HardwareSubsystem {
 
     public boolean isStill(double seconds) {
         return stillTimer.seconds() > seconds;
+    }
+
+    public boolean isAtElement() {
+        return vision.element == null || vision.element.hypot(config.pose) < ARTIFACT_RADIUS;
     }
 
     public boolean isBusy() {

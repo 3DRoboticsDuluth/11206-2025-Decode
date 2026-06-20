@@ -194,6 +194,14 @@ public class NavSubsystem {
         );
     }
 
+    public Pose getBackupArtifactPose() {
+        return new Pose(
+            (3 * TILE_WIDTH) - (ELEMENT_RADIUS * 5),
+            ((3 * TILE_WIDTH) - (ELEMENT_RADIUS * 1)) * -config.alliance.sign,
+            0
+        );
+    }
+
     public double getArtifactForwardRemaining() {
         return config.pose.x - getArtifactPose().x;
     }
