@@ -188,7 +188,7 @@ public class NavSubsystem {
 
     public Pose getArtifactPose() {
         return new Pose(
-            clamp(vision.element.x, TILE_WIDTH * -3 + ROBOT_WIDTH / 2, TILE_WIDTH * 3 - ROBOT_WIDTH / 2),
+            clamp(vision.element.x, TILE_WIDTH * 2 + 2 + ROBOT_WIDTH / 2, TILE_WIDTH * 3 - ROBOT_WIDTH / 2),
             (TILE_WIDTH * 3 - ELEMENT_RADIUS) * -config.alliance.sign,
             getArtifactHeading()
         );

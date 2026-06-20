@@ -185,7 +185,7 @@ public class DriveSubsystem extends HardwareSubsystem {
     }
 
     public boolean isAtElement() {
-        return vision.element == null || vision.element.hypot(config.pose) < ARTIFACT_RADIUS;
+        return vision.element == null || nav.getArtifactPose().hypot(config.pose) < ARTIFACT_RADIUS;
     }
 
     public boolean isBusy() {

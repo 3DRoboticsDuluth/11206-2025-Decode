@@ -168,7 +168,7 @@ public class AutoCommands {
     public Command chaseIntake() {
         return drive.toChaseScan().alongWith(
             vision.chaseLock(true),
-            vision.waitForElement().withTimeout(800).andThen(
+            vision.waitForElement().withTimeout(2000).andThen(
                 vision.setDefaultElement(),
                 auto.intakeStart(),
                 drive.chaseLock(true),
@@ -182,7 +182,7 @@ public class AutoCommands {
 
     public Command chaseComplete() {
         return intake.untilFull().raceWith(
-            intake.untilArtifacts(2).andThen(drive.untilDepositNorthDistance(-1.50 * TILE_WIDTH)),
+            intake.untilArtifacts(2)/*.andThen(drive.untilDepositNorthDistance(-1.50 * TILE_WIDTH))*/,
             intake.untilArtifacts(1).andThen(drive.untilDepositNorthDistance(-0.75 * TILE_WIDTH))
         );
     }
