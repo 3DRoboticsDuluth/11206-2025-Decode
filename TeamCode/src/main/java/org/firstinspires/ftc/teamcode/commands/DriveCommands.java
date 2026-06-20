@@ -155,7 +155,7 @@ public class DriveCommands {
 
     protected Command toSpike3FromDeposit() {
         return curve(
-            nav.getSpike3().axial(TILE_WIDTH * -1.1).lateral(TILE_WIDTH * -0.3 * config.alliance.sign * signum(config.pose.x)),
+            nav.getSpike3().axial(TILE_WIDTH * -1.5).lateral(TILE_WIDTH * -0.2 * config.alliance.sign * signum(config.pose.x)),
             nav.getSpike3().axial(TILE_WIDTH * 1).hold(false)
         );
     }
