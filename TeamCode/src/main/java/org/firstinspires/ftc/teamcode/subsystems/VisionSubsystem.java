@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.game.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.game.Config.config;
 import static org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline.APRILTAG;
 import static org.firstinspires.ftc.teamcode.game.Side.NORTH;
+import static org.firstinspires.ftc.teamcode.opmodes.OpMode.opMode;
 import static org.firstinspires.ftc.teamcode.opmodes.OpMode.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.NavSubsystem.TILE_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystems.Subsystems.nav;
@@ -85,6 +86,11 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static int MOD_THRESH = 3;
     public static int MOD = 6;
 
+    public static int COUNTER = 1;
+
+    public ElapsedTime timer1 = new ElapsedTime();
+
+
     private static final Style VIEWABLE_AREA_LOOK = new Style(
         "#0057FF", "#0057FF", 2.0
     );
@@ -136,6 +142,12 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         if (!limelight.isConnected()) {
             telemetry.addData("Vision", () -> "Connection Issue!");
+            return;
+        }
+
+        if (timer1.milliseconds() >= 250 && COUNTER <= 1000 && opMode.isStarted()) {
+            limelight.captureSnapshot(Integer.toString(COUNTER++));
+            timer1.reset();
             return;
         }
 
