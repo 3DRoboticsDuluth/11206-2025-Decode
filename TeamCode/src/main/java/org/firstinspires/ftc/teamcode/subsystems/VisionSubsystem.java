@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.adaptations.odometry.Pose;
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Drawing;
 import org.firstinspires.ftc.teamcode.adaptations.solverslib.ServoEx;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Pipeline;
+import org.firstinspires.ftc.teamcode.adaptations.vision.LimelightSnapshotTransfer;
 import org.firstinspires.ftc.teamcode.adaptations.vision.Quanomous;
 
 import java.util.ArrayList;
@@ -146,7 +147,7 @@ public class VisionSubsystem extends HardwareSubsystem {
         }
 
         if (timer1.milliseconds() >= 250 && COUNTER <= 1000 && opMode.isStarted()) {
-            limelight.captureSnapshot(Integer.toString(COUNTER++));
+            LimelightSnapshotTransfer.captureToRobot(COUNTER++);
             timer1.reset();
             return;
         }
