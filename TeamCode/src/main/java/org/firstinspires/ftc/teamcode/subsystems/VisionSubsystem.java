@@ -74,7 +74,7 @@ public class VisionSubsystem extends HardwareSubsystem {
     public static double POS_CHASE_LOCK = 0.83;
     public static double POS_MIN = 0.10;
     public static double POS_MAX = 0.85;
-    public static double POS = 1;
+    public static double POS = 0.83;
     public static double POS_LAST = POS;
     public static double DEG_MIN = -230;
     public static double DEG_MAX = 10;
@@ -127,6 +127,8 @@ public class VisionSubsystem extends HardwareSubsystem {
 
         servo = getServo("turret", s -> s.scaleRange(POS_MIN, POS_MAX));
 
+        limelight.pipelineSwitch(2);
+
         processors = new HashMap<Pipeline, Consumer<LLResult>>() {{
             put(QRCODE, VisionSubsystem.this::processQrCode);
             put(APRILTAG, VisionSubsystem.this::processAprilTag);
@@ -146,6 +148,8 @@ public class VisionSubsystem extends HardwareSubsystem {
             return;
         }
 
+        servo.set(0.83);
+
         if (timer1.milliseconds() >= 250 && COUNTER <= 1000 && opMode.isStarted()) {
             LimelightSnapshotTransfer.captureToRobot(COUNTER++);
             timer1.reset();
@@ -164,7 +168,7 @@ public class VisionSubsystem extends HardwareSubsystem {
             POS_LAST = POS;
         }
 
-        servo.set(POS);
+        //servo.set(POS);
 
         telemetry.addData("Vision (Pipeline)", () -> String.format("%s", PIPELINE));
         telemetry.addData("Vision (Timer)", () -> String.format("%.1f", timer.seconds()));
